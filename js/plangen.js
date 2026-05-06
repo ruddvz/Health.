@@ -128,6 +128,12 @@ function buildPhases(profile) {
   phases.forEach((p) => {
     p.macro = macros(profile, p.calories);
   });
+  let weekCursor = 1;
+  for (const p of phases) {
+    p.startWeek = weekCursor;
+    p.endWeek = weekCursor + (p.weeks || 0) - 1;
+    weekCursor = p.endWeek + 1;
+  }
   return phases;
 }
 
@@ -258,6 +264,21 @@ function scaleAmount(ing, factor) {
   return Math.max(0, Math.round((ing.g * factor) / 25) * 25);
 }
 
+/** Up to 3 alternative meal titles for this weekday slot (other weekdays' templates). */
+export function getSwapAlternatives(profile, dayIndex, slot, currentName) {
+  const dk = dietTemplateKey(profile);
+  const out = [];
+  const seen = new Set([currentName]);
+  for (let d = 0; d < 7 && out.length < 3; d++) {
+    if (d === dayIndex) continue;
+    const n = mealName(dk, d, slot);
+    if (!n || seen.has(n)) continue;
+    seen.add(n);
+    out.push(n);
+  }
+  return out;
+}
+
 function buildDayMeals(profile, dayIndex, targetKcal, options = {}) {
   const dk = dietTemplateKey(profile);
   const jain = profile.foodPrefs?.includes("jain");
@@ -342,7 +363,8 @@ function supplementSchedule(profile) {
   return ids.map((id) => ({ id, ...SUPP_META[id] })).filter((x) => x.why);
 }
 
-function generatePlan(profile) {
+function generatePlan(profile, opts = {}) {
+  const prev = opts.preserveMetaFrom;
   const kcal = calorieTarget(profile);
   const macro = macros(profile, kcal);
   const phases = buildPhases(profile);
@@ -351,8 +373,12 @@ function generatePlan(profile) {
   const supps = supplementSchedule(profile);
   const jain = profile.foodPrefs?.includes("jain");
 
+  const totalWeeks = profile.durationWeeks || phases.reduce((s, p) => s + (p.weeks || 0), 0) || 16;
+
   return {
-    generatedAt: Date.now(),
+    generatedAt: prev?.generatedAt ?? Date.now(),
+    startDate: prev?.startDate ?? new Date().toISOString().slice(0, 10),
+    totalWeeks,
     tdee: Math.round(tdee(profile)),
     targetCalories: kcal,
     macro,
@@ -367,6 +393,7 @@ function generatePlan(profile) {
 export {
   generatePlan,
   buildDayMeals,
+  getSwapAlternatives,
   dietTemplateKey,
   calorieTarget,
   macros,

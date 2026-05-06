@@ -1,4 +1,4 @@
-const CACHE = "nutripal-v7";
+const CACHE = "nutripal-v11";
 /** Paths relative to the service worker scope (works on GitHub Pages `/repo/`). */
 const ASSET_PATHS = [
   "./",
@@ -10,16 +10,23 @@ const ASSET_PATHS = [
   "css/onboarding.css",
   "css/app.css",
   "js/store.js",
+  "js/foodLog.js",
+  "js/mealSwap.js",
+  "js/weightStore.js",
+  "js/notifications.js",
   "js/i18n.js",
   "js/plangen.js",
   "js/onboarding.js",
   "js/app.js",
+  "js/data/foods.js",
   "js/pages/home.js",
   "js/pages/phases.js",
   "js/pages/meals.js",
   "js/pages/prep.js",
   "js/pages/grocery.js",
   "js/pages/supps.js",
+  "js/pages/progress.js",
+  "js/pages/tools.js",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
 ];
@@ -29,13 +36,52 @@ function scopeUrls() {
   return ASSET_PATHS.map((p) => new URL(p, base).href);
 }
 
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_) {
+    try {
+      data = { body: event.data?.text() || "" };
+    } catch {
+      data = {};
+    }
+  }
+  const scopeBase = self.registration?.scope || self.location.href.replace(/\/[^/]+$/, "/");
+  const iconUrl = new URL("assets/icons/icon-192.png", scopeBase).href;
+  event.waitUntil(
+    self.registration.showNotification(data.title || "NutriPal", {
+      body: data.body || "",
+      icon: iconUrl,
+      badge: iconUrl,
+      tag: data.tag || "nutripal",
+      data: { url: data.url || "app.html" },
+    })
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "app.html";
+  const scopeBase = self.registration.scope || "";
+  const abs = new URL(url, scopeBase).href;
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientsArr) => {
+      for (const c of clientsArr) {
+        if (c.url.startsWith(new URL("./", scopeBase).href) && "focus" in c) return c.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(abs);
+    })
+  );
+});
+
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(CACHE).then((c) =>
       Promise.all(
         scopeUrls().map((url) =>
           c.add(url).catch(() => {
-            // Silently skip assets that are not yet present (e.g. icons).
+            /* skip missing */
           })
         )
       )

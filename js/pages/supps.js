@@ -1,4 +1,5 @@
 import { t } from "../i18n.js";
+import { todayKey } from "../foodLog.js";
 
 const SUPP_META = {
   creatine: { dot: "var(--accent-lime)",   name: "Creatine Monohydrate",    status: "have" },
@@ -16,6 +17,40 @@ const SCHEDULE_ROWS = [
   { time: "Post-gym",   items: ["Whey 1.5 scoops + Creatine 5g"], note: "Within 30 min of finishing. On rest days take creatine with any meal." },
   { time: "Before bed", items: ["Ashwagandha + Magnesium"], note: "Together. Lowers cortisol and improves sleep quality + overnight recovery." },
 ];
+
+function suppLogStorageKey(dateKey = todayKey()) {
+  return `np_supp_log_${dateKey}`;
+}
+
+function getSuppLog() {
+  try {
+    return JSON.parse(localStorage.getItem(suppLogStorageKey()) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function saveSuppLog(obj) {
+  localStorage.setItem(suppLogStorageKey(), JSON.stringify(obj));
+}
+
+function suppStreak(suppId) {
+  let streak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = suppLogStorageKey(d.toISOString().slice(0, 10));
+    let log = {};
+    try {
+      log = JSON.parse(localStorage.getItem(key) || "{}");
+    } catch {
+      log = {};
+    }
+    if (log[suppId]) streak++;
+    else break;
+  }
+  return streak;
+}
 
 export function mountSupps(root, profile, plan) {
   const hasWhey = profile.supplements?.includes("whey");
@@ -37,13 +72,38 @@ export function mountSupps(root, profile, plan) {
         </div>
       </div>`).join("");
 
-  const suppCards = (plan.supps || []).map(s => {
-    const meta = SUPP_META[s.id] || { dot: "var(--text-dim)", name: s.id, status: "have" };
-    const timingChips = (s.time || "").split(",").map(t =>
-      `<span class="timing-chip active">${t.trim()}</span>`
-    ).join("") + `<span class="timing-chip">${s.dose}</span>`;
+  const stackIds = (plan.supps || []).map((s) => s.id);
+  const log = getSuppLog();
+  const takenCount = stackIds.filter((id) => log[id]).length;
+  const totalStack = stackIds.length;
+  const adherPct = totalStack ? Math.round((takenCount / totalStack) * 100) : 0;
 
-    return `
+  const adherenceBar =
+    totalStack > 0
+      ? `
+      <div class="compliance-bar glass supp-adherence-bar">
+        <div class="compliance-row">
+          <span class="compliance-label">${t("supps.adherence_today")}</span>
+          <span class="compliance-kcal">${takenCount}/${totalStack}</span>
+        </div>
+        <div class="progress-track" style="margin-top:8px">
+          <div class="progress-fill supp-adherence-fill" style="width:${adherPct}%;animation:none"></div>
+        </div>
+      </div>`
+      : "";
+
+  const suppCards = (plan.supps || [])
+    .map((s) => {
+      const meta = SUPP_META[s.id] || { dot: "var(--text-dim)", name: s.id, status: "have" };
+      const timingChips =
+        (s.time || "")
+          .split(",")
+          .map((x) => `<span class="timing-chip active">${x.trim()}</span>`)
+          .join("") + `<span class="timing-chip">${s.dose}</span>`;
+      const streak = suppStreak(s.id);
+      const isTaken = !!log[s.id];
+
+      return `
       <div class="supp-card">
         <div class="supp-head">
           <div class="supp-dot" style="background:${meta.dot}"></div>
@@ -52,10 +112,15 @@ export function mountSupps(root, profile, plan) {
         </div>
         <div class="supp-body">
           <div class="supp-why">${s.why}</div>
+          <div class="supp-streak">${t("supps.streak_days", { n: streak })}</div>
           <div class="supp-timing-row">${timingChips}</div>
+          <button type="button" class="supp-taken-btn ${isTaken ? "taken" : ""}" data-supp="${s.id}">
+            ${isTaken ? t("supps.taken_today") : t("supps.mark_taken")}
+          </button>
         </div>
       </div>`;
-  }).join("");
+    })
+    .join("");
 
   const wheyBlock = !hasWhey
     ? `
@@ -99,6 +164,8 @@ export function mountSupps(root, profile, plan) {
         <div class="ph-desc">Built around what you actually have. Dosage, timing, and why each one matters.</div>
       </div>
 
+      ${adherenceBar}
+
       <div class="section-eyebrow">Daily Schedule</div>
       <div class="daily-schedule-card">${scheduleHTML}</div>
 
@@ -112,4 +179,15 @@ export function mountSupps(root, profile, plan) {
         <strong>Don't buy anything else.</strong> BCAAs are useless at 170g+ protein per day. Fat burners don't work. Extra pre-workout stacks are just more caffeine. Your stack is complete — save the money for better food.
       </div>
     </div>`;
+
+  root.querySelectorAll(".supp-taken-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const id = btn.dataset.supp;
+      const cur = getSuppLog();
+      if (cur[id]) delete cur[id];
+      else cur[id] = true;
+      saveSuppLog(cur);
+      mountSupps(root, profile, plan);
+    });
+  });
 }

@@ -28,16 +28,45 @@
       <div class="app-nav-inner" id="bottom-nav"></div>
     </nav>
     <div class="settings-panel" id="settings-panel">
-      <div class="glass settings-sheet">
-        <h2 id="settings-title">Language</h2>
-        <p class="step-sub" id="settings-sub">Pick language</p>
-        <div class="lang-grid" style="margin-top:12px">
-          <button type="button" class="glass lang-card" data-set-lang="en"><h2>English</h2></button>
-          <button type="button" class="glass lang-card" data-set-lang="hi"><h2>Hinglish</h2></button>
-          <button type="button" class="glass lang-card" data-set-lang="gu"><h2>Gujlish</h2></button>
+      <div class="glass settings-sheet settings-sheet-wide">
+        <h2 id="settings-title">Settings</h2>
+        <p class="step-sub" id="settings-sub">Language & plan inputs</p>
+
+        <div class="settings-block">
+          <label class="label" for="edit-weight" id="lbl-weight">Current weight (kg)</label>
+          <input class="field settings-field" type="number" id="edit-weight" step="0.1" min="30" max="300" />
         </div>
-        <div class="footer-actions">
-          <button type="button" class="btn btn-primary" id="settings-close">Done</button>
+
+        <div class="settings-block">
+          <span class="label" id="lbl-train">Training days / week</span>
+          <div class="train-day-grid" id="edit-train-days">
+            <button type="button" class="train-day-btn glass" data-train="1">1</button>
+            <button type="button" class="train-day-btn glass" data-train="2">2</button>
+            <button type="button" class="train-day-btn glass" data-train="3">3</button>
+            <button type="button" class="train-day-btn glass" data-train="4">4</button>
+            <button type="button" class="train-day-btn glass" data-train="5">5</button>
+            <button type="button" class="train-day-btn glass" data-train="6">6</button>
+            <button type="button" class="train-day-btn glass" data-train="7">7</button>
+          </div>
+        </div>
+
+        <div class="settings-block">
+          <label class="label" for="edit-city" id="lbl-city">City (grocery tips)</label>
+          <input class="field settings-field" type="text" id="edit-city" maxlength="80" placeholder="" />
+        </div>
+
+        <div class="settings-block">
+          <span class="label" id="lbl-lang">Language</span>
+          <div class="lang-grid settings-lang-grid">
+            <button type="button" class="glass lang-card" data-set-lang="en"><h2>English</h2></button>
+            <button type="button" class="glass lang-card" data-set-lang="hi"><h2>Hinglish</h2></button>
+            <button type="button" class="glass lang-card" data-set-lang="gu"><h2>Gujlish</h2></button>
+          </div>
+        </div>
+
+        <div class="footer-actions settings-footer">
+          <button type="button" class="btn btn-primary" id="settings-save">Save changes</button>
+          <button type="button" class="btn btn-ghost" id="settings-close">Close</button>
         </div>
       </div>
     </div>

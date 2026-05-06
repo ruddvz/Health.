@@ -25,27 +25,35 @@ A mobile-first **Progressive Web App** (PWA) — no server, no login, works offl
 ```
 /
 ├── index.html              ← Language picker + onboarding wizard
-├── app.html                ← Main plan app (all 6 pages)
+├── app.html                ← Main plan app (bottom nav + settings sheet)
 ├── manifest.json           ← PWA install config
-├── sw.js                   ← Service worker (offline)
+├── sw.js                   ← Service worker (offline + push display hooks)
 ├── css/
-│   ├── tokens.css          ← Design tokens
-│   ├── components.css      ← Shared UI
-│   ├── onboarding.css      ← Quiz styles
-│   └── app.css             ← Main app styles
+│   ├── tokens.css
+│   ├── components.css
+│   ├── onboarding.css
+│   └── app.css
 ├── js/
-│   ├── store.js            ← localStorage helper
-│   ├── i18n.js             ← All 3 language strings
-│   ├── onboarding.js       ← Quiz logic
-│   ├── plangen.js          ← Plan generation engine
-│   ├── app.js              ← Router + bottom nav
+│   ├── store.js            ← localStorage helpers
+│   ├── foodLog.js          ← daily meal log + custom entries
+│   ├── mealSwap.js         ← weekday meal name overrides
+│   ├── weightStore.js      ← weigh-in history
+│   ├── notifications.js    ← optional local Notification reminders
+│   ├── i18n.js
+│   ├── onboarding.js
+│   ├── plangen.js
+│   ├── app.js              ← router, settings save, install banner
+│   ├── data/
+│   │   └── foods.js        ← nutrition lookup list (Tools)
 │   └── pages/
 │       ├── home.js
 │       ├── phases.js
 │       ├── meals.js
 │       ├── prep.js
 │       ├── grocery.js
-│       └── supps.js
+│       ├── supps.js
+│       ├── progress.js
+│       └── tools.js
 └── assets/
     ├── otto/               ← optional future: mascot PNGs from PROMPTS.md (not required for the app)
     │   ├── otto-wave.png
