@@ -8,6 +8,29 @@ const ACTIVITY_MULT = { sedentary: 1.2, light: 1.375, moderate: 1.55, high: 1.72
 const SLOTS = ["breakfast", "lunch", "snack", "pre", "dinner"];
 const SLOT_SHARE = { breakfast: 0.22, lunch: 0.28, snack: 0.12, pre: 0.08, dinner: 0.3 };
 
+/** Stable hash from diet, goal, food prefs, and supplements — shifts weekly meal templates & ingredient variants. */
+function profileMealSeed(profile) {
+  const parts = [
+    profile.dietType || "veg",
+    profile.goal || "cut",
+    ...(profile.foodPrefs || []).slice().sort(),
+    ...(profile.supplements || []).filter((x) => x && x !== "none").slice().sort(),
+  ];
+  const str = parts.join("|");
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+/** Maps calendar weekday (0=Mon…6=Sun) to MEAL_NAMES row index so plans differ by preferences. */
+export function mealTemplateDay(profile, calendarDayIndex) {
+  const seed = profileMealSeed(profile);
+  return (calendarDayIndex + (seed % 7)) % 7;
+}
+
 function dietTemplateKey(profile) {
   const d = profile.dietType;
   if (d === "nonveg") return "nonveg";
@@ -247,6 +270,8 @@ function baseIngredients(profile, dayIndex, slot) {
     list.push({ en: "Whole eggs", g: 100, kcal: 140, cat: "protein" });
   }
 
+  list = applyIngredientPreferenceVariants(profile, dk, slot, list);
+
   if (profile.foodPrefs?.includes("nodairy")) {
     list = list.map((x) => {
       if (/yogurt|paneer|milk/i.test(x.en)) {
@@ -260,6 +285,63 @@ function baseIngredients(profile, dayIndex, slot) {
   return { ingredients: list, baseKcal: mealKcal };
 }
 
+/** Alternate protein/carbs lines by preference hash so grocery lists diverge meaningfully. */
+function applyIngredientPreferenceVariants(profile, dk, slot, list) {
+  const fp = new Set(profile.foodPrefs || []);
+  const seed = profileMealSeed(profile);
+  const alt = (seed >> 3) % 2 === 1;
+  let out = list.map((x) => ({ ...x }));
+
+  if (fp.has("nogluten")) {
+    out = out.map((x) => {
+      if (/whole wheat bread/i.test(x.en)) return { ...x, en: "Gluten-free millet roti / rice cakes", kcal: x.kcal };
+      if (/rolled oats/i.test(x.en)) return { ...x, en: "Certified gluten-free oats", kcal: x.kcal };
+      return x;
+    });
+  }
+
+  if (!alt) return out;
+
+  if (dk === "nonveg") {
+    if (slot === "lunch") {
+      out = out.map((x) =>
+        /chicken breast/i.test(x.en) ? { ...x, en: "White fish fillet (tilapia/cod)", kcal: Math.round(x.kcal * 0.93) } : x
+      );
+    }
+    if (slot === "dinner") {
+      out = out.map((x) =>
+        /sweet potato/i.test(x.en) ? { ...x, en: "Roasted pumpkin + masoor dal", kcal: Math.round(x.kcal * 0.98) } : x
+      );
+    }
+  }
+
+  if (dk === "veg" || profile.dietType === "eggetarian") {
+    if (slot === "lunch") {
+      out = out.map((x) =>
+        /paneer/i.test(x.en) ? { ...x, en: "Soy chunks / tempeh curry", kcal: Math.round(x.kcal * 0.9) } : x
+      );
+    }
+    if (slot === "breakfast" && dk === "veg") {
+      out = out.map((x) =>
+        /besan/i.test(x.en) ? { ...x, en: "Moong dal chilla mix", kcal: Math.round(x.kcal * 1.02) } : x
+      );
+    }
+  }
+
+  if (dk === "vegan") {
+    if (slot === "lunch") {
+      out = out.map((x) => (/tofu/i.test(x.en) ? { ...x, en: "Seitan / soy curls stir-fry", kcal: Math.round(x.kcal * 1.03) } : x));
+    }
+    if (slot === "dinner") {
+      out = out.map((x) =>
+        /tomato masala/i.test(x.en) ? { ...x, en: "Coconut milk tomato curry base", kcal: Math.round(x.kcal * 1.08) } : x
+      );
+    }
+  }
+
+  return out;
+}
+
 function scaleAmount(ing, factor) {
   return Math.max(0, Math.round((ing.g * factor) / 25) * 25);
 }
@@ -271,7 +353,8 @@ export function getSwapAlternatives(profile, dayIndex, slot, currentName) {
   const seen = new Set([currentName]);
   for (let d = 0; d < 7 && out.length < 3; d++) {
     if (d === dayIndex) continue;
-    const n = mealName(dk, d, slot);
+    const td = mealTemplateDay(profile, d);
+    const n = mealName(dk, td, slot);
     if (!n || seen.has(n)) continue;
     seen.add(n);
     out.push(n);
@@ -289,10 +372,11 @@ function buildDayMeals(profile, dayIndex, targetKcal, options = {}) {
   return SLOTS.map((slot) => {
     if (slot === "pre" && !isWorkoutDay) return null;
 
-    const name = mealName(dk, dayIndex, slot);
+    const templateDay = mealTemplateDay(profile, dayIndex);
+    const name = mealName(dk, templateDay, slot);
     if (!name) return null;
 
-    const { ingredients, baseKcal } = baseIngredients(profile, dayIndex, slot);
+    const { ingredients, baseKcal } = baseIngredients(profile, templateDay, slot);
     const share = SLOT_SHARE[slot];
     const targetMeal = Math.round(targetKcal * share);
     const factor = targetMeal / baseKcal;
@@ -394,6 +478,7 @@ export {
   generatePlan,
   buildDayMeals,
   getSwapAlternatives,
+  mealTemplateDay,
   dietTemplateKey,
   calorieTarget,
   macros,

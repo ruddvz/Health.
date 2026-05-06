@@ -270,16 +270,33 @@ function render() {
       </div>`;
 
   } else if (step === 13) {
-    const sups = ["creatine","whey","pre","omega","multi","mag","ash","none"];
+    const catalog = ["creatine", "whey", "pre", "omega", "multi", "mag", "ash"];
+    const selected = (data.supplements || []).filter((s) => s !== "none");
     body = `
       <div class="step-eyebrow">Step 12 / 13</div>
       <h1 class="step-title">${t("onb.q_supps")}</h1>
-      <p class="step-sub">Only the supplements you already have — your schedule will be built around them.</p>
-      <div class="chip-grid">
-        ${sups.map(s =>
-          `<button type="button" class="chip ${data.supplements.includes(s) ? "selected" : ""}" data-supp="${s}">${t("onb.supp_" + s)}</button>`
-        ).join("")}
-      </div>`;
+      <p class="step-sub">${t("onb.supp_hint")}</p>
+      <label class="label" for="supp-dropdown">${t("onb.supp_pick")}</label>
+      <select id="supp-dropdown" class="field supp-dropdown">
+        <option value="">${t("onb.supp_placeholder")}</option>
+        ${catalog.map((id) => `<option value="${id}">${t("onb.supp_" + id)}</option>`).join("")}
+      </select>
+      <div class="supp-selected-list">
+        ${
+          selected.length
+            ? selected
+                .map(
+                  (id) => `
+          <span class="supp-pill glass">
+            ${t("onb.supp_" + id)}
+            <button type="button" class="supp-remove" data-id="${id}" aria-label="Remove">×</button>
+          </span>`
+                )
+                .join("")
+            : `<p class="supp-empty">${t("onb.supp_empty")}</p>`
+        }
+      </div>
+      <button type="button" class="btn btn-ghost supp-clear-btn" id="supp-clear-none">${t("onb.supp_none_clear")}</button>`;
 
   } else if (step === 14) {
     body = `
@@ -429,21 +446,27 @@ function wireStep() {
     );
   }
   if (step === 13) {
-    root.querySelectorAll("[data-supp]").forEach(b =>
-      b.addEventListener("click", () => {
-        const s = b.dataset.supp;
-        if (s === "none") {
-          data.supplements = ["none"];
-          root.querySelectorAll("[data-supp]").forEach(x => x.classList.toggle("selected", x.dataset.supp === "none"));
-        } else {
-          data.supplements = data.supplements.filter(x => x !== "none");
-          if (data.supplements.includes(s)) data.supplements = data.supplements.filter(x => x !== s);
-          else data.supplements.push(s);
-          b.classList.toggle("selected", data.supplements.includes(s));
-          root.querySelector("[data-supp='none']")?.classList.remove("selected");
-        }
-      })
-    );
+    document.getElementById("supp-dropdown")?.addEventListener("change", (e) => {
+      const sel = e.target;
+      const v = sel?.value;
+      if (!v) return;
+      data.supplements = (data.supplements || []).filter((x) => x !== "none");
+      if (!data.supplements.includes(v)) data.supplements.push(v);
+      sel.value = "";
+      render();
+    });
+    document.getElementById("supp-clear-none")?.addEventListener("click", () => {
+      data.supplements = ["none"];
+      render();
+    });
+    root.querySelectorAll(".supp-remove").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.id;
+        data.supplements = (data.supplements || []).filter((x) => x !== id);
+        if (!data.supplements.length) data.supplements = ["none"];
+        render();
+      });
+    });
   }
 
   const next = document.getElementById("onb-next");
