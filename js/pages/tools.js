@@ -2,15 +2,27 @@ import { t } from "../i18n.js";
 import { FOODS } from "../data/foods.js";
 import { appendCustomFoodToLog } from "../foodLog.js";
 
+const CAT_KEYS = ["all", "protein", "carbs", "veg", "fruit", "dairy", "indian", "pantry"];
+
 export function mountTools(root, profile, plan) {
   let query = "";
+  let catFilter = "all";
+
+  function filteredList() {
+    const q = query.trim().toLowerCase();
+    let list = FOODS;
+    if (catFilter !== "all") list = list.filter((f) => f.cat === catFilter);
+    if (q.length >= 2) list = list.filter((f) => f.name.toLowerCase().includes(q));
+    else list = list.slice(0, 40);
+    return list.slice(0, 36);
+  }
 
   function renderInner() {
-    const q = query.trim().toLowerCase();
-    const results =
-      q.length < 2
-        ? FOODS.slice(0, 14)
-        : FOODS.filter((f) => f.name.toLowerCase().includes(q)).slice(0, 22);
+    const results = filteredList();
+    const catsRow = CAT_KEYS.map(
+      (c) =>
+        `<button type="button" class="tools-cat ${catFilter === c ? "active" : ""}" data-cat="${c}">${t("tools.cat_" + c)}</button>`
+    ).join("");
 
     root.innerHTML = `
       <div class="page-enter">
@@ -19,17 +31,19 @@ export function mountTools(root, profile, plan) {
           <div class="ph-title">${t("tools.title")}</div>
           <div class="ph-desc">${t("tools.desc")}</div>
         </div>
+        <div class="tools-cat-row">${catsRow}</div>
         <input type="search" class="weight-input tools-search" id="food-search" autocomplete="off"
           placeholder="${t("tools.placeholder")}" />
         <div class="tools-results">
-          ${results
-            .map(
-              (f) => `
+          ${results.length
+            ? results
+                .map(
+                  (f) => `
             <div class="food-result-card glass" data-food="${encodeURIComponent(f.name)}">
               <div class="food-result-top">
                 <div>
                   <div class="food-result-name">${f.name}</div>
-                  <div class="food-result-basis">${t("tools.basis")}: ${f.basis || "100g"}</div>
+                  <div class="food-result-basis">${t("tools.basis")}: ${f.basis || "100g"} · ${t("tools.cat_" + (f.cat || "pantry"))}</div>
                 </div>
                 <div class="food-result-kcal-wrap">
                   <div class="food-result-kcal">${f.kcal}</div>
@@ -43,8 +57,9 @@ export function mountTools(root, profile, plan) {
               </div>
               <button type="button" class="btn btn-primary tools-add-btn">${t("tools.add_log")}</button>
             </div>`
-            )
-            .join("")}
+                )
+                .join("")
+            : `<p class="tools-empty">${t("tools.no_results")}</p>`}
         </div>
       </div>`;
 
@@ -53,6 +68,13 @@ export function mountTools(root, profile, plan) {
     inp?.addEventListener("input", (e) => {
       query = e.target.value;
       renderInner();
+    });
+
+    root.querySelectorAll("[data-cat]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        catFilter = btn.dataset.cat || "all";
+        renderInner();
+      });
     });
 
     root.querySelectorAll(".food-result-card").forEach((card) => {

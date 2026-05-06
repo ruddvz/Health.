@@ -2,6 +2,7 @@ import { t, dayLabel } from "../i18n.js";
 import { buildDayMeals, getSwapAlternatives } from "../plangen.js";
 import { getFoodTotals, isMealEaten, toggleMealEaten } from "../foodLog.js";
 import { getSwapOverride, setSwapOverride } from "../mealSwap.js";
+import { MEAL_TIMING, getMealOptionsForSlot } from "../data/mealOptions.js";
 
 const SLOT_TIMES = {
   breakfast: "7:00 AM",
@@ -100,6 +101,7 @@ export function mountMeals(root, profile, plan) {
     const mealCards = meals
       .map((m) => {
         const time = SLOT_TIMES[m.slot] || "";
+        const timingMeta = MEAL_TIMING[m.slot];
         const tags = [];
         if (m.tags?.includes("high_protein")) tags.push(`<span class="tag tag-lime">${t("meals.high_protein")}</span>`);
         if (m.tags?.includes("no_cook")) tags.push(`<span class="tag">No cook</span>`);
@@ -111,6 +113,10 @@ export function mountMeals(root, profile, plan) {
               `<li>${ing.name}<span style="margin-left:auto;font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted);flex-shrink:0">${ing.grams}g</span></li>`
           )
           .join("");
+
+        const timingNote = timingMeta
+          ? `<div style="font-size:0.72rem;color:var(--text-dim);margin-top:8px;line-height:1.5;font-style:italic">${timingMeta.note}</div>`
+          : "";
 
         const eaten = viewingToday && isMealEaten(m.slot);
         const eatBtn =
@@ -133,6 +139,7 @@ export function mountMeals(root, profile, plan) {
           </div>
           <div class="meal-body">
             <ul class="ing-list">${ings}</ul>
+            ${timingNote}
             ${tags.length ? `<div class="meal-tags">${tags.join("")}</div>` : ""}
             <button type="button" class="meal-swap-btn" data-swap-slot="${m.slot}" data-template="${encodeURIComponent(tmpl)}">
               ${t("meals.swap")}
@@ -177,6 +184,33 @@ export function mountMeals(root, profile, plan) {
           </div>` : ""}
 
         ${mealCards || `<div class="empty-hint">${t("meals.rest")}</div>`}
+
+        ${(() => {
+          const dietType = profile.dietType || "veg";
+          const goal = profile.goal || "maintain";
+          const allOpts = ["breakfast", "lunch", "snack", "dinner"].flatMap((slot) =>
+            getMealOptionsForSlot(slot, dietType, goal).slice(0, 2)
+          );
+          if (!allOpts.length) return "";
+          return `
+          <div class="section-eyebrow" style="margin-top:20px">More Meal Ideas</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:8px">
+            ${allOpts.map((opt) => `
+              <div class="glass" style="border-radius:12px;padding:12px 14px">
+                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:4px">
+                  <div style="font-size:0.8rem;font-weight:600;color:var(--text-secondary)">${opt.name}</div>
+                  <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--accent-lime);white-space:nowrap;flex-shrink:0">${opt.kcal} kcal</span>
+                </div>
+                <div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:6px">
+                  P ${opt.macro.protein}g · C ${opt.macro.carbs}g · F ${opt.macro.fat}g · Prep ${opt.prepMins + opt.cookMins} min
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:4px">
+                  ${opt.tags.map((tag) => `<span class="tag">${tag.replace("_", " ")}</span>`).join("")}
+                </div>
+                ${opt.tips ? `<div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.5;font-style:italic">${opt.tips}</div>` : ""}
+              </div>`).join("")}
+          </div>`;
+        })()}
 
         <div class="swap-drawer glass" id="swap-drawer" hidden>
           <div class="section-eyebrow swap-drawer-title">${t("meals.swap_alts")}</div>

@@ -1,5 +1,6 @@
 import { t } from "../i18n.js";
 import { todayKey } from "../foodLog.js";
+import { SUPP_DETAIL, SUPP_STACK_GUIDE, DAILY_SCHEDULE } from "../data/supplements.js";
 
 const SUPP_META = {
   creatine: { dot: "var(--accent-lime)",   name: "Creatine Monohydrate",    status: "have" },
@@ -92,9 +93,12 @@ export function mountSupps(root, profile, plan) {
       </div>`
       : "";
 
+  const EVIDENCE_COLOUR = { A: "var(--accent-lime)", B: "var(--accent-teal)", C: "var(--accent-gold)", D: "var(--accent-orange)" };
+
   const suppCards = (plan.supps || [])
     .map((s) => {
       const meta = SUPP_META[s.id] || { dot: "var(--text-dim)", name: s.id, status: "have" };
+      const detail = SUPP_DETAIL[s.id];
       const timingChips =
         (s.time || "")
           .split(",")
@@ -102,6 +106,31 @@ export function mountSupps(root, profile, plan) {
           .join("") + `<span class="timing-chip">${s.dose}</span>`;
       const streak = suppStreak(s.id);
       const isTaken = !!log[s.id];
+
+      const evidenceBadge = detail
+        ? `<span class="timing-chip" style="background:${EVIDENCE_COLOUR[detail.evidenceRating] || "var(--text-dim)"}20;color:${EVIDENCE_COLOUR[detail.evidenceRating] || "var(--text-dim)"}">Evidence: ${detail.evidenceRating}</span>`
+        : "";
+
+      const topFormNote = detail
+        ? (() => {
+            const rec = detail.forms.find((f) => f.recommended);
+            return rec
+              ? `<div class="supp-form-note" style="font-size:0.72rem;color:var(--text-muted);margin-top:6px;line-height:1.5">
+                   <strong style="color:var(--text-secondary)">Best form:</strong> ${rec.name} — ${rec.note}
+                 </div>`
+              : "";
+          })()
+        : "";
+
+      const cyclingNote = detail?.cycling?.required
+        ? `<div class="supp-form-note" style="font-size:0.72rem;color:var(--accent-gold);margin-top:4px">
+             ⚠ Cycling: ${detail.cycling.protocol}
+           </div>`
+        : "";
+
+      const keyNote = detail?.keyNote
+        ? `<div class="supp-form-note" style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;font-style:italic;line-height:1.5">${detail.keyNote}</div>`
+        : "";
 
       return `
       <div class="supp-card">
@@ -112,8 +141,11 @@ export function mountSupps(root, profile, plan) {
         </div>
         <div class="supp-body">
           <div class="supp-why">${s.why}</div>
+          ${topFormNote}
+          ${cyclingNote}
+          ${keyNote}
           <div class="supp-streak">${t("supps.streak_days", { n: streak })}</div>
-          <div class="supp-timing-row">${timingChips}</div>
+          <div class="supp-timing-row">${timingChips}${evidenceBadge}</div>
           <button type="button" class="supp-taken-btn ${isTaken ? "taken" : ""}" data-supp="${s.id}">
             ${isTaken ? t("supps.taken_today") : t("supps.mark_taken")}
           </button>
@@ -178,6 +210,31 @@ export function mountSupps(root, profile, plan) {
       <div class="info-box info-box-orange" style="margin-top:4px">
         <strong>Don't buy anything else.</strong> BCAAs are useless at 170g+ protein per day. Fat burners don't work. Extra pre-workout stacks are just more caffeine. Your stack is complete — save the money for better food.
       </div>
+
+      <div class="section-eyebrow" style="margin-top:20px">What to Avoid</div>
+      <div class="glass" style="border-radius:14px;padding:14px 16px;margin-bottom:8px">
+        ${SUPP_STACK_GUIDE.avoid.map((item) => `
+          <div style="display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;font-size:0.8rem;color:var(--text-muted);line-height:1.5">
+            <span style="color:var(--accent-orange);flex-shrink:0;margin-top:1px">✕</span>
+            <span>${item}</span>
+          </div>`).join("")}
+      </div>
+
+      <div class="section-eyebrow" style="margin-top:20px">Stack Progression Guide</div>
+      ${[SUPP_STACK_GUIDE.beginner, SUPP_STACK_GUIDE.intermediate, SUPP_STACK_GUIDE.full].map((tier, i) => {
+        const colours = ["var(--accent-lime)", "var(--accent-teal)", "var(--accent-gold)"];
+        return `
+        <div class="glass" style="border-radius:14px;padding:14px 16px;margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:8px;height:8px;border-radius:50%;background:${colours[i]};flex-shrink:0"></div>
+            <div style="font-size:0.78rem;font-weight:600;color:var(--text-secondary)">${tier.label}</div>
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:8px;line-height:1.5">${tier.rationale}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            ${tier.items.map((id) => `<span class="timing-chip active" style="background:${colours[i]}18;color:${colours[i]}">${SUPP_DETAIL[id]?.fullName || id}</span>`).join("")}
+          </div>
+        </div>`;
+      }).join("")}
     </div>`;
 
   root.querySelectorAll(".supp-taken-btn").forEach((btn) => {
