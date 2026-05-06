@@ -1,0 +1,62 @@
+/**
+ * NutriPal design tokens — Section 6 (iOS-style liquid glass)
+ */
+:root {
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  --font-mono: "SF Mono", Menlo, monospace;
+
+  --bg: #000000;
+  --surface: rgba(28, 28, 30, 0.72);
+  --nav: rgba(18, 18, 20, 0.92);
+  --border: rgba(255, 255, 255, 0.09);
+  --accent-lime: #d4f53c;
+  --accent-teal: #3effc8;
+  --accent-orange: #ff6030;
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+
+  --radius-card: 20px;
+  --radius-chip: 12px;
+  --radius-btn: 14px;
+  --radius-pill: 9999px;
+
+  --glass-blur: blur(28px) saturate(180%);
+  --transition-page: 300ms ease-out;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f2f2f7;
+    --surface: rgba(255, 255, 255, 0.82);
+    --nav: rgba(255, 255, 255, 0.92);
+    --border: rgba(0, 0, 0, 0.08);
+    --text: #0a0a0a;
+    --text-dim: rgba(0, 0, 0, 0.55);
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding-top: var(--safe-top);
+}
+
+a {
+  color: var(--accent-teal);
+}

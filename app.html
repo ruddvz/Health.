@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#000000" />
+    <title>NutriPal</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-top">
+        <div class="app-title" id="app-name">.</div>
+        <button type="button" class="icon-btn" id="settings-btn" aria-label="Settings">⚙</button>
+      </header>
+      <main class="page-stack" id="app-main"></main>
+    </div>
+    <nav class="app-nav" aria-label="Main">
+      <div class="app-nav-inner" id="bottom-nav"></div>
+    </nav>
+    <div class="settings-panel" id="settings-panel">
+      <div class="glass settings-sheet">
+        <h2 id="settings-title">Language</h2>
+        <p class="step-sub" id="settings-sub">Pick language</p>
+        <div class="lang-grid" style="margin-top:12px">
+          <button type="button" class="glass lang-card" data-set-lang="en"><h2>English</h2></button>
+          <button type="button" class="glass lang-card" data-set-lang="hi"><h2>Hinglish</h2></button>
+          <button type="button" class="glass lang-card" data-set-lang="gu"><h2>Gujlish</h2></button>
+        </div>
+        <div class="footer-actions">
+          <button type="button" class="btn btn-primary" id="settings-close">Done</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
