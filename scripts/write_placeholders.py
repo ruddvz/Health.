@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write minimal solid-colour PNGs (stdlib only) for PWA / mascot placeholders."""
+"""Write minimal solid-colour PNGs (stdlib only) for PWA icons."""
 import struct, zlib
 
 def chunk(tag, data):
@@ -16,12 +16,6 @@ def write_png(path, w, h, rgb):
 
 import os
 os.makedirs("/workspace/assets/icons", exist_ok=True)
-os.makedirs("/workspace/assets/axo", exist_ok=True)
 # Lime app icons
 write_png("/workspace/assets/icons/icon-192.png", 192, 192, (0xD4, 0xF5, 0x3C))
 write_png("/workspace/assets/icons/icon-512.png", 512, 512, (0xD4, 0xF5, 0x3C))
-# Pink mascot placeholders (distinct shades)
-write_png("/workspace/assets/axo/axo-wave.png", 256, 256, (0xFF, 0xB7, 0xC5))
-write_png("/workspace/assets/axo/axo-think.png", 256, 256, (0xFF, 0xC8, 0xD4))
-write_png("/workspace/assets/axo/axo-flex.png", 256, 256, (0xFF, 0x9E, 0xB5))
-write_png("/workspace/assets/axo/axo-eat.png", 256, 256, (0xFF, 0xA8, 0xC0))

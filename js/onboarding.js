@@ -31,15 +31,6 @@ function kgFrom(lbs) {
 function lbsFrom(kg) {
   return Math.round(kg * 2.20462);
 }
-function axoSvg(pose) {
-  const poses = {
-    wave: `<ellipse cx="64" cy="72" rx="38" ry="28" fill="#ffb7c5"/><ellipse cx="64" cy="58" rx="32" ry="26" fill="#ffc8d4"/><circle cx="52" cy="52" r="6" fill="#1a1a1a"/><circle cx="76" cy="52" r="6" fill="#1a1a1a"/><path d="M58 62 Q64 68 70 62" stroke="#1a1a1a" fill="none"/><path d="M28 50 Q20 40 26 32" stroke="#ff9eb5" fill="#ff9eb5"/><path d="M100 50 Q108 40 102 32" stroke="#ff9eb5" fill="#ff9eb5"/><ellipse cx="40" cy="78" rx="8" ry="6" fill="#ffb7c5"/><ellipse cx="88" cy="78" rx="8" ry="6" fill="#ffb7c5"/>`,
-    think: `<ellipse cx="64" cy="72" rx="38" ry="28" fill="#ffb7c5"/><ellipse cx="64" cy="58" rx="32" ry="26" fill="#ffc8d4"/><circle cx="52" cy="52" r="6" fill="#1a1a1a"/><circle cx="76" cy="50" r="5" fill="#1a1a1a"/><path d="M58 62 Q64 66 70 60" stroke="#1a1a1a" fill="none"/><path d="M72 44 L78 38" stroke="#1a1a1a"/><circle cx="78" cy="36" r="4" fill="#ffb7c5"/><path d="M28 50 Q20 40 26 32" stroke="#ff9eb5" fill="#ff9eb5"/><path d="M100 50 Q108 40 102 32" stroke="#ff9eb5" fill="#ff9eb5"/>`,
-    flex: `<ellipse cx="64" cy="72" rx="38" ry="28" fill="#ffb7c5"/><ellipse cx="64" cy="56" rx="30" ry="24" fill="#ffc8d4"/><path d="M52 48 Q56 44 60 48" stroke="#1a1a1a" fill="none"/><path d="M68 48 Q72 44 76 48" stroke="#1a1a1a" fill="none"/><path d="M58 62 Q64 70 70 62" stroke="#1a1a1a" fill="none"/><ellipse cx="34" cy="58" rx="10" ry="8" fill="#ffb7c5"/><ellipse cx="94" cy="58" rx="10" ry="8" fill="#ffb7c5"/><path d="M28 50 Q20 40 26 32" stroke="#ff9eb5" fill="#ff9eb5"/><path d="M100 50 Q108 40 102 32" stroke="#ff9eb5" fill="#ff9eb5"/><text x="64" y="24" text-anchor="middle" fill="#d4f53c" font-size="14">✦</text>`,
-    eat: `<ellipse cx="64" cy="72" rx="38" ry="28" fill="#ffb7c5"/><ellipse cx="64" cy="58" rx="32" ry="26" fill="#ffc8d4"/><circle cx="50" cy="52" r="7" fill="#1a1a1a"/><circle cx="78" cy="52" r="7" fill="#1a1a1a"/><ellipse cx="64" cy="88" rx="14" ry="8" fill="#fff" opacity="0.9"/><path d="M58 62 Q64 72 70 62" stroke="#1a1a1a" fill="none"/><path d="M28 50 Q20 40 26 32" stroke="#ff9eb5" fill="#ff9eb5"/><path d="M100 50 Q108 40 102 32" stroke="#ff9eb5" fill="#ff9eb5"/>`,
-  };
-  return `<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${poses[pose] || poses.wave}</svg>`;
-}
 
 function setProgress() {
   const pct = ((step + 1) / STEPS) * 100;
@@ -55,6 +46,7 @@ function render() {
   if (step === 0) {
     root.innerHTML = `
       <div class="page-enter">
+        <p class="app-brand">NutriPal</p>
         <h1 class="step-title">${t("lang.pick")}</h1>
         <div class="lang-grid">
           <button type="button" class="glass lang-card" data-lang="en">
@@ -84,7 +76,7 @@ function render() {
   if (step === 1) {
     root.innerHTML = `
       <div class="page-enter">
-        <div class="axo-wrap">${axoSvg("wave")}</div>
+        <p class="app-brand">NutriPal</p>
         <h1 class="step-title">${t("lang.sample_" + (localStorage.getItem("np_lang") || "en"))}</h1>
         <p class="step-sub">${t("onb.tap_begin")}</p>
         <div class="splash-tap"><button type="button" class="btn btn-primary" id="splash-go">${t("onb.next")}</button></div>
@@ -94,15 +86,13 @@ function render() {
   }
 
   let body = "";
-  const pose = step >= 15 ? "flex" : "think";
-  const axo = `<div class="axo-wrap">${axoSvg(pose)}</div>`;
 
   if (step === 2) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_name")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_name")}</h1>
       <label class="label">${t("onb.q_name")}</label>
       <input class="field" id="f-name" value="${data.name.replace(/"/g, "&quot;")}" autocomplete="name">`;
   } else if (step === 3) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_goal")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_goal")}</h1>
       <div class="option-grid cols-3">
         ${["cut", "build", "recomp"]
           .map(
@@ -119,7 +109,7 @@ function render() {
       [24, "w24"],
       [52, "w52"],
     ];
-    body = `${axo}<h1 class="step-title">${t("onb.q_duration")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_duration")}</h1>
       <div class="option-grid">${opts
         .map(
           ([w, key]) =>
@@ -130,21 +120,21 @@ function render() {
       <input class="field" type="number" min="1" max="104" id="f-custom-w" placeholder="12" value="${data.durationWeeks}">`;
   } else if (step === 5) {
     const disp = weightUnit === "kg" ? data.weight_kg : lbsFrom(data.weight_kg);
-    body = `${axo}<h1 class="step-title">${t("onb.q_weight")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_weight")}</h1>
       <div class="slider-row"><span id="weight-disp">${disp}${weightUnit === "kg" ? " kg" : " lb"}</span>
       <div class="toggle" style="margin-left:auto"><button type="button" class="${weightUnit === "kg" ? "active" : ""}" data-wu="kg">kg</button><button type="button" class="${weightUnit === "lbs" ? "active" : ""}" data-wu="lbs">lb</button></div></div>
       <input type="range" id="f-weight" min="${weightUnit === "kg" ? 40 : 88}" max="${weightUnit === "kg" ? 180 : 400}" step="1" value="${disp}">`;
   } else if (step === 6) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_height")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_height")}</h1>
       <div class="slider-row"><span id="height-disp">${data.height_cm} cm</span></div>
       <input type="range" id="f-height" min="140" max="210" step="1" value="${data.height_cm}">`;
   } else if (step === 7) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_age")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_age")}</h1>
       <div class="number-stepper">
         <button type="button" id="age-minus">−</button><div class="value" id="age-val">${data.age}</div><button type="button" id="age-plus">+</button>
       </div>`;
   } else if (step === 8) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_sex")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_sex")}</h1>
       <div class="option-grid cols-3">
         ${[
           ["male", "m"],
@@ -158,7 +148,7 @@ function render() {
           .join("")}</div>`;
   } else if (step === 9) {
     const acts = ["sedentary", "light", "moderate", "high"];
-    body = `${axo}<h1 class="step-title">${t("onb.q_activity")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_activity")}</h1>
       <div class="option-grid">${acts
         .map(
           (a) =>
@@ -166,7 +156,7 @@ function render() {
         )
         .join("")}</div>`;
   } else if (step === 10) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_train")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_train")}</h1>
       <div class="option-grid cols-3">${[1, 2, 3, 4, 5, 6, 7]
         .map(
           (n) =>
@@ -174,7 +164,7 @@ function render() {
         )
         .join("")}</div>`;
   } else if (step === 11) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_diet")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_diet")}</h1>
       <div class="option-grid">${["nonveg", "veg", "eggetarian", "vegan"]
         .map(
           (d) =>
@@ -183,7 +173,7 @@ function render() {
         .join("")}</div>`;
   } else if (step === 12) {
     const prefs = ["nodairy", "nogluten", "nopork", "jain", "halal"];
-    body = `${axo}<h1 class="step-title">${t("onb.q_prefs")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_prefs")}</h1>
       <div class="chip-grid">${prefs
         .map((p) => {
           const on = data.foodPrefs.includes(p);
@@ -192,7 +182,7 @@ function render() {
         .join("")}</div>`;
   } else if (step === 13) {
     const sups = ["creatine", "whey", "pre", "omega", "multi", "mag", "ash", "none"];
-    body = `${axo}<h1 class="step-title">${t("onb.q_supps")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_supps")}</h1>
       <div class="chip-grid">${sups
         .map((s) => {
           const on = data.supplements.includes(s);
@@ -200,10 +190,10 @@ function render() {
         })
         .join("")}</div>`;
   } else if (step === 14) {
-    body = `${axo}<h1 class="step-title">${t("onb.q_city")}</h1>
+    body = `<h1 class="step-title">${t("onb.q_city")}</h1>
       <input class="field" id="f-city" placeholder="${t("onb.city_ph")}" value="${data.city.replace(/"/g, "&quot;")}">`;
   } else if (step === 15) {
-    body = `${axo}<h1 class="step-title">${t("onb.loading")}</h1><div class="loading-bar"><div class="progress-track"><div class="progress-fill" id="load-bar" style="width:5%"></div></div></div>`;
+    body = `<h1 class="step-title">${t("onb.loading")}</h1><div class="loading-bar"><div class="progress-track"><div class="progress-fill" id="load-bar" style="width:5%"></div></div></div>`;
   }
 
   root.innerHTML = `<div class="page-enter">${body}${

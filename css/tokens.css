@@ -6,6 +6,8 @@
   --font-mono: "SF Mono", Menlo, monospace;
 
   --bg: #000000;
+  --bg-gradient: radial-gradient(120% 80% at 50% -20%, rgba(62, 255, 200, 0.12), transparent 55%),
+    radial-gradient(90% 60% at 100% 100%, rgba(212, 245, 60, 0.06), transparent 50%);
   --surface: rgba(28, 28, 30, 0.72);
   --nav: rgba(18, 18, 20, 0.92);
   --border: rgba(255, 255, 255, 0.09);
@@ -21,6 +23,7 @@
   --radius-pill: 9999px;
 
   --glass-blur: blur(28px) saturate(180%);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
   --transition-page: 300ms ease-out;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top: env(safe-area-inset-top, 0px);
@@ -29,11 +32,14 @@
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f2f2f7;
+    --bg-gradient: radial-gradient(120% 80% at 50% -10%, rgba(0, 122, 255, 0.06), transparent 55%),
+      radial-gradient(90% 50% at 0% 100%, rgba(0, 0, 0, 0.03), transparent 45%);
     --surface: rgba(255, 255, 255, 0.82);
     --nav: rgba(255, 255, 255, 0.92);
     --border: rgba(0, 0, 0, 0.08);
     --text: #0a0a0a;
     --text-dim: rgba(0, 0, 0, 0.55);
+    --shadow-glass: 0 8px 28px rgba(0, 0, 0, 0.08);
   }
 }
 
@@ -49,6 +55,8 @@ body {
   min-height: 100%;
   font-family: var(--font-body);
   background: var(--bg);
+  background-image: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
 }

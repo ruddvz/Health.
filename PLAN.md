@@ -1,7 +1,7 @@
-# NutriPal PWA — Full Implementation Plan v2
+# NutriPal PWA — Full Implementation Plan v3
 
-> **Status**: Plan only. No code written yet.
-> **Your manual tasks**: Create mascot images (prompts in Section 8). Everything else is for the build agent.
+> **Status**: Living spec. UI follows **iOS-style liquid glass** (Section 6). Optional mascot and pixel mockups live in `PROMPTS.md` for a later pass — the shipped app stays text-first and simple.
+> **Your manual tasks**: App icons (`assets/icons/`). When you add a mascot, use `PROMPTS.md` as the art brief.
 
 ---
 
@@ -11,12 +11,12 @@ A mobile-first **Progressive Web App** (PWA) — no server, no login, works offl
 
 **Core flow:**
 1. User picks their language (English / Hinglish / Gujlish)
-2. Mascot-guided step-by-step quiz collects their stats and preferences
+2. Step-by-step quiz collects their stats and preferences
 3. App generates a fully personalised plan — correct duration, correct meals for their diet type, correct language
 4. They tap "Add to Home Screen" — it lives on their phone like a native app
 5. Everything stored on device, nothing sent anywhere
 
-**Mascot:** Axo the Axolotl — prehistoric, pink, chubby, big round eyes, feathery gills. Gender-neutral, universally lovable. Duolingo-level charm.
+**Visual style:** Apple **iOS 26–style** liquid glass — SF system fonts, frosted cards, subtle depth, lime/teal accents on a deep background (see Section 6). **Mascot:** deferred; `PROMPTS.md` documents an optional Otto character for when you want illustrations.
 
 ---
 
@@ -47,11 +47,13 @@ A mobile-first **Progressive Web App** (PWA) — no server, no login, works offl
 │       ├── grocery.js
 │       └── supps.js
 └── assets/
-    ├── axo/
-    │   ├── axo-wave.png    ← YOU create (prompt below)
-    │   ├── axo-think.png   ← YOU create
-    │   ├── axo-flex.png    ← YOU create
-    │   └── axo-eat.png     ← YOU create
+    ├── otto/               ← optional future: mascot PNGs from PROMPTS.md (not required for the app)
+    │   ├── otto-wave.png
+    │   ├── otto-think.png
+    │   ├── otto-flex.png
+    │   ├── otto-eat.png
+    │   ├── otto-sleep.png
+    │   └── otto-shop.png
     └── icons/
         ├── icon-192.png    ← YOU create
         └── icon-512.png    ← YOU create
@@ -151,12 +153,12 @@ Every piece of visible text in the entire app calls `t('key')` — never hardcod
 
 ## Section 2 — Onboarding Quiz (14 Steps)
 
-Axo appears at the top of every step. Progress bar at top shows how far through they are.
+Progress bar at top shows how far through they are.
 
 | # | Screen | Question | Input | Notes |
 |---|--------|----------|-------|-------|
 | 0 | Language | Pick your language | 3 cards | First screen, no back button |
-| 1 | Splash | "Let's build your plan." | Tap to begin | Axo waves, user's name not known yet |
+| 1 | Splash | "Let's build your plan." | Tap to begin | Clean headline + primary button |
 | 2 | Name | "What's your name?" | Text field | Used everywhere after this |
 | 3 | Goal | "Main goal?" | 3 big buttons: Cut / Build / Recomp | |
 | 4 | Duration | "How long do you want your plan?" | Option grid: 4 weeks / 8 weeks / 12 weeks / 16 weeks / 6 months / 1 year | Custom option too |
@@ -170,7 +172,7 @@ Axo appears at the top of every step. Progress bar at top shows how far through 
 | 12 | Food preferences | "Any other preferences?" | Multi-select chips | No dairy / No gluten / No pork / Jain (no root veg) / Halal only |
 | 13 | Supplements | "Which supplements do you have?" | Multi-select chips | Creatine / Whey / Pre-workout / Omega-3 / Multivitamin / Magnesium / Ashwagandha / None |
 | 14 | City | "City or region?" | Text field, skippable | For grocery store tips |
-| 15 | Loading | "Building your plan…" | Axo animated + progress → redirect | 2–3 sec fake progress, then to app.html |
+| 15 | Loading | "Building your plan…" | Progress bar → redirect | 2–3 sec fake progress, then to app.html |
 
 ---
 
@@ -371,7 +373,6 @@ Full pill:  9999px
 
 ### Animations
 - Page transitions: slide + fade, 300ms ease-out
-- Axo mascot: gentle floating bob loop
 - Button tap: scale 0.96 → spring back
 - Progress bar: smooth width CSS transition
 
@@ -426,46 +427,30 @@ All text rendered via `t('key')` so it's in the user's chosen language.
 
 ## Section 8 — Your Manual Tasks (Images)
 
-### Mascot: Axo the Axolotl — 4 Poses
+### Optional mascot + pixel mockups
 
-Use any AI image generator (Midjourney, DALL-E 3, Ideogram, Adobe Firefly). Export each as **PNG with transparent background**.
+**`PROMPTS.md`** holds full-screen mockup prompts (iPhone 15 Pro framing) and an optional **Otto the Otter** character pack. Use it when you are ready to add illustrations or match marketing visuals; the default product UI does **not** depend on it.
 
----
+### Mascot (later) — Otto the Otter — 6 poses (transparent PNG)
 
-**`axo-wave.png`** — Welcome / splash screen
-```
-Cute axolotl character, pink and peach body, pink feathery gills on sides of head, big round black eyes, wide friendly smile, chubby chibi proportions, stubby arms and legs. Flat vector illustration style. Transparent background. The axolotl is waving one hand cheerfully with a huge happy grin. Clean minimal lines. Think Duolingo owl energy but an axolotl. No text, no shadows, no background.
-```
+Use any AI image generator. Export each as **PNG with transparent background**. File names below match `PROMPTS.md` and optional `assets/otto/`.
 
----
+| File | Use in app |
+|------|------------|
+| `otto-wave.png` | Language picker, splash |
+| `otto-think.png` | Quiz / questions, prep |
+| `otto-flex.png` | Loading complete, supplements |
+| `otto-eat.png` | Home, meals (workout days) |
+| `otto-sleep.png` | Meals (rest tab) |
+| `otto-shop.png` | Grocery (optional) |
 
-**`axo-think.png`** — Quiz / question screens
-```
-Same cute chibi axolotl — pink body, feathery gills, big eyes. Flat vector illustration. Transparent background. Thinking pose: one stubby finger raised to chin, eyes glancing upward to the side with a curious squint, small smile. No text. No background.
-```
-
----
-
-**`axo-flex.png`** — Plan complete / results screen
-```
-Same cute chibi axolotl — pink body, feathery gills. Flat vector illustration. Transparent background. Victory / celebration pose: both stubby arms flexed up, eyes squeezed shut with the biggest smile, small sparkles and star shapes floating around it. Very energetic and happy. No text. No background.
-```
-
----
-
-**`axo-eat.png`** — Meals / food pages
-```
-Same cute chibi axolotl — pink body, feathery gills. Flat vector illustration. Transparent background. Holding a small round bowl of food in both hands, looking at it with wide excited eyes and a huge grin, tiny cute drool drop at corner of mouth. No text. No background.
-```
+Integrate into the UI when you have final assets.
 
 ---
 
 ### App Icon — 2 Sizes
 
-**`icon-192.png`** (192×192 px) and **`icon-512.png`** (512×512 px):
-```
-Mobile app icon. Square with Apple squircle rounded corners (22.5% radius). Solid lime green background (#d4f53c). Centred: the cute pink chibi axolotl holding a small dumbbell in one hand and a fork in the other, grinning. Flat vector illustration. No text. Bold and readable at very small sizes.
-```
+**`icon-192.png`** (192×192 px) and **`icon-512.png`** (512×512 px): use the **`App Icon — icon-512.png`** block in `PROMPTS.md` (Otto on lime `#d4f53c`, squircle, dumbbell + fork).
 
 ---
 
@@ -523,7 +508,7 @@ When you implement this plan:
 4. **Duration drives phases**: phase count and length must be computed from `userProfile.durationWeeks` (4 / 8 / 12 / 16 / 24 / 52)
 5. **Weekday meals**: Meals page must have a 7-day picker (Mon–Sun) — not just Workout/Rest tabs — each showing the unique rotation for that day
 6. **Design system**: use the tokens in Section 6 exactly. iOS 26 Liquid Glass. Squircle radii. No flat corporate look.
-7. **Axo images**: if `assets/axo/*.png` files are missing, render inline SVG placeholders (pink oval body, simple eyes) so the app still looks good
+7. **Optional mascot**: `PROMPTS.md` + `assets/otto/` when you add character art — not required for launch
 8. **LocalStorage contract**:
    ```js
    // Keys stored by onboarding:
@@ -540,4 +525,4 @@ When you implement this plan:
 
 ---
 
-*Plan v2 — updated May 2026 with language support, Indian meal plans, flexible duration, full diet type system.*
+*Plan v3 — May 2026: iOS liquid-glass UI; optional `PROMPTS.md` / Otto art pack deferred; same product scope as v2 (languages, meals, duration, diet types).*

@@ -15,6 +15,15 @@
   margin-bottom: 12px;
 }
 
+.app-brand {
+  margin: 0 0 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
 .onb-back {
   background: none;
   border: none;
