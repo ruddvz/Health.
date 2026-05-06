@@ -23,6 +23,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.18s ease, background 0.2s ease;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .btn:active {
@@ -50,6 +52,9 @@
   cursor: pointer;
   transition: background 0.2s ease, transform 0.15s ease;
   background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .chip:active {
@@ -100,11 +105,23 @@
   background: rgba(255, 255, 255, 0.05);
   color: var(--text);
   font-size: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .field:focus {
   outline: 2px solid var(--accent-teal);
   outline-offset: 2px;
+}
+
+/* Prevent iOS/WebKit from overriding the dark input background on autofill */
+.field:-webkit-autofill,
+.field:-webkit-autofill:hover,
+.field:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0 1000px rgba(28, 28, 30, 0.95) inset;
+  box-shadow: 0 0 0 1000px rgba(28, 28, 30, 0.95) inset;
+  caret-color: var(--text);
 }
 
 .label {
@@ -134,6 +151,8 @@
   padding: 8px 14px;
   font-size: 0.85rem;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .toggle button.active {

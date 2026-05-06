@@ -33,6 +33,8 @@
   align-items: center;
   justify-content: center;
   font-size: 1.1rem;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .app-nav {
@@ -68,6 +70,8 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .nav-item.active {
@@ -129,6 +133,9 @@
   padding: 14px;
   cursor: pointer;
   text-align: left;
+  color: var(--text);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .quick-card span {
@@ -154,6 +161,8 @@
   color: var(--text-dim);
   font-size: 0.85rem;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .tab.active {
@@ -180,6 +189,9 @@
   font-weight: 600;
   cursor: pointer;
   background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .day-pill.active {
