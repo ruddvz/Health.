@@ -1,5 +1,6 @@
 import { t, dayLabel } from "../i18n.js";
 import { buildDayMeals } from "../plangen.js";
+import { mascotBlock } from "../mascot.js";
 
 export function mountMeals(root, profile, plan) {
   let day = new Date().getDay();
@@ -34,9 +35,11 @@ export function mountMeals(root, profile, plan) {
       .join("");
 
     const jainNote = plan.flags?.jain ? `<p class="step-sub">${t("meals.jain_note")}</p>` : "";
+    const mascotPose = forceRest ? "sleep" : "eat";
 
     root.innerHTML = `
       <div class="page-enter">
+        ${mascotBlock(mascotPose, { hero: true })}
         <h2 class="step-title" style="font-size:1.2rem">${t("meals.title")}</h2>
         <div class="tabs">
           <button type="button" class="tab ${tab === "workout" ? "active" : ""}" data-tab="workout">${t("meals.tab_workout")}</button>

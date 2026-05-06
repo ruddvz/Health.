@@ -1,4 +1,4 @@
-const CACHE = "nutripal-v1";
+const CACHE = "nutripal-v3";
 const ASSETS = [
   "/",
   "/index.html",
@@ -19,12 +19,9 @@ const ASSETS = [
   "/js/pages/prep.js",
   "/js/pages/grocery.js",
   "/js/pages/supps.js",
+  "/js/mascot.js",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
-  "/assets/axo/axo-wave.png",
-  "/assets/axo/axo-think.png",
-  "/assets/axo/axo-flex.png",
-  "/assets/axo/axo-eat.png",
 ];
 
 self.addEventListener("install", (e) => {

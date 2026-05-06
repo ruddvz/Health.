@@ -1,4 +1,5 @@
 import { t } from "../i18n.js";
+import { mascotBlock } from "../mascot.js";
 
 const CAT_KEYS = ["protein", "carbs", "veg", "dairy", "pantry"];
 
@@ -32,6 +33,7 @@ export function mountGrocery(root, profile, plan) {
 
     root.innerHTML = `
       <div class="page-enter">
+        ${mascotBlock("shop", { hero: true })}
         <h2 class="step-title" style="font-size:1.2rem">${t("grocery.title")}</h2>
         <p class="step-sub">${tip}</p>
         <div class="grocery-tabs">${tabs}</div>

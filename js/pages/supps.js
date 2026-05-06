@@ -1,4 +1,5 @@
 import { t } from "../i18n.js";
+import { mascotBlock } from "../mascot.js";
 
 const LABEL = {
   creatine: "Creatine",
@@ -43,6 +44,7 @@ export function mountSupps(root, profile, plan) {
 
   root.innerHTML = `
     <div class="page-enter">
+      ${mascotBlock("flex", { hero: true })}
       <h2 class="step-title" style="font-size:1.2rem">${t("supps.title")}</h2>
       <p class="step-sub">${t("supps.schedule")}</p>
       ${empty}

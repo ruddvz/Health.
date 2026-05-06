@@ -90,7 +90,7 @@
   }
 }
 
-@keyframes axoBob {
+@keyframes mascotBob {
   0%,
   100% {
     transform: translateY(0);
@@ -100,17 +100,23 @@
   }
 }
 
-.axo-wrap {
+.mascot-wrap {
   display: flex;
   justify-content: center;
   margin: 12px 0 20px;
 }
 
-.axo-wrap svg,
-.axo-wrap img {
+.mascot-wrap svg,
+.mascot-wrap img {
   width: min(200px, 55vw);
   height: auto;
-  animation: axoBob 3s ease-in-out infinite;
+  animation: mascotBob 3s ease-in-out infinite;
+}
+
+.mascot-wrap.mascot-hero svg,
+.mascot-wrap.mascot-hero img {
+  width: min(120px, 32vw);
+  margin-bottom: 4px;
 }
 
 .field {
