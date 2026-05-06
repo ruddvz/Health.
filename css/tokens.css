@@ -1,76 +1,151 @@
 /**
- * NutriPal design tokens — Section 6 (iOS-style liquid glass)
+ * NutriPal design tokens — Premium Dark Athletic
+ * Section 6 of PLAN.md + UI_REDESIGN_PLAN.md
  */
+
 :root {
-  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-  --font-mono: "SF Mono", Menlo, monospace;
+  /* ── Fonts ── */
+  --font-display: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', Menlo, 'Courier New', monospace;
 
+  /* ── Background ── */
   --bg: #000000;
-  --bg-gradient: radial-gradient(120% 80% at 50% -20%, rgba(62, 255, 200, 0.12), transparent 55%),
-    radial-gradient(90% 60% at 100% 100%, rgba(212, 245, 60, 0.06), transparent 50%);
-  --surface: rgba(28, 28, 30, 0.72);
-  --nav: rgba(18, 18, 20, 0.92);
-  --border: rgba(255, 255, 255, 0.09);
-  --accent-lime: #d4f53c;
-  --accent-teal: #3effc8;
-  --accent-orange: #ff6030;
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.6);
+  --bg-gradient:
+    radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212, 245, 60, 0.13) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 110%, rgba(62, 255, 200, 0.07) 0%, transparent 50%);
 
+  /* ── Surface hierarchy ── */
+  --surface:        rgba(28, 28, 30, 0.72);
+  --surface-low:    rgba(255, 255, 255, 0.03);
+  --surface-mid:    rgba(255, 255, 255, 0.06);
+  --surface-high:   rgba(255, 255, 255, 0.10);
+  --surface-raised: rgba(255, 255, 255, 0.13);
+
+  /* ── Navigation ── */
+  --nav: rgba(10, 10, 12, 0.94);
+
+  /* ── Borders ── */
+  --border:     rgba(255, 255, 255, 0.09);
+  --border-mid: rgba(255, 255, 255, 0.14);
+
+  /* ── Primary accents ── */
+  --accent-lime:   #d4f53c;
+  --accent-teal:   #3effc8;
+  --accent-orange: #ff6030;
+  --accent-purple: #b4a0ff;
+  --accent-gold:   #ffd060;
+
+  /* ── Accent transparencies ── */
+  --lime-10:   rgba(212, 245, 60, 0.10);
+  --lime-15:   rgba(212, 245, 60, 0.15);
+  --lime-20:   rgba(212, 245, 60, 0.20);
+  --teal-10:   rgba(62, 255, 200, 0.10);
+  --teal-15:   rgba(62, 255, 200, 0.15);
+  --orange-10: rgba(255, 96, 48, 0.10);
+  --orange-15: rgba(255, 96, 48, 0.15);
+  --purple-10: rgba(180, 160, 255, 0.10);
+  --purple-15: rgba(180, 160, 255, 0.15);
+
+  /* ── Text ── */
+  --text:       #ffffff;
+  --text-dim:   rgba(255, 255, 255, 0.55);
+  --text-muted: rgba(255, 255, 255, 0.30);
+
+  /* ── Glow box-shadows ── */
+  --glow-lime:   0 0 28px rgba(212, 245, 60, 0.45);
+  --glow-teal:   0 0 28px rgba(62, 255, 200, 0.35);
+  --glow-orange: 0 0 24px rgba(255, 96, 48, 0.35);
+  --glow-purple: 0 0 24px rgba(180, 160, 255, 0.30);
+
+  /* ── Gradients ── */
+  --gradient-lime: linear-gradient(135deg, #d4f53c 0%, #b8d900 100%);
+  --gradient-teal: linear-gradient(135deg, #3effc8 0%, #00d4a0 100%);
+
+  /* ── Border radius ── */
   --radius-card: 20px;
   --radius-chip: 12px;
-  --radius-btn: 14px;
+  --radius-btn:  14px;
   --radius-pill: 9999px;
+  --radius-sm:   8px;
 
+  /* ── Shadows ── */
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.40);
+  --shadow-card:  0 4px 20px rgba(0, 0, 0, 0.30);
+
+  /* ── Glass blur ── */
   --glass-blur: blur(28px) saturate(180%);
-  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.35);
+
+  /* ── Animation ── */
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast:       150ms;
+  --dur-base:       250ms;
+  --dur-slow:       400ms;
+  --dur-page:       300ms;
   --transition-page: 300ms ease-out;
+
+  /* ── Safe areas ── */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-top:    env(safe-area-inset-top, 0px);
 }
 
+/* ── Light mode overrides ── */
 @media (prefers-color-scheme: light) {
   :root {
     --bg: #f2f2f7;
-    --bg-gradient: radial-gradient(120% 80% at 50% -10%, rgba(0, 122, 255, 0.06), transparent 55%),
-      radial-gradient(90% 50% at 0% 100%, rgba(0, 0, 0, 0.03), transparent 45%);
-    --surface: rgba(255, 255, 255, 0.82);
-    --nav: rgba(255, 255, 255, 0.92);
-    --border: rgba(0, 0, 0, 0.08);
-    --text: #0a0a0a;
-    --text-dim: rgba(0, 0, 0, 0.55);
+    --bg-gradient:
+      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 122, 255, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 50% at 0% 100%, rgba(0, 0, 0, 0.03) 0%, transparent 45%);
+    --surface:        rgba(255, 255, 255, 0.82);
+    --surface-low:    rgba(0, 0, 0, 0.02);
+    --surface-mid:    rgba(0, 0, 0, 0.04);
+    --surface-high:   rgba(0, 0, 0, 0.07);
+    --surface-raised: rgba(0, 0, 0, 0.10);
+    --nav:        rgba(255, 255, 255, 0.92);
+    --border:     rgba(0, 0, 0, 0.08);
+    --border-mid: rgba(0, 0, 0, 0.14);
+    --text:       #0a0a0a;
+    --text-dim:   rgba(0, 0, 0, 0.55);
+    --text-muted: rgba(0, 0, 0, 0.35);
     --shadow-glass: 0 8px 28px rgba(0, 0, 0, 0.08);
+    --shadow-card:  0 4px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
+/* ── Global reset ── */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html {
   height: 100%;
+  scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
   min-height: 100%;
   font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
   background: var(--bg);
   background-image: var(--bg-gradient);
-  /* fixed attachment causes flicker on iOS Safari; use scroll instead */
   background-attachment: scroll;
   background-size: cover;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   padding-top: var(--safe-top);
   overflow-x: hidden;
 }
 
-/* Reset browser UA styles that override inherited colour on interactive elements */
 button,
 input,
 select,
@@ -82,4 +157,11 @@ textarea {
 
 a {
   color: var(--accent-teal);
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  margin: 0;
+  line-height: 1.15;
 }

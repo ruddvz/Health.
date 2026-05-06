@@ -1,58 +1,92 @@
-/* Shared UI — glass cards, chips, buttons, progress */
+/**
+ * NutriPal shared components — Premium Dark Athletic
+ */
 
+/* ─── Glass card ─────────────────────────────────── */
 .glass {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-card);
-  box-shadow: var(--shadow-glass);
+  /* Top inner edge highlight — essential for convincing glass look */
+  box-shadow: var(--shadow-glass), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+/* ─── Buttons ─────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 20px;
+  width: 100%;
+  padding: 15px 22px;
   border-radius: var(--radius-btn);
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--surface-high);
   color: var(--text);
+  font-family: var(--font-display);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   cursor: pointer;
-  transition: transform 0.18s ease, background 0.2s ease;
+  transition:
+    transform var(--dur-fast) var(--ease-spring),
+    box-shadow var(--dur-fast) ease,
+    background var(--dur-base) ease;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .btn:active {
-  transform: scale(0.96);
+  transform: scale(0.97);
 }
 
 .btn-primary {
-  background: var(--accent-lime);
-  color: #0a0a0a;
+  background: var(--gradient-lime);
+  color: #000000;
   border: none;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 8px 24px rgba(212, 245, 60, 0.22);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), var(--glow-lime);
+  font-weight: 900;
+}
+
+.btn-primary:active {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 12px rgba(212, 245, 60, 0.20);
 }
 
 .btn-ghost {
   background: transparent;
+  border-color: transparent;
+  color: var(--text-dim);
+  box-shadow: none;
 }
 
+.btn-ghost:active {
+  color: var(--text);
+}
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--border-mid);
+}
+
+/* ─── Chips / Tags ────────────────────────────────── */
 .chip {
   display: inline-flex;
   align-items: center;
-  padding: 8px 14px;
+  padding: 9px 16px;
   border-radius: var(--radius-chip);
   border: 1px solid var(--border);
   font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.15s ease;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
+  transition:
+    background var(--dur-base) ease,
+    border-color var(--dur-base) ease,
+    box-shadow var(--dur-base) ease,
+    transform var(--dur-fast) var(--ease-spring);
+  background: var(--surface-low);
+  color: var(--text-dim);
   -webkit-appearance: none;
   appearance: none;
 }
@@ -62,59 +96,127 @@
 }
 
 .chip.selected {
-  border-color: var(--accent-lime);
-  background: rgba(212, 245, 60, 0.15);
+  border-color: rgba(212, 245, 60, 0.5);
+  background: var(--lime-15);
   color: var(--text);
+  box-shadow: 0 0 14px rgba(212, 245, 60, 0.18);
 }
 
+/* ─── Option cards (large selection buttons) ─────── */
+.option-big {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 18px 12px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: var(--radius-card);
+  border: 1.5px solid var(--border);
+  background: var(--surface-low);
+  color: var(--text-dim);
+  cursor: pointer;
+  transition:
+    border-color var(--dur-base) ease,
+    background var(--dur-base) ease,
+    box-shadow var(--dur-base) ease,
+    transform var(--dur-fast) var(--ease-spring),
+    color var(--dur-base) ease;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: var(--shadow-card);
+}
+
+.option-big:active {
+  transform: scale(0.97);
+}
+
+.option-big.selected {
+  border-color: rgba(212, 245, 60, 0.6);
+  background: var(--lime-15);
+  color: var(--text);
+  box-shadow: 0 0 20px rgba(212, 245, 60, 0.20);
+}
+
+.option-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.option-desc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.option-big.selected .option-desc {
+  color: var(--text-dim);
+}
+
+/* ─── Progress bar ────────────────────────────────── */
 .progress-track {
-  height: 6px;
+  height: 4px;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--surface-high);
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   border-radius: var(--radius-pill);
-  background: linear-gradient(90deg, var(--accent-teal), var(--accent-lime));
+  background: linear-gradient(90deg, var(--accent-teal), var(--accent-lime), var(--accent-teal));
+  background-size: 200% 100%;
   width: 0%;
-  transition: width 0.45s ease;
+  transition: width 0.45s var(--ease-smooth);
+  animation: shimmer 2s linear infinite;
 }
 
+@keyframes shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* ─── Page enter animation ────────────────────────── */
 .page-enter {
-  animation: pageIn var(--transition-page) ease-out forwards;
+  animation: pageIn var(--dur-page) var(--ease-smooth) both;
 }
 
 @keyframes pageIn {
   from {
     opacity: 0;
-    transform: translateX(12px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
+/* ─── Form fields ─────────────────────────────────── */
 .field {
   width: 100%;
-  padding: 14px 16px;
+  padding: 15px 17px;
   border-radius: var(--radius-btn);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid var(--border);
+  background: var(--surface-low);
   color: var(--text);
   font-size: 1rem;
+  transition: border-color var(--dur-base) ease, box-shadow var(--dur-base) ease;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .field:focus {
-  outline: 2px solid var(--accent-teal);
-  outline-offset: 2px;
+  outline: none;
+  border-color: rgba(62, 255, 200, 0.5);
+  box-shadow: 0 0 0 3px rgba(62, 255, 200, 0.12);
 }
 
-/* Prevent iOS/WebKit from overriding the dark input background on autofill */
 .field:-webkit-autofill,
 .field:-webkit-autofill:hover,
 .field:-webkit-autofill:focus {
@@ -124,23 +226,46 @@
   caret-color: var(--text);
 }
 
+/* ─── Labels ──────────────────────────────────────── */
 .label {
   display: block;
-  font-size: 0.8rem;
-  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   margin-bottom: 8px;
 }
 
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-lime);
+}
+
+/* ─── Slider row ──────────────────────────────────── */
 .slider-row {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-lime);
+  height: 4px;
+  cursor: pointer;
+}
+
+/* ─── Toggle ──────────────────────────────────────── */
 .toggle {
   display: inline-flex;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
+  background: var(--surface-low);
   overflow: hidden;
 }
 
@@ -148,22 +273,207 @@
   border: none;
   background: transparent;
   color: var(--text-dim);
-  padding: 8px 14px;
+  padding: 8px 16px;
   font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background var(--dur-base) ease, color var(--dur-base) ease;
   -webkit-appearance: none;
   appearance: none;
 }
 
 .toggle button.active {
-  background: rgba(212, 245, 60, 0.2);
+  background: var(--lime-20);
   color: var(--text);
 }
 
+/* ─── Tags ────────────────────────────────────────── */
 .tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
-  padding: 4px 8px;
+  font-weight: 500;
+  padding: 3px 9px;
   border-radius: 8px;
-  background: rgba(62, 255, 200, 0.15);
+  background: var(--teal-10);
   color: var(--accent-teal);
+  letter-spacing: 0.02em;
+  border: 1px solid var(--teal-10);
+}
+
+.tag-lime {
+  background: var(--lime-10);
+  color: var(--accent-lime);
+  border-color: var(--lime-15);
+}
+
+.tag-orange {
+  background: var(--orange-10);
+  color: var(--accent-orange);
+  border-color: var(--orange-15);
+}
+
+/* ─── Hero stat block ─────────────────────────────── */
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.hero-stat-val {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.hero-stat-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── Info boxes ──────────────────────────────────── */
+.info-box {
+  border-radius: var(--radius-chip);
+  padding: 15px 17px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.info-box-lime {
+  background: var(--lime-10);
+  border: 1px solid rgba(212, 245, 60, 0.22);
+  color: var(--text-dim);
+}
+
+.info-box-lime strong {
+  color: var(--accent-lime);
+}
+
+.info-box-orange {
+  background: var(--orange-10);
+  border: 1px solid rgba(255, 96, 48, 0.22);
+  color: var(--text-dim);
+}
+
+.info-box-orange strong {
+  color: var(--accent-orange);
+}
+
+/* ─── Number stepper ──────────────────────────────── */
+.number-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin: 12px 0 8px;
+}
+
+.number-stepper button {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border-mid);
+  background: var(--surface-mid);
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: background var(--dur-fast) ease, transform var(--dur-fast) var(--ease-spring);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.number-stepper button:active {
+  transform: scale(0.93);
+  background: var(--surface-high);
+}
+
+.number-stepper .value {
+  font-family: var(--font-display);
+  font-size: 4.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+  min-width: 96px;
+  text-align: center;
+}
+
+/* ─── Option grids ────────────────────────────────── */
+.option-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.option-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.option-grid.cols-1 {
+  grid-template-columns: 1fr;
+}
+
+/* ─── Chip grid ───────────────────────────────────── */
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+/* ─── Loading bar (standalone, inside page) ───────── */
+.loading-bar {
+  margin-top: 24px;
+}
+
+/* ─── Stat reveal animation ───────────────────────── */
+.stat-reveal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity var(--dur-base) var(--ease-smooth), transform var(--dur-base) var(--ease-smooth);
+}
+
+.stat-reveal.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.stat-reveal:last-child {
+  border-bottom: none;
+}
+
+.stat-reveal-check {
+  color: var(--accent-lime);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.stat-reveal strong {
+  color: var(--text);
+}
+
+/* ─── Footer actions ──────────────────────────────── */
+.footer-actions {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }

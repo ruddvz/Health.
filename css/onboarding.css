@@ -1,39 +1,51 @@
-/* Onboarding / index.html */
+/**
+ * NutriPal onboarding — Premium Athletic
+ * index.html / wizard
+ */
 
+/* ─── Root layout ──────────────────────────────────── */
 .onb-root {
   max-width: 480px;
   margin: 0 auto;
-  padding: 16px 18px 32px;
+  padding: 12px 20px calc(40px + var(--safe-bottom));
   min-height: 100vh;
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ─── Top header bar ────────────────────────────────── */
 .onb-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.app-brand {
-  margin: 0 0 4px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-dim);
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 4px 0;
+  min-height: 44px;
 }
 
 .onb-back {
-  background: none;
-  border: none;
-  color: var(--accent-teal);
-  font-size: 0.95rem;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface-mid);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-size: 1.1rem;
   cursor: pointer;
-  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--dur-base) ease, transform var(--dur-fast) var(--ease-spring);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.onb-back:active {
+  transform: scale(0.92);
 }
 
 .onb-back.visible {
@@ -41,132 +53,221 @@
   pointer-events: auto;
 }
 
+/* ─── Brand mark ────────────────────────────────────── */
+.app-brand {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-lime);
+  margin: 0;
+}
+
+/* ─── Step eyebrow ──────────────────────────────────── */
+.step-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+/* ─── Step title ────────────────────────────────────── */
+.step-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0 0 6px;
+}
+
+.step-sub {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  line-height: 1.55;
+  margin: 0 0 20px;
+}
+
+/* ─── Language picker ────────────────────────────────── */
 .lang-grid {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 24px;
+  gap: 12px;
+  margin-top: 20px;
 }
 
 .lang-card {
   text-align: left;
-  padding: 20px;
+  padding: 18px 20px;
   cursor: pointer;
   color: var(--text);
   -webkit-appearance: none;
   appearance: none;
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid transparent;
+  transition:
+    border-color var(--dur-base) ease,
+    background var(--dur-base) ease,
+    box-shadow var(--dur-base) ease,
+    transform var(--dur-fast) var(--ease-spring);
 }
 
-.lang-card h2 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
-}
-
-.lang-card p {
-  margin: 0;
-  color: var(--text-dim);
-  font-size: 0.95rem;
-}
-
-.splash-tap {
-  text-align: center;
-  margin-top: 32px;
-}
-
-.option-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.option-grid.cols-3 {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.option-big {
-  padding: 18px 12px;
-  text-align: center;
-  font-weight: 600;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--text);
-  cursor: pointer;
-  transition: border-color 0.2s ease, transform 0.15s ease;
-  -webkit-appearance: none;
-  appearance: none;
-}
-
-.option-big:active {
+.lang-card:active {
   transform: scale(0.98);
 }
 
-.option-big.selected {
-  border-color: var(--accent-lime);
-  background: rgba(212, 245, 60, 0.12);
+.lang-card:hover,
+.lang-card:focus-visible {
+  border-left-color: var(--accent-lime);
+  box-shadow: var(--shadow-glass), 0 0 20px rgba(212, 245, 60, 0.12);
 }
 
-.chip-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
+.lang-card-flag {
+  font-size: 1.75rem;
+  line-height: 1;
+  margin-bottom: 10px;
 }
 
-.step-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  margin: 8px 0 4px;
-  line-height: 1.25;
+.lang-card-name {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 0 0 4px;
 }
 
-.step-sub {
+.lang-card-native {
+  font-size: 0.85rem;
   color: var(--text-dim);
-  font-size: 0.9rem;
+  margin: 0 0 8px;
+}
+
+.lang-card-sample {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: 0;
+}
+
+.lang-card-arrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
+/* ─── Splash screen ──────────────────────────────────── */
+.splash-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 0 40px;
+}
+
+.splash-brand {
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--accent-lime);
+  line-height: 1;
+  margin-bottom: 24px;
+  text-shadow: var(--glow-lime);
+}
+
+.splash-headline {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  color: var(--text);
   margin-bottom: 16px;
 }
 
-.loading-bar {
-  margin-top: 24px;
+.splash-sub {
+  font-size: 1rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  margin-bottom: 40px;
+  max-width: 320px;
 }
 
-.footer-actions {
-  margin-top: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* ─── Giant number display (weight/height/age) ────────── */
+.big-number-display {
+  text-align: center;
+  margin: 8px 0 4px;
 }
 
-.number-stepper {
+.big-number-val {
+  font-family: var(--font-display);
+  font-size: 5.5rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.big-number-unit {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  margin-left: 6px;
+  vertical-align: baseline;
+  position: relative;
+  top: -0.75rem;
+}
+
+.slider-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
-.number-stepper button {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.06);
+/* ─── Loading screen ─────────────────────────────────── */
+.loading-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+}
+
+.loading-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   color: var(--text);
-  font-size: 1.4rem;
-  cursor: pointer;
-  -webkit-appearance: none;
-  appearance: none;
+  margin-bottom: 8px;
 }
 
-.number-stepper .value {
-  font-size: 2rem;
-  font-weight: 700;
-  min-width: 64px;
-  text-align: center;
+.loading-sub {
+  font-size: 0.9rem;
+  color: var(--text-dim);
+  margin-bottom: 28px;
 }
 
-input[type="range"] {
-  width: 100%;
-  accent-color: var(--accent-lime);
+.loading-stats {
+  margin-top: 28px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  background: var(--surface-low);
+  overflow: hidden;
+}
+
+/* ─── Splash tap helper ──────────────────────────────── */
+.splash-tap {
+  margin-top: 8px;
 }

@@ -12,45 +12,98 @@ export function mountGrocery(root, profile, plan) {
   }
 
   function renderInner() {
-    const items = plan.grocery.filter((g) => g.category === cat);
-    const list = items
-      .map((g) => {
-        const id = `${g.category}|${g.name}`;
-        const isOn = checked.has(id);
-        return `<div class="grocery-item ${isOn ? "checked" : ""}" data-id="${id}"><span>${g.name}</span><strong>${g.grams} g</strong></div>`;
-      })
-      .join("");
+    const allItems = plan.grocery || [];
+    const items    = allItems.filter(g => g.category === cat);
 
-    const tabs = CAT_KEYS.map((c) => {
-      const key = c === "veg" ? "grocery.cat_veg" : c === "dairy" ? "grocery.cat_dairy" : `grocery.cat_${c}`;
-      return `<button type="button" class="tab ${cat === c ? "active" : ""}" data-cat="${c}">${t(key)}</button>`;
+    const catCounts = CAT_KEYS.reduce((acc, c) => {
+      acc[c] = allItems.filter(g => g.category === c).length;
+      return acc;
+    }, {});
+
+    const checkedInCat = items.filter(g => checked.has(`${g.category}|${g.name}`)).length;
+    const totalInCat   = items.length;
+
+    const tabs = CAT_KEYS.map(c => {
+      const keyMap = { veg: "grocery.cat_veg", dairy: "grocery.cat_dairy" };
+      const label = t(keyMap[c] || `grocery.cat_${c}`);
+      const count = catCounts[c] || 0;
+      const done  = allItems.filter(g => g.category === c && checked.has(`${g.category}|${g.name}`)).length;
+      return `<button type="button" class="g-tab ${cat === c ? "active" : ""}" data-cat="${c}">
+        ${label}${done > 0 && done === count ? " ✓" : ""}
+      </button>`;
+    }).join("");
+
+    const listItems = items.map(g => {
+      const id   = `${g.category}|${g.name}`;
+      const isOn = checked.has(id);
+      const qty  = g.grams ? `${g.grams}g` : (g.qty || "");
+      return `
+        <div class="grocery-item ${isOn ? "checked" : ""}" data-id="${id}">
+          <div class="gi-checkbox">
+            <span class="gi-check-icon">✓</span>
+          </div>
+          <div class="gi-name">${g.name}</div>
+          <div class="gi-qty">${qty}</div>
+        </div>`;
     }).join("");
 
     const tip = profile.city
       ? t("grocery.tip", { city: profile.city })
       : t("grocery.tip_default");
 
+    const progressPct = totalInCat > 0 ? Math.round((checkedInCat / totalInCat) * 100) : 0;
+
     root.innerHTML = `
       <div class="page-enter">
-        <h2 class="step-title" style="font-size:1.2rem">${t("grocery.title")}</h2>
-        <p class="step-sub">${tip}</p>
+        <div class="page-header">
+          <div class="ph-eyebrow">// Weekly shop</div>
+          <div class="ph-title">Grocery List</div>
+          <div class="ph-desc">Tap items to check them off. Buy this every week.</div>
+        </div>
+
         <div class="grocery-tabs">${tabs}</div>
-        ${list || `<p class="empty-hint">—</p>`}
+
+        ${totalInCat > 0 ? `
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <div style="flex:1">
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${progressPct}%;background:var(--gradient-lime);animation:none"></div>
+              </div>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);white-space:nowrap">${checkedInCat}/${totalInCat} done</span>
+          </div>` : ""}
+
+        <div class="grocery-list">
+          ${listItems || `<div class="grocery-item"><div class="gi-name" style="color:var(--text-dim)">—</div></div>`}
+        </div>
+
+        ${tip ? `<div class="info-box info-box-lime" style="margin-top:14px"><strong>Store tip:</strong> ${tip}</div>` : ""}
       </div>`;
 
-    root.querySelectorAll("[data-cat]").forEach((b) => {
-      b.addEventListener("click", () => {
-        cat = b.dataset.cat;
-        renderInner();
-      });
+    root.querySelectorAll("[data-cat]").forEach(b => {
+      b.addEventListener("click", () => { cat = b.dataset.cat; renderInner(); });
     });
-    root.querySelectorAll(".grocery-item").forEach((el) => {
+    root.querySelectorAll(".grocery-item").forEach(el => {
       el.addEventListener("click", () => {
         const id = el.dataset.id;
         if (checked.has(id)) checked.delete(id);
         else checked.add(id);
         save();
         el.classList.toggle("checked", checked.has(id));
+        const chk = el.querySelector(".gi-check-icon");
+        if (chk) chk.style.opacity = checked.has(id) ? "1" : "0";
+        const box = el.querySelector(".gi-checkbox");
+        if (box) {
+          if (checked.has(id)) {
+            box.style.background = "var(--accent-lime)";
+            box.style.borderColor = "var(--accent-lime)";
+            box.style.boxShadow = "0 0 10px rgba(212,245,60,0.35)";
+          } else {
+            box.style.background = "";
+            box.style.borderColor = "";
+            box.style.boxShadow = "";
+          }
+        }
       });
     });
   }
