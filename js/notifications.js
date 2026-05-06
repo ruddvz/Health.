@@ -1,6 +1,9 @@
 /**
  * Optional reminders — FEATURE_PLAN §7 (client-side Notification API).
  */
+import { t } from "./i18n.js";
+import { todayKey } from "./foodLog.js";
+
 const MEAL_REMINDERS = [
   { tag: "breakfast", title: "Breakfast time", body: "Morning fuel — don't skip it.", hour: 7, min: 0 },
   { tag: "snack", title: "Snack", body: "Hit your protein between meals.", hour: 10, min: 30 },
@@ -20,6 +23,7 @@ export function scheduleLocalReminders() {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   const icon = "./assets/icons/icon-192.png";
   const now = Date.now();
+
   MEAL_REMINDERS.forEach((r) => {
     const target = new Date();
     target.setHours(r.hour, r.min, 0, 0);
@@ -34,6 +38,27 @@ export function scheduleLocalReminders() {
       }
     }, delay);
   });
+
+  const waterTarget = new Date();
+  waterTarget.setHours(20, 0, 0, 0);
+  const waterDelay = waterTarget.getTime() - now;
+  if (waterDelay > 0 && waterDelay <= 24 * 3600000) {
+    setTimeout(() => {
+      if (Notification.permission !== "granted") return;
+      const key = "np_water_" + todayKey();
+      const glasses = parseInt(localStorage.getItem(key) || "0", 10);
+      if (glasses >= 6) return;
+      try {
+        new Notification(t("notify.water_title"), {
+          body: t("notify.water_body", { n: glasses }),
+          icon,
+          tag: "water-pm",
+        });
+      } catch (_) {
+        /* ignore */
+      }
+    }, waterDelay);
+  }
 }
 
 export function maybeAskNotifications() {

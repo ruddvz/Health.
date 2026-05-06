@@ -188,6 +188,10 @@ const STRINGS = {
       sub: "Offline access and faster launch.",
       cta: "Install",
     },
+    notify: {
+      water_title: "Water check-in",
+      water_body: "You're at {n}/8 glasses — close the gap before bed.",
+    },
     settings: {
       title: "Settings",
       subtitle: "Language & plan",
@@ -386,6 +390,10 @@ const STRINGS = {
       sub: "Offline + fast open.",
       cta: "Install",
     },
+    notify: {
+      water_title: "Water reminder",
+      water_body: "Abhi {n}/8 glasses — thoda aur pi lo.",
+    },
     settings: {
       title: "Settings",
       subtitle: "Language & plan",
@@ -583,6 +591,10 @@ const STRINGS = {
       title: "Home screen par add",
       sub: "Offline ane fast.",
       cta: "Install",
+    },
+    notify: {
+      water_title: "Water reminder",
+      water_body: "Have {n}/8 glass — ochhu pi lo.",
     },
     settings: {
       title: "Settings",

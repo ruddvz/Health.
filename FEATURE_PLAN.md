@@ -1,6 +1,8 @@
 # NutriPal — Feature Implementation Plan
 
-> **For the next agent:** This is a static PWA. No server. No database. All state lives in `localStorage`. Before starting any feature, read `PLAN.md` (architecture), `UI_REDESIGN_PLAN.md` (design system), and the relevant existing page file. Merge PR #7 (`cursor/premium-ui-redesign-0de1`) into `main` first — this plan builds on top of that redesign.
+> **Status:** Features **1–12** from this document are **implemented** in the codebase (meal compliance through install banner, Progress tab, tools, settings with plan regen, meal swaps, local notifications + SW push handlers, etc.). What remains optional: a **push subscription backend** for real remote pushes, and **expanding** `js/data/foods.js` beyond the starter list.
+>
+> **Architecture:** Static PWA — no server, no database. State in `localStorage`. Read `PLAN.md` and `UI_REDESIGN_PLAN.md` before changing flows or tokens.
 >
 > **Inspiration sources:** HEALTHSYNC_MERN (daily monitoring, medication adherence, analytics), ai_meal_planner (meal swap, recipe cards, compliance), NutriGuide AI (weight charting, macro tracking, progress dashboard), Acara Plate (daily health signals, food database, habit coaching, PWA install).
 
@@ -20,12 +22,18 @@ np_streak               JSON     — {days: number, last: 'YYYY-MM-DD'}
 NEW keys added by this plan:
 np_weights              JSON     — [{date:'YYYY-MM-DD', kg:number}]
 np_measurements         JSON     — [{date:'YYYY-MM-DD', waist:n, chest:n, arms:n}]
-np_food_log_YYYY-MM-DD  JSON     — [{mealId, name, kcal, protein, carbs, fat, eaten:bool}]
-np_supp_log_YYYY-MM-DD  JSON     — {creatine:bool, whey:bool, pre:bool, ...}
-np_photo_dates          JSON     — [{week:n, date:'YYYY-MM-DD'}]
-np_push_sub             String   — push subscription JSON (Feature 3)
-np_sleep_YYYY-MM-DD     JSON     — {hours:number, quality:1-5}
-np_mood_YYYY-MM-DD      JSON     — {mood:'great'|'good'|'ok'|'low'|'bad', energy:1-5}
+np_food_log_YYYY-MM-DD  JSON     — [{mealId, name, kcal, protein, carbs, fat}]
+np_supp_log_YYYY-MM-DD  JSON     — {supplementId: bool, ...}
+np_meal_swap_map        JSON     — {"0-breakfast": "Meal name", ...} weekday overrides
+np_photo_dismissed      String   — last dismissed plan week number (photo banner)
+np_install_dismissed    String   — '1' if install banner dismissed
+np_push_asked           String   — '1' after notification permission prompt
+
+Deferred / optional:
+np_photo_dates          JSON     — [{week:n, date:'YYYY-MM-DD'}] (not yet used)
+np_push_sub             String   — push subscription JSON (needs backend)
+np_sleep_YYYY-MM-DD     JSON     — superseded by extended np_checkin_* for Feature 3 signals
+np_mood_YYYY-MM-DD      JSON     — superseded by extended np_checkin_* 
 ```
 
 ---
@@ -975,10 +983,6 @@ Do these in order. Each builds on the previous.
 ```
 
 ---
-
-## About the Merge Conflict
-
-**There is no conflict.** PR #7 (`cursor/premium-ui-redesign-0de1`) is confirmed `MERGEABLE: CLEAN` by GitHub's API. The branch is a direct fast-forward on top of `main`. The other open PR (#2) only adds `PLAN_V3.md` and touches none of the same files. Merge PR #7 normally via the GitHub UI — no rebase needed.
 
 ---
 
