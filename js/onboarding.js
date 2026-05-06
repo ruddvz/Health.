@@ -58,7 +58,7 @@ function render() {
             <p>${t("lang.sample_hi")}</p>
           </button>
           <button type="button" class="glass lang-card" data-lang="gu">
-            <h2>${t("lang.gu") ગુજ્લિશ</h2>
+            <h2>${t("lang.gu")} ગુજ્લિશ</h2>
             <p>${t("lang.sample_gu")}</p>
           </button>
         </div>
