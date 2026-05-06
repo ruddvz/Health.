@@ -1,29 +1,11 @@
 import { t } from "../i18n.js";
 import { buildDayMeals } from "../plangen.js";
 import { todayKey, getFoodTotals } from "../foodLog.js";
+import { getWeights, logWeight } from "../weightStore.js";
 
 const WATER_KEY = "np_water_";
 const CHECKIN_KEY = "np_checkin_";
 const STREAK_KEY = "np_streak";
-const WEIGHT_KEY = "np_weights";
-
-function getWeights() {
-  try {
-    return JSON.parse(localStorage.getItem(WEIGHT_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function logWeight(kg) {
-  const weights = getWeights();
-  const today = todayKey();
-  const idx = weights.findIndex((w) => w.date === today);
-  if (idx >= 0) weights[idx].kg = kg;
-  else weights.push({ date: today, kg });
-  weights.sort((a, b) => a.date.localeCompare(b.date));
-  localStorage.setItem(WEIGHT_KEY, JSON.stringify(weights.slice(-52)));
-}
 
 function renderWeightSection(profile) {
   const weights = getWeights();
@@ -125,11 +107,16 @@ function saveCheckin(obj) {
 }
 
 function phaseForWeek(plan) {
-  const start = new Date(plan.startDate || Date.now());
+  const start = new Date(plan.startDate || plan.generatedAt || Date.now());
   const diff = Math.floor((Date.now() - start.getTime()) / (7 * 86400000));
-  const weekNum = Math.max(1, Math.min(diff + 1, plan.totalWeeks || 16));
+  const cap = plan.totalWeeks || 16;
+  const weekNum = Math.max(1, Math.min(diff + 1, cap));
+  let c = 1;
   for (const p of plan.phases || []) {
-    if (weekNum <= p.endWeek) return { phase: p, weekNum };
+    const sw = p.startWeek ?? c;
+    const ew = p.endWeek ?? sw + (p.weeks || 0) - 1;
+    if (weekNum >= sw && weekNum <= ew) return { phase: p, weekNum };
+    c = ew + 1;
   }
   return { phase: plan.phases?.[plan.phases.length - 1], weekNum };
 }
@@ -296,6 +283,46 @@ export function mountHome(root, profile, plan) {
         ${habitHTML}
       </div>
 
+      <div class="glass signals-card">
+        <div class="section-eyebrow signals-card-title">${t("home.signals_title")}</div>
+
+        <div class="signal-row">
+          <span class="signal-icon" aria-hidden="true">😴</span>
+          <span class="signal-label">${t("home.signal_sleep")}</span>
+          <div class="signal-sleep-input">
+            <input type="number" class="weight-input signal-input" id="sleep-hrs" min="0" max="14" step="0.5"
+              placeholder="—" value="${checkin.sleepHours != null && checkin.sleepHours !== "" ? checkin.sleepHours : ""}" />
+            <span class="signal-hint">hrs</span>
+          </div>
+        </div>
+
+        <div class="signal-row signal-row--wrap">
+          <span class="signal-icon" aria-hidden="true">😊</span>
+          <span class="signal-label">${t("home.signal_mood")}</span>
+          <div class="mood-grid">
+            ${["😫", "😔", "😐", "😊", "🤩"]
+              .map(
+                (e, i) =>
+                  `<button type="button" class="mood-btn ${checkin.mood === i ? "selected" : ""}" data-mood="${i}" aria-pressed="${checkin.mood === i}">${e}</button>`
+              )
+              .join("")}
+          </div>
+        </div>
+
+        <div class="signal-row signal-row--wrap">
+          <span class="signal-icon" aria-hidden="true">⚡</span>
+          <span class="signal-label">${t("home.signal_energy")}</span>
+          <div class="energy-grid">
+            ${[1, 2, 3, 4, 5]
+              .map(
+                (n) =>
+                  `<button type="button" class="energy-btn ${checkin.energy === n ? "selected" : ""}" data-energy="${n}" aria-pressed="${checkin.energy === n}">${n}</button>`
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
+
       <!-- Quick nav -->
       <div class="section-eyebrow" style="margin-top:24px">Quick Access</div>
       <div class="quick-grid">
@@ -321,6 +348,12 @@ export function mountHome(root, profile, plan) {
           <span class="qc-icon">💊</span>
           <div class="qc-title">${t("nav.supps")}</div>
           <div class="qc-sub">Stack + timing</div>
+          <span class="qc-arrow">›</span>
+        </button>
+        <button type="button" class="glass quick-card" data-go="progress">
+          <span class="qc-icon">📊</span>
+          <div class="qc-title">${t("nav.progress")}</div>
+          <div class="qc-sub">${t("home.quick_progress")}</div>
           <span class="qc-arrow">›</span>
         </button>
       </div>
@@ -350,6 +383,43 @@ export function mountHome(root, profile, plan) {
     });
   }
   bindWeightWidget();
+
+  root.querySelector("#sleep-hrs")?.addEventListener("change", () => {
+    const inp = root.querySelector("#sleep-hrs");
+    const v = parseFloat(inp?.value || "");
+    const cur = getCheckin();
+    if (Number.isFinite(v) && v >= 0 && v <= 14) cur.sleepHours = v;
+    else delete cur.sleepHours;
+    saveCheckin(cur);
+  });
+
+  root.querySelectorAll(".mood-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cur = getCheckin();
+      const i = +btn.dataset.mood;
+      cur.mood = cur.mood === i ? undefined : i;
+      saveCheckin(cur);
+      root.querySelectorAll(".mood-btn").forEach((b) => {
+        const on = +b.dataset.mood === cur.mood;
+        b.classList.toggle("selected", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+    });
+  });
+
+  root.querySelectorAll(".energy-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cur = getCheckin();
+      const n = +btn.dataset.energy;
+      cur.energy = cur.energy === n ? undefined : n;
+      saveCheckin(cur);
+      root.querySelectorAll(".energy-btn").forEach((b) => {
+        const on = +b.dataset.energy === cur.energy;
+        b.classList.toggle("selected", on);
+        b.setAttribute("aria-pressed", String(on));
+      });
+    });
+  });
 
   // ── Water glasses ──
   root.querySelectorAll(".water-glass").forEach((btn) => {

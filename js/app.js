@@ -1,11 +1,12 @@
 import { getProfile, getPlan, setLang } from "./store.js";
 import { t } from "./i18n.js";
-import { mountHome }    from "./pages/home.js";
-import { mountPhases }  from "./pages/phases.js";
-import { mountMeals }   from "./pages/meals.js";
-import { mountPrep }    from "./pages/prep.js";
+import { mountHome } from "./pages/home.js";
+import { mountPhases } from "./pages/phases.js";
+import { mountMeals } from "./pages/meals.js";
+import { mountPrep } from "./pages/prep.js";
+import { mountProgress } from "./pages/progress.js";
 import { mountGrocery } from "./pages/grocery.js";
-import { mountSupps }   from "./pages/supps.js";
+import { mountSupps } from "./pages/supps.js";
 
 let route = "home";
 
@@ -17,6 +18,7 @@ const NAV_ICONS = {
   prep:  `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 1a9 9 0 100 18A9 9 0 0010 1zm.5 5v5.25l3.5 2.1-.75 1.23-4.25-2.58V6h1.5z"/></svg>`,
   grocery: `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M6 16a2 2 0 100 4 2 2 0 000-4zm0 0h9a1 1 0 00.95-.68L18 6H4.21L3 3H1v2h1.5L6 16zm10 0a2 2 0 100 4 2 2 0 000-4z"/></svg>`,
   supps: `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M3.5 9.59l6.91-6.91a4.5 4.5 0 016.36 6.36l-6.91 6.91a4.5 4.5 0 01-6.36-6.36zm8.48-5.48a2.5 2.5 0 013.55 3.54l-1.94 1.94-3.54-3.54 1.93-1.94zM4.91 10.41l3.54 3.54-1.94 1.94a2.5 2.5 0 01-3.54-3.54l1.94-1.94z"/></svg>`,
+  progress: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16h14M5 13l3-4 2 2 5-6 3 4"/></svg>`,
 };
 
 function ensureAuth() {
@@ -30,12 +32,13 @@ function ensureAuth() {
 function renderNav() {
   const nav = document.getElementById("bottom-nav");
   const items = [
-    ["home",    "nav.home"],
-    ["phases",  "nav.phases"],
-    ["meals",   "nav.meals"],
-    ["prep",    "nav.prep"],
+    ["home", "nav.home"],
+    ["phases", "nav.phases"],
+    ["meals", "nav.meals"],
+    ["prep", "nav.prep"],
+    ["progress", "nav.progress"],
     ["grocery", "nav.grocery"],
-    ["supps",   "nav.supps"],
+    ["supps", "nav.supps"],
   ];
   nav.innerHTML = items.map(([id, key]) => `
     <button type="button" class="nav-item ${route === id ? "active" : ""}" data-route="${id}">
@@ -60,7 +63,15 @@ function renderMain() {
 
   document.getElementById("app-name").textContent = `${profile.name}.`;
 
-  const pages = { home: mountHome, phases: mountPhases, meals: mountMeals, prep: mountPrep, grocery: mountGrocery, supps: mountSupps };
+  const pages = {
+    home: mountHome,
+    phases: mountPhases,
+    meals: mountMeals,
+    prep: mountPrep,
+    progress: mountProgress,
+    grocery: mountGrocery,
+    supps: mountSupps,
+  };
   pages[route]?.(main, profile, plan);
 
   // Scroll to top on route change

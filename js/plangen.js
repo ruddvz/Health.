@@ -128,6 +128,12 @@ function buildPhases(profile) {
   phases.forEach((p) => {
     p.macro = macros(profile, p.calories);
   });
+  let weekCursor = 1;
+  for (const p of phases) {
+    p.startWeek = weekCursor;
+    p.endWeek = weekCursor + (p.weeks || 0) - 1;
+    weekCursor = p.endWeek + 1;
+  }
   return phases;
 }
 
@@ -351,8 +357,12 @@ function generatePlan(profile) {
   const supps = supplementSchedule(profile);
   const jain = profile.foodPrefs?.includes("jain");
 
+  const totalWeeks = profile.durationWeeks || phases.reduce((s, p) => s + (p.weeks || 0), 0) || 16;
+
   return {
     generatedAt: Date.now(),
+    startDate: new Date().toISOString().slice(0, 10),
+    totalWeeks,
     tdee: Math.round(tdee(profile)),
     targetCalories: kcal,
     macro,
