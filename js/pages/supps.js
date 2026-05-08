@@ -228,6 +228,7 @@ export function mountSupps(root, profile, plan) {
         <div style="font-weight:700">${s.name}</div>
         <div class="step-sub">${s.category} · ${s.defaultDose} ${s.unit} · ${s.timing}</div>
         <div style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;line-height:1.45">${s.benefits || ""}</div>
+        <button type="button" class="btn btn-ghost" style="margin-top:10px;width:auto" data-copy-line="${encodeURIComponent(`${s.name}: ${s.defaultDose} ${s.unit} · ${s.timing}`)}">${t("supps.copy_dose")}</button>
       </div>`
       )
       .join("");
@@ -254,6 +255,12 @@ export function mountSupps(root, profile, plan) {
         const v = b.dataset.libCat;
         suppsLibCat = v === "__all__" ? "" : v || "";
         mountSupps(root, profile, plan);
+      });
+    });
+    root.querySelectorAll("[data-copy-line]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const line = decodeURIComponent(b.dataset.copyLine || "");
+        if (line) navigator.clipboard?.writeText(line).catch(() => {});
       });
     });
     root.querySelectorAll("[data-supp-tab]").forEach((b) => {

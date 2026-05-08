@@ -2,6 +2,7 @@ import { t } from "../i18n.js";
 import { FOODS } from "../data/foods.js";
 import { appendCustomFoodToLog, todayKey } from "../foodLog.js";
 import { getHealthState, setHealthState } from "../healthStore.js";
+import { BUILTIN_HABIT_IDS, isBuiltinHabitDone, toggleBuiltinHabit, ensureBuiltinHabitSlots } from "../dashboardHabits.js";
 
 const CAT_KEYS = ["all", "protein", "carbs", "veg", "fruit", "dairy", "indian", "pantry"];
 
@@ -44,6 +45,10 @@ export function mountTools(root, profile, plan) {
   }
 
   function toggleHabitDay(habitId) {
+    if (BUILTIN_HABIT_IDS.includes(habitId)) {
+      toggleBuiltinHabit(habitId);
+      return;
+    }
     const s = getHealthState();
     const habits = s.habits?.habits || [];
     const h = habits.find((x) => x.id === habitId);
@@ -73,6 +78,7 @@ export function mountTools(root, profile, plan) {
   }
 
   function deleteHabit(id) {
+    if (BUILTIN_HABIT_IDS.includes(id)) return;
     const s = getHealthState();
     s.habits.habits = (s.habits.habits || []).filter((h) => h.id !== id);
     setHealthState(s);
@@ -86,20 +92,28 @@ export function mountTools(root, profile, plan) {
       </div>`;
 
     if (toolsUiTab === "habits") {
+      ensureBuiltinHabitSlots({
+        workout: "🏋️",
+        prep: "🥡",
+        supps: "💊",
+        water: "💧",
+      });
       const habits = getHealthState().habits?.habits || [];
       const today = todayKey();
-      const habitCards = habits
+      const ordered = [...BUILTIN_HABIT_IDS.map((id) => habits.find((h) => h.id === id)).filter(Boolean), ...habits.filter((h) => !BUILTIN_HABIT_IDS.includes(h.id))];
+      const habitCards = ordered
         .map((h) => {
-          const done = (h.completions || []).includes(today);
+          const done = BUILTIN_HABIT_IDS.includes(h.id) ? isBuiltinHabitDone(h.id) : (h.completions || []).includes(today);
+          const canDel = !BUILTIN_HABIT_IDS.includes(h.id);
           return `
         <div class="glass" style="padding:14px;margin-bottom:10px">
           <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
             <div>
               <span style="font-size:1.2rem;margin-right:6px">${h.icon || "✓"}</span>
               <strong>${h.name}</strong>
-              <div class="step-sub">${t("habits.tap_toggle")}</div>
+              <div class="step-sub">${BUILTIN_HABIT_IDS.includes(h.id) ? t("habits.dash_linked") : t("habits.tap_toggle")}</div>
             </div>
-            <button type="button" class="btn btn-ghost" style="width:auto;padding:6px 10px" data-del-habit="${h.id}">${t("habits.delete")}</button>
+            ${canDel ? `<button type="button" class="btn btn-ghost" style="width:auto;padding:6px 10px" data-del-habit="${h.id}">${t("habits.delete")}</button>` : ""}
           </div>
           ${renderHeatmap(h.completions)}
           <button type="button" class="btn ${done ? "btn-primary" : "btn-outline"}" style="margin-top:12px;width:100%" data-toggle-habit="${h.id}">

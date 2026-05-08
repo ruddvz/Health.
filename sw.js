@@ -1,4 +1,4 @@
-const CACHE = "health-pwa-v1";
+const CACHE = "health-pwa-v2";
 /** Paths relative to the service worker scope (works on GitHub Pages `/repo/`). */
 const FONT_CSS =
   "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700;800;900&display=swap";
@@ -30,6 +30,8 @@ const ASSET_PATHS = [
   "js/pages/phases.js",
   "js/pages/meals.js",
   "js/healthStore.js",
+  "js/dashboardHabits.js",
+  "js/mealToGrocery.js",
   "js/data/exercises.js",
   "js/data/mealPlansLibrary.js",
   "js/data/groceryDatabase.js",

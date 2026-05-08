@@ -3,6 +3,12 @@ import { buildDayMeals } from "../plangen.js";
 import { todayKey, getFoodTotals } from "../foodLog.js";
 import { getWeights, logWeight } from "../weightStore.js";
 import { getSwapOverride } from "../mealSwap.js";
+import {
+  ensureBuiltinHabitSlots,
+  updateBuiltinHabitLabels,
+  isBuiltinHabitDone,
+  toggleBuiltinHabit,
+} from "../dashboardHabits.js";
 
 const WATER_KEY = "np_water_";
 const CHECKIN_KEY = "np_checkin_";
@@ -182,6 +188,19 @@ export function mountHome(root, profile, plan) {
     return { ...bm, name: sw || bm.name };
   });
 
+  ensureBuiltinHabitSlots({
+    workout: "🏋️",
+    prep: "🥡",
+    supps: "💊",
+    water: "💧",
+  });
+  updateBuiltinHabitLabels({
+    workout: isWorkout ? "Hit the gym" : "Active rest / walk",
+    prep: "Meals prepped / packed",
+    supps: "Supplements taken",
+    water: "3L water goal",
+  });
+
   const streak   = updateStreak();
   let water      = getWater();
   const checkin  = getCheckin();
@@ -218,8 +237,8 @@ export function mountHome(root, profile, plan) {
     { id: "water",     label: "3L water goal",                                   icon: "💧" },
   ];
 
-  const habitHTML = habits.map(h => {
-    const done = !!checkin[h.id];
+  const habitHTML = habits.map((h) => {
+    const done = isBuiltinHabitDone(h.id);
     return `
       <button type="button" class="habit-item ${done ? "done" : ""}" data-habit="${h.id}">
         <span class="habit-icon">${h.icon}</span>
@@ -531,17 +550,15 @@ export function mountHome(root, profile, plan) {
     });
   });
 
-  // ── Habit checkin ──
+  // ── Habit checkin (synced with healthStore + legacy check-in) ──
   root.querySelectorAll(".habit-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       const key = btn.dataset.habit;
-      const cur = getCheckin();
-      if (cur[key]) delete cur[key];
-      else cur[key] = true;
-      saveCheckin(cur);
-      btn.classList.toggle("done", !!cur[key]);
+      toggleBuiltinHabit(key);
+      const on = isBuiltinHabitDone(key);
+      btn.classList.toggle("done", on);
       const chk = btn.querySelector(".habit-check");
-      if (chk) chk.textContent = cur[key] ? "✓" : "";
+      if (chk) chk.textContent = on ? "✓" : "";
     });
   });
 

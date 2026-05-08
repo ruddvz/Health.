@@ -173,6 +173,8 @@ const STRINGS = {
       fav_add: "Add to favorites",
       fav_saved: "Saved",
       fav_remove: "Remove",
+      grocery_import_btn: "Add today’s ingredients to grocery",
+      grocery_import_done: "Added {n} ingredient lines to Grocery (extras). Open Grocery → Current to see them.",
       rest_empty: "No meals in this template.",
     },
     prep: {
@@ -204,6 +206,9 @@ const STRINGS = {
       tips_budget: "Budget tips",
       tips_indian: "Indian grocery tips",
       manual_tag: "extra",
+      share_list: "Copy full list",
+      from_meals: "Add today’s meal ingredients",
+      from_meals_done: "Added {n} new grocery lines.",
       tip: "Tip for {city}",
       tip_default: "Buy fresh proteins mid-week if storing 7+ days.",
       cat_protein: "Protein",
@@ -231,6 +236,7 @@ const STRINGS = {
       lib_search: "Search name, category, benefit…",
       lib_empty: "No matches.",
       all_cat: "All",
+      copy_dose: "Copy dosing line",
     },
     tools: {
       eyebrow: "Tools",
@@ -265,6 +271,7 @@ const STRINGS = {
       delete: "Remove",
       mark_today: "Mark done today",
       done_today: "Done today ✓",
+      dash_linked: "Synced with Home check-in",
     },
     install: {
       title: "Add to Home Screen",

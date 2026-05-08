@@ -5,6 +5,7 @@ import { getSwapOverride, setSwapOverride } from "../mealSwap.js";
 import { MEAL_TIMING, getMealOptionsForSlot } from "../data/mealOptions.js";
 import { MEAL_PLAN_TEMPLATES } from "../data/mealPlansLibrary.js";
 import { getHealthState, setHealthState } from "../healthStore.js";
+import { importTodayMealsToGrocery } from "../mealToGrocery.js";
 
 const SLOT_TIMES = {
   breakfast: "7:00 AM",
@@ -289,6 +290,10 @@ export function mountMeals(root, profile, plan) {
 
         ${complianceBar}
 
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button type="button" class="btn btn-outline" id="meals-to-grocery" style="width:auto">${t("meals.grocery_import_btn")}</button>
+        </div>
+
         ${totalKcal > 0 ? `
           <div class="info-box info-box-lime" style="margin-bottom:14px">
             <strong>Total today: ~${totalKcal} kcal.</strong>
@@ -336,6 +341,11 @@ export function mountMeals(root, profile, plan) {
       </div>`;
 
     root.querySelector("#swap-close")?.addEventListener("click", closeDrawer);
+
+    root.querySelector("#meals-to-grocery")?.addEventListener("click", () => {
+      const n = importTodayMealsToGrocery(profile, plan);
+      window.alert(t("meals.grocery_import_done", { n: String(n) }));
+    });
 
     root.querySelectorAll("[data-tab]").forEach((b) => {
       b.addEventListener("click", () => {

@@ -1,7 +1,8 @@
 import { t } from "../i18n.js";
 import { SHOPPING_TIPS, BATCH_COOK_LIST } from "../data/groceryRef.js";
-import { GROCERY_TEMPLATES } from "../data/groceryDatabase.js";
+import { GROCERY_TEMPLATES, GROCERY_AUTOCOMPLETE } from "../data/groceryDatabase.js";
 import { getHealthState, setHealthState } from "../healthStore.js";
+import { importTodayMealsToGrocery } from "../mealToGrocery.js";
 
 const CAT_KEYS = ["protein", "carbs", "veg", "dairy", "pantry"];
 
@@ -190,6 +191,10 @@ export function mountGrocery(root, profile, plan) {
             .join("")
         : `<div class="empty-hint">${t("grocery.lists_empty")}</div>`;
 
+    const acOptions = GROCERY_AUTOCOMPLETE.slice(0, 100)
+      .map((k) => `<option value="${String(k).replace(/"/g, "'")}"></option>`)
+      .join("");
+
     const currentBody =
       topTab === "current"
         ? `
@@ -204,16 +209,19 @@ export function mountGrocery(root, profile, plan) {
             <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--text-muted);white-space:nowrap">${checkedInCat}/${totalInCat}</span>
           </div>` : ""}
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-          <input type="text" class="field" id="grocery-quick-add" placeholder="${t("grocery.quick_add_ph")}" style="flex:1;min-width:0" />
+          <input type="text" class="field" id="grocery-quick-add" list="grocery-ac-list" placeholder="${t("grocery.quick_add_ph")}" style="flex:1;min-width:0" />
           <button type="button" class="btn btn-primary" id="grocery-quick-btn" style="width:auto">${t("grocery.quick_add_btn")}</button>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
           <button type="button" class="btn btn-outline" id="grocery-clear-done" style="width:auto">${t("grocery.clear_done")}</button>
           <button type="button" class="btn btn-ghost" id="grocery-save-snapshot" style="width:auto">${t("grocery.save_snapshot")}</button>
+          <button type="button" class="btn btn-outline" id="grocery-share-list" style="width:auto">${t("grocery.share_list")}</button>
+          <button type="button" class="btn btn-outline" id="grocery-from-meals" style="width:auto">${t("grocery.from_meals")}</button>
         </div>
         <div class="grocery-list">
           ${listItems || `<div class="grocery-item"><div class="gi-name" style="color:var(--text-dim)">—</div></div>`}
         </div>
+        <datalist id="grocery-ac-list">${acOptions}</datalist>
         ${tip ? `<div class="info-box info-box-lime" style="margin-top:14px"><strong>Store tip:</strong> ${tip}</div>` : ""}
         <div class="section-eyebrow" style="margin-top:20px">${t("grocery.prep_title")}</div>
         <div class="info-box info-box-lime" style="margin-bottom:10px">${t("grocery.prep_blurb")}</div>
@@ -330,6 +338,17 @@ export function mountGrocery(root, profile, plan) {
       const v = root.querySelector("#grocery-quick-add")?.value || "";
       addManualLine(v);
       root.querySelector("#grocery-quick-add").value = "";
+      renderInner();
+    });
+
+    root.querySelector("#grocery-share-list")?.addEventListener("click", () => {
+      const lines = mergedRows().map((r) => `- [ ] ${r.name} (${r.qtyLabel}) [${r.category}]`);
+      copyText(lines.join("\n"));
+    });
+
+    root.querySelector("#grocery-from-meals")?.addEventListener("click", () => {
+      const n = importTodayMealsToGrocery(profile, plan);
+      window.alert(t("grocery.from_meals_done", { n: String(n) }));
       renderInner();
     });
 
