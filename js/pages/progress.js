@@ -1,5 +1,6 @@
 import { t } from "../i18n.js";
 import { todayKey, getFoodTotals } from "../foodLog.js";
+import { effectiveCalorieGoal } from "../effectiveTargets.js";
 import { getWeights, logWeight } from "../weightStore.js";
 import { getHealthState, setHealthState } from "../healthStore.js";
 
@@ -292,7 +293,7 @@ export function mountProgress(root, profile, plan) {
       ${renderBodyCompCard(profile, lastWeight)}
 
       <div class="info-box info-box-lime progress-food-summary">
-        <strong>${t("progress.today_logged")}</strong> ${food.kcal} / ${plan.targetCalories ?? "—"} kcal · ${t("progress.week_label")} ${wn}
+        <strong>${t("progress.today_logged")}</strong> ${food.kcal} / ${effectiveCalorieGoal(plan) || "—"} kcal · ${t("progress.week_label")} ${wn}
       </div>
 
       ${renderComplianceStrip(profile, plan)}

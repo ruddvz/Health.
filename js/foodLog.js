@@ -1,6 +1,7 @@
 /**
  * Daily food log — FEATURE_PLAN Feature 1 (np_food_log_YYYY-MM-DD)
  */
+import { effectiveCalorieGoal, effectiveMacros } from "./effectiveTargets.js";
 
 export function todayKey() {
   return new Date().toISOString().slice(0, 10);
@@ -11,9 +12,9 @@ export function foodLogStorageKey() {
 }
 
 export function mealMacrosFromPlan(mealKcal, plan) {
-  const target = plan.targetCalories || 1;
+  const target = effectiveCalorieGoal(plan) || 1;
   const ratio = (mealKcal || 0) / target;
-  const macro = plan.macro || { protein: 0, carbs: 0, fat: 0 };
+  const macro = effectiveMacros(plan);
   return {
     protein: Math.round(macro.protein * ratio * 10) / 10,
     carbs: Math.round(macro.carbs * ratio * 10) / 10,

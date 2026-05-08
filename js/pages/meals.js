@@ -1,5 +1,6 @@
 import { t, dayLabel } from "../i18n.js";
 import { buildDayMeals, getSwapAlternatives } from "../plangen.js";
+import { effectiveCalorieGoal, effectiveMacros } from "../effectiveTargets.js";
 import { getFoodTotals, isMealEaten, toggleMealEaten } from "../foodLog.js";
 import { getSwapOverride, setSwapOverride } from "../mealSwap.js";
 import { MEAL_TIMING, getMealOptionsForSlot } from "../data/mealOptions.js";
@@ -171,7 +172,7 @@ export function mountMeals(root, profile, plan) {
     }
 
     const forceRest = tab === "rest";
-    const baseMeals = buildDayMeals(profile, day, plan.targetCalories, { forceRest });
+    const baseMeals = buildDayMeals(profile, day, effectiveCalorieGoal(plan), { forceRest });
     const meals = baseMeals.map((bm) => {
       const sw = getSwapOverride(day, bm.slot);
       return { ...bm, name: sw || bm.name };
@@ -187,7 +188,8 @@ export function mountMeals(root, profile, plan) {
 
     const viewingToday = day === mondayBasedToday();
     const totals = getFoodTotals();
-    const tgt = plan.targetCalories || 1;
+    const em = effectiveMacros(plan);
+    const tgt = effectiveCalorieGoal(plan) || 1;
     const pct = Math.min(100, Math.round((totals.kcal / tgt) * 100));
 
     const complianceBar =
@@ -196,15 +198,15 @@ export function mountMeals(root, profile, plan) {
         <div class="compliance-bar glass" id="compliance-bar">
           <div class="compliance-row">
             <span class="compliance-label">${t("meals.compliance_today")}</span>
-            <span class="compliance-kcal" id="comp-kcal">${totals.kcal} / ${plan.targetCalories} kcal</span>
+            <span class="compliance-kcal" id="comp-kcal">${totals.kcal} / ${effectiveCalorieGoal(plan)} kcal</span>
           </div>
           <div class="progress-track" style="margin-top:8px">
             <div class="progress-fill" id="comp-fill" style="width:${pct}%;animation:none"></div>
           </div>
           <div class="compliance-macros">
-            <span>P: ${Math.round(totals.protein)}g / ${plan.macro?.protein ?? 0}g</span>
-            <span>C: ${Math.round(totals.carbs)}g / ${plan.macro?.carbs ?? 0}g</span>
-            <span>F: ${Math.round(totals.fat)}g / ${plan.macro?.fat ?? 0}g</span>
+            <span>P: ${Math.round(totals.protein)}g / ${em.protein ?? 0}g</span>
+            <span>C: ${Math.round(totals.carbs)}g / ${em.carbs ?? 0}g</span>
+            <span>F: ${Math.round(totals.fat)}g / ${em.fat ?? 0}g</span>
           </div>
         </div>`
         : "";

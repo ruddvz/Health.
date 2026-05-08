@@ -1,6 +1,11 @@
 import { t } from "./i18n.js";
-import { setLang, setProfile, setPlan } from "./store.js";
+import { setLang, setProfile, setPlan, getProfile, getPlan } from "./store.js";
 import { generatePlan } from "./plangen.js";
+import { initHealthState } from "./healthStore.js";
+import { applyThemeFromHealthStore } from "./themeApply.js";
+
+initHealthState();
+applyThemeFromHealthStore();
 
 const STEPS = 16;
 let step = 0;
@@ -597,7 +602,7 @@ function finish() {
 
 function initOnboarding() {
   // Already completed — go straight to the app.
-  if (localStorage.getItem("np_profile") && localStorage.getItem("np_plan")) {
+  if (getProfile() && getPlan()) {
     window.location.replace("app.html");
     return;
   }

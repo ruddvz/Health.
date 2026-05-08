@@ -1,9 +1,12 @@
 /**
  * Optional reminders — FEATURE_PLAN §7 (client-side Notification API).
+ * Times come from healthStore.settings.reminderTimes (HH:mm).
  */
 import { t } from "./i18n.js";
 import { todayKey } from "./foodLog.js";
-import { getHealthState } from "./healthStore.js";
+import { getHealthState, defaultReminderTimes } from "./healthStore.js";
+
+export const REMINDER_TIME_TAGS = ["breakfast", "snack", "lunch", "pre", "dinner", "bedtime", "water"];
 
 const MEAL_REMINDERS = [
   { tag: "breakfast", title: "Breakfast time", body: "Morning fuel — don't skip it.", hour: 7, min: 0 },
@@ -13,6 +16,23 @@ const MEAL_REMINDERS = [
   { tag: "dinner", title: "Dinner", body: "Finish strong — protein stays high.", hour: 19, min: 30 },
   { tag: "bedtime", title: "Wind down", body: "Magnesium / ash timing if that's your stack.", hour: 22, min: 15 },
 ];
+
+function parseTimeHHMM(str, fallbackHour, fallbackMin) {
+  if (!str || typeof str !== "string" || !/^\d{1,2}:\d{2}$/.test(str.trim())) {
+    return { hour: fallbackHour, min: fallbackMin };
+  }
+  const [hs, ms] = str.trim().split(":");
+  const h = parseInt(hs, 10);
+  const m = parseInt(ms, 10);
+  if (!Number.isFinite(h) || !Number.isFinite(m) || m < 0 || m > 59 || h < 0 || h > 23) {
+    return { hour: fallbackHour, min: fallbackMin };
+  }
+  return { hour: h, min: m };
+}
+
+function mergedReminderTimes() {
+  return { ...defaultReminderTimes(), ...(getHealthState().settings?.reminderTimes || {}) };
+}
 
 export async function requestPushPermission() {
   if (!("Notification" in window)) return false;
@@ -24,10 +44,12 @@ export function scheduleLocalReminders() {
   if (!("Notification" in window) || Notification.permission !== "granted") return;
   const icon = "./assets/icons/icon-192.png";
   const now = Date.now();
+  const times = mergedReminderTimes();
 
   MEAL_REMINDERS.forEach((r) => {
+    const { hour, min } = parseTimeHHMM(times[r.tag], r.hour, r.min);
     const target = new Date();
-    target.setHours(r.hour, r.min, 0, 0);
+    target.setHours(hour, min, 0, 0);
     const delay = target.getTime() - now;
     if (delay <= 0 || delay > 24 * 3600000) return;
     setTimeout(() => {
@@ -40,8 +62,9 @@ export function scheduleLocalReminders() {
     }, delay);
   });
 
+  const waterHM = parseTimeHHMM(times.water, 20, 0);
   const waterTarget = new Date();
-  waterTarget.setHours(20, 0, 0, 0);
+  waterTarget.setHours(waterHM.hour, waterHM.min, 0, 0);
   const waterDelay = waterTarget.getTime() - now;
   if (waterDelay > 0 && waterDelay <= 24 * 3600000) {
     setTimeout(() => {

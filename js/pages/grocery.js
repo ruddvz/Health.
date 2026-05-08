@@ -3,6 +3,7 @@ import { SHOPPING_TIPS, BATCH_COOK_LIST } from "../data/groceryRef.js";
 import { GROCERY_TEMPLATES, GROCERY_AUTOCOMPLETE } from "../data/groceryDatabase.js";
 import { getHealthState, setHealthState } from "../healthStore.js";
 import { importTodayMealsToGrocery } from "../mealToGrocery.js";
+import { currencyLabel } from "../formatCurrency.js";
 
 const CAT_KEYS = ["protein", "carbs", "veg", "dairy", "pantry"];
 
@@ -269,12 +270,19 @@ export function mountGrocery(root, profile, plan) {
 
     const listsBody = topTab === "lists" ? `<div class="section-eyebrow">${t("grocery.lists_title")}</div>${listsTab}` : "";
 
+    const curCode = getHealthState().settings?.currencyCode;
+    const curLine =
+      curCode && curCode !== "NONE"
+        ? `<div class="ph-desc" style="margin-top:6px;font-size:0.85rem;opacity:0.88">${t("grocery.currency_hint", { cur: currencyLabel(curCode) })}</div>`
+        : "";
+
     root.innerHTML = `
       <div class="page-enter">
         <div class="page-header">
           <div class="ph-eyebrow">// ${t("grocery.header_eyebrow")}</div>
           <div class="ph-title">${t("grocery.title")}</div>
           <div class="ph-desc">${t("grocery.header_desc")}</div>
+          ${curLine}
         </div>
         <div class="tabs" style="margin-bottom:12px">
           <button type="button" class="tab ${topTab === "current" ? "active" : ""}" data-top="current">${t("grocery.tab_current")}</button>

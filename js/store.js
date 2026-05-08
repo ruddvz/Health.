@@ -1,6 +1,8 @@
 /**
- * localStorage helpers — contract from PLAN.md Section 11
+ * localStorage helpers — profile/plan are stored inside np_health_state (see healthStore.js).
  */
+import { getHealthState, setHealthState } from "./healthStore.js";
+
 const KEYS = {
   lang: "np_lang",
   profile: "np_profile",
@@ -16,35 +18,31 @@ function setLang(code) {
 }
 
 function getProfile() {
-  const raw = localStorage.getItem(KEYS.profile);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+  return getHealthState().profile ?? null;
 }
 
 function setProfile(profile) {
-  localStorage.setItem(KEYS.profile, JSON.stringify(profile));
+  const s = getHealthState();
+  s.profile = profile;
+  setHealthState(s);
 }
 
 function getPlan() {
-  const raw = localStorage.getItem(KEYS.plan);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
+  return getHealthState().plan ?? null;
 }
 
 function setPlan(plan) {
-  localStorage.setItem(KEYS.plan, JSON.stringify(plan));
+  const s = getHealthState();
+  s.plan = plan;
+  setHealthState(s);
 }
 
 function clearAll() {
   localStorage.removeItem(KEYS.lang);
+  const s = getHealthState();
+  s.profile = null;
+  s.plan = null;
+  setHealthState(s);
   localStorage.removeItem(KEYS.profile);
   localStorage.removeItem(KEYS.plan);
 }

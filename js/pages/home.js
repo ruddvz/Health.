@@ -11,6 +11,7 @@ import {
   syncWaterHabitFromGlasses,
 } from "../dashboardHabits.js";
 import { getHealthState } from "../healthStore.js";
+import { effectiveCalorieGoal, effectiveMacros } from "../effectiveTargets.js";
 
 const WATER_KEY = "np_water_";
 const CHECKIN_KEY = "np_checkin_";
@@ -185,7 +186,7 @@ export function mountHome(root, profile, plan) {
   const monBased = today === 0 ? 6 : today - 1;
   const td = Math.min(Math.max(profile.trainingDays || 4, 1), 7);
   const isWorkout = monBased < td;
-  const meals = buildDayMeals(profile, monBased, plan.targetCalories, { forceRest: !isWorkout }).map((bm) => {
+  const meals = buildDayMeals(profile, monBased, effectiveCalorieGoal(plan), { forceRest: !isWorkout }).map((bm) => {
     const sw = getSwapOverride(monBased, bm.slot);
     return { ...bm, name: sw || bm.name };
   });
@@ -211,16 +212,13 @@ export function mountHome(root, profile, plan) {
   const checkin = getCheckin();
   const GLASSES = glassGoal;
 
-  const calGoal = getHealthState().settings?.calorieGoal ?? plan.targetCalories ?? 0;
+  const calGoal = effectiveCalorieGoal(plan);
+  const macros = effectiveMacros(plan);
+  const mp = macros.protein || 1;
+  const mc = macros.carbs || 1;
+  const mf = macros.fat || 1;
 
   const { weekNum } = phaseForWeek(plan);
-  const totalWeeks  = profile.durationWeeks || 16;
-  const weekPct     = Math.round((weekNum / totalWeeks) * 100);
-
-  const food = getFoodTotals();
-  const mp = plan.macro?.protein || 1;
-  const mc = plan.macro?.carbs || 1;
-  const mf = plan.macro?.fat || 1;
   const proteinPct = Math.min(100, Math.round((food.protein / mp) * 100));
   const carbPct = Math.min(100, Math.round((food.carbs / mc) * 100));
   const fatPct = Math.min(100, Math.round((food.fat / mf) * 100));
@@ -301,7 +299,7 @@ export function mountHome(root, profile, plan) {
             <span class="home-stat-lbl">Week</span>
           </div>
           <div class="home-stat-item">
-            <span class="home-stat-val">${plan.macro?.protein || 0}g</span>
+            <span class="home-stat-val">${macros.protein || 0}g</span>
             <span class="home-stat-lbl">Protein</span>
           </div>
         </div>
@@ -356,17 +354,17 @@ export function mountHome(root, profile, plan) {
           <div class="macro-bar-row">
             <span class="macro-bar-label">Protein</span>
             <div class="macro-bar-track"><div class="macro-bar-fill protein" style="width:${proteinPct}%"></div></div>
-            <span class="macro-bar-val">${Math.round(food.protein)}/${plan.macro?.protein || 0}g</span>
+            <span class="macro-bar-val">${Math.round(food.protein)}/${macros.protein || 0}g</span>
           </div>
           <div class="macro-bar-row">
             <span class="macro-bar-label">Carbs</span>
             <div class="macro-bar-track"><div class="macro-bar-fill carbs" style="width:${carbPct}%"></div></div>
-            <span class="macro-bar-val">${Math.round(food.carbs)}/${plan.macro?.carbs || 0}g</span>
+            <span class="macro-bar-val">${Math.round(food.carbs)}/${macros.carbs || 0}g</span>
           </div>
           <div class="macro-bar-row">
             <span class="macro-bar-label">Fat</span>
             <div class="macro-bar-track"><div class="macro-bar-fill fat" style="width:${fatPct}%"></div></div>
-            <span class="macro-bar-val">${Math.round(food.fat)}/${plan.macro?.fat || 0}g</span>
+            <span class="macro-bar-val">${Math.round(food.fat)}/${macros.fat || 0}g</span>
           </div>
         </div>
       </div>
@@ -480,7 +478,7 @@ export function mountHome(root, profile, plan) {
       </div>
 
       <div class="info-box info-box-orange" style="margin-bottom:28px">
-        <strong>${plan.targetCalories} kcal</strong> target today.
+        <strong>${calGoal} kcal</strong> target today.
         ${isWorkout ? "Workout day — eat all of it. Carbs fuel performance." : "Rest day — slightly lower carbs, same protein."}
       </div>
 

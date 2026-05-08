@@ -8,7 +8,7 @@ import {
   importLocalBackup,
   clearAllAppStorage,
 } from "./store.js";
-import { initHealthState, getHealthState, setHealthState } from "./healthStore.js";
+import { initHealthState, getHealthState, setHealthState, defaultReminderTimes } from "./healthStore.js";
 import { applyThemeFromHealthStore } from "./themeApply.js";
 import { generatePlan } from "./plangen.js";
 import { t } from "./i18n.js";
@@ -20,7 +20,7 @@ import { mountProgress } from "./pages/progress.js";
 import { mountGrocery } from "./pages/grocery.js";
 import { mountSupps } from "./pages/supps.js";
 import { mountTools } from "./pages/tools.js";
-import { maybeAskNotifications, requestPushPermission, scheduleLocalReminders } from "./notifications.js";
+import { maybeAskNotifications, requestPushPermission, scheduleLocalReminders, REMINDER_TIME_TAGS } from "./notifications.js";
 
 initHealthState();
 applyThemeFromHealthStore();
@@ -156,7 +156,7 @@ function renderMain() {
       main.innerHTML = `
         <div style="padding:32px 20px;text-align:center">
           <p style="color:var(--text-dim);margin-bottom:20px">Something went wrong loading your plan.</p>
-          <button type="button" class="btn btn-primary" onclick="localStorage.removeItem('np_profile');localStorage.removeItem('np_plan');window.location.href='index.html'">
+          <button type="button" class="btn btn-primary" onclick="localStorage.removeItem('np_health_state');localStorage.removeItem('np_profile');localStorage.removeItem('np_plan');window.location.href='index.html'">
             Start over
           </button>
         </div>`;
@@ -245,6 +245,15 @@ function syncPreferenceChips() {
   if (wg) wg.value = String(st.waterGoal ?? 8);
   const co = document.getElementById("edit-cal-override");
   if (co) co.value = st.calorieGoal != null && st.calorieGoal !== "" ? String(st.calorieGoal) : "";
+  const mo = st.macroOverride || {};
+  const mp = document.getElementById("macro-p");
+  const mc = document.getElementById("macro-c");
+  const mf = document.getElementById("macro-f");
+  if (mp) mp.value = mo.protein != null && mo.protein !== "" ? String(mo.protein) : "";
+  if (mc) mc.value = mo.carbs != null && mo.carbs !== "" ? String(mo.carbs) : "";
+  if (mf) mf.value = mo.fat != null && mo.fat !== "" ? String(mo.fat) : "";
+  const cur = document.getElementById("edit-currency");
+  if (cur) cur.value = st.currencyCode || "NONE";
 }
 
 function translateSettingsChrome(panel) {
@@ -262,6 +271,38 @@ function translateSettingsChrome(panel) {
   document.getElementById("lbl-water-goal") && (document.getElementById("lbl-water-goal").textContent = t("settings.water_goal_lbl"));
   document.getElementById("lbl-cal-override") && (document.getElementById("lbl-cal-override").textContent = t("settings.cal_override_lbl"));
   document.getElementById("edit-cal-override") && (document.getElementById("edit-cal-override").placeholder = t("settings.cal_override_ph"));
+  document.getElementById("lbl-macro-ov") && (document.getElementById("lbl-macro-ov").textContent = t("settings.macro_lbl"));
+  const macroHint = document.getElementById("settings-macro-hint");
+  if (macroHint) macroHint.textContent = t("settings.macro_hint");
+  document.getElementById("lbl-macro-p") && (document.getElementById("lbl-macro-p").textContent = t("settings.macro_p"));
+  document.getElementById("lbl-macro-c") && (document.getElementById("lbl-macro-c").textContent = t("settings.macro_c"));
+  document.getElementById("lbl-macro-f") && (document.getElementById("lbl-macro-f").textContent = t("settings.macro_f"));
+  document.getElementById("lbl-reminder-times") && (document.getElementById("lbl-reminder-times").textContent = t("settings.reminder_lbl"));
+  const remHint = document.getElementById("settings-reminder-hint");
+  if (remHint) remHint.textContent = t("settings.reminder_hint");
+  document.getElementById("lbl-currency") && (document.getElementById("lbl-currency").textContent = t("settings.currency_lbl"));
+
+  const rtList = document.getElementById("settings-reminder-list");
+  if (rtList) {
+    const times = { ...defaultReminderTimes(), ...(getHealthState().settings?.reminderTimes || {}) };
+    const labels = {
+      breakfast: t("settings.rt_breakfast"),
+      snack: t("settings.rt_snack"),
+      lunch: t("settings.rt_lunch"),
+      pre: t("settings.rt_pre"),
+      dinner: t("settings.rt_dinner"),
+      bedtime: t("settings.rt_bedtime"),
+      water: t("settings.rt_water"),
+    };
+    rtList.innerHTML = REMINDER_TIME_TAGS.map(
+      (tag) => `
+      <div class="settings-reminder-row">
+        <label class="label" for="rt-${tag}" style="margin:0">${labels[tag] || tag}</label>
+        <input type="time" id="rt-${tag}" class="field settings-field settings-time-input" value="${times[tag] || ""}" />
+      </div>`
+    ).join("");
+  }
+
   document.getElementById("lbl-about") && (document.getElementById("lbl-about").textContent = t("settings.about_lbl"));
   const aboutBody = document.getElementById("settings-about-body");
   if (aboutBody) aboutBody.textContent = t("settings.about_body");
@@ -460,6 +501,24 @@ function setupSettings() {
       const c = parseInt(calRaw, 10);
       if (Number.isFinite(c) && c >= 800 && c <= 6000) h.settings.calorieGoal = c;
     }
+    const parseGramOrNull = (id) => {
+      const raw = document.getElementById(id)?.value?.trim();
+      if (!raw) return null;
+      const n = parseInt(raw, 10);
+      return Number.isFinite(n) && n > 0 ? n : null;
+    };
+    h.settings.macroOverride = {
+      protein: parseGramOrNull("macro-p"),
+      carbs: parseGramOrNull("macro-c"),
+      fat: parseGramOrNull("macro-f"),
+    };
+    const rtMerged = { ...defaultReminderTimes(), ...h.settings.reminderTimes };
+    for (const tag of REMINDER_TIME_TAGS) {
+      const el = document.getElementById(`rt-${tag}`);
+      if (el?.value) rtMerged[tag] = el.value;
+    }
+    h.settings.reminderTimes = rtMerged;
+    h.settings.currencyCode = document.getElementById("edit-currency")?.value || "NONE";
     setHealthState(h);
     applyThemeFromHealthStore();
 
@@ -467,6 +526,9 @@ function setupSettings() {
     const prevPlan = getPlan();
     setPlan(generatePlan(next, { preserveMetaFrom: prevPlan }));
     panel?.classList.remove("open");
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      scheduleLocalReminders();
+    }
     render();
   });
 

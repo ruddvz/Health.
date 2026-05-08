@@ -109,6 +109,36 @@
         </div>
 
         <div class="settings-block">
+          <span class="label" id="lbl-macro-ov">Macro overrides (g)</span>
+          <p class="step-sub" id="settings-macro-hint"></p>
+          <div class="settings-inline-row">
+            <label class="label settings-macro-lbl" for="macro-p" id="lbl-macro-p">P</label>
+            <input class="field settings-field" type="number" id="macro-p" min="0" max="500" step="1" placeholder="—" />
+            <label class="label settings-macro-lbl" for="macro-c" id="lbl-macro-c">C</label>
+            <input class="field settings-field" type="number" id="macro-c" min="0" max="800" step="1" placeholder="—" />
+            <label class="label settings-macro-lbl" for="macro-f" id="lbl-macro-f">F</label>
+            <input class="field settings-field" type="number" id="macro-f" min="0" max="300" step="1" placeholder="—" />
+          </div>
+        </div>
+
+        <div class="settings-block">
+          <span class="label" id="lbl-reminder-times">Reminder times</span>
+          <p class="step-sub" id="settings-reminder-hint"></p>
+          <div id="settings-reminder-list" class="settings-reminder-list"></div>
+        </div>
+
+        <div class="settings-block">
+          <label class="label" for="edit-currency" id="lbl-currency">Currency</label>
+          <select class="field settings-field" id="edit-currency">
+            <option value="NONE">None</option>
+            <option value="INR">INR ₹</option>
+            <option value="USD">USD $</option>
+            <option value="EUR">EUR €</option>
+            <option value="GBP">GBP £</option>
+          </select>
+        </div>
+
+        <div class="settings-block">
           <button type="button" class="btn btn-outline" id="settings-notify-btn"></button>
           <p class="step-sub" id="settings-notify-hint"></p>
         </div>

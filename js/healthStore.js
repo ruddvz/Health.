@@ -1,12 +1,28 @@
 /**
  * Plan0 unified app state — persisted under np_health_state (included in np_* backup export).
- * Coexists with legacy np_profile / np_plan / per-day food logs.
+ * Profile and plan live here; legacy np_profile / np_plan are migrated once and removed.
  */
 
 const HEALTH_KEY = "np_health_state";
 
+export function defaultReminderTimes() {
+  return {
+    breakfast: "07:00",
+    snack: "10:30",
+    lunch: "13:00",
+    pre: "16:00",
+    dinner: "19:30",
+    bedtime: "22:15",
+    water: "20:00",
+  };
+}
+
 const defaultState = {
-  version: 1,
+  version: 2,
+  /** Onboarding profile (migrated from np_profile) */
+  profile: null,
+  /** Generated plan (migrated from np_plan) */
+  plan: null,
   meals: {
     favorites: [],
     savedPlans: [],
@@ -15,7 +31,6 @@ const defaultState = {
   grocery: {
     lists: [],
     activeListId: null,
-    /** User-added lines (e.g. from templates) merged into Current list */
     manualItems: [],
   },
   workout: {
@@ -23,7 +38,6 @@ const defaultState = {
     programs: [],
     activeProgramId: null,
     customExercises: [],
-    /** Active timer session (ephemeral; not always persisted) */
     draftSession: null,
   },
   habits: {
@@ -36,10 +50,14 @@ const defaultState = {
     waterGoal: 8,
     cupMl: 250,
     calorieGoal: null,
+    macroOverride: { protein: null, carbs: null, fat: null },
     theme: "auto",
     units: "metric",
     weekStart: "monday",
     notificationsEnabled: false,
+    reminderTimes: defaultReminderTimes(),
+    /** NONE | INR | USD | EUR | GBP — display for future cost fields */
+    currencyCode: "NONE",
   },
 };
 
@@ -61,6 +79,15 @@ function deepMerge(base, patch) {
   return out;
 }
 
+function tryParseJson(str) {
+  if (!str) return null;
+  try {
+    return JSON.parse(str);
+  } catch {
+    return null;
+  }
+}
+
 function getRaw() {
   try {
     const raw = localStorage.getItem(HEALTH_KEY);
@@ -71,7 +98,45 @@ function getRaw() {
   }
 }
 
+/** Pull np_profile / np_plan into this blob once, then drop legacy keys. */
+function migrateLegacyProfilePlan() {
+  const lp = localStorage.getItem("np_profile");
+  const lpl = localStorage.getItem("np_plan");
+  if (!lp && !lpl) return;
+
+  const raw = tryParseJson(localStorage.getItem(HEALTH_KEY));
+  let merged = deepMerge(deepClone(defaultState), raw || {});
+  let changed = false;
+
+  if (lp) {
+    const parsed = tryParseJson(lp);
+    if (parsed) {
+      if (merged.profile == null) {
+        merged.profile = parsed;
+        changed = true;
+      }
+      localStorage.removeItem("np_profile");
+    }
+  }
+  if (lpl) {
+    const parsed = tryParseJson(lpl);
+    if (parsed) {
+      if (merged.plan == null) {
+        merged.plan = parsed;
+        changed = true;
+      }
+      localStorage.removeItem("np_plan");
+    }
+  }
+
+  if (changed) {
+    merged.version = defaultState.version;
+    localStorage.setItem(HEALTH_KEY, JSON.stringify(merged));
+  }
+}
+
 export function getHealthState() {
+  migrateLegacyProfilePlan();
   const raw = getRaw();
   if (!raw) return deepClone(defaultState);
   return deepMerge(deepClone(defaultState), raw);

@@ -1,4 +1,5 @@
 import { t } from "../i18n.js";
+import { effectiveCalorieGoal, effectiveMacros } from "../effectiveTargets.js";
 
 const PHASE_COLORS = ["1", "2", "3", "4"];
 
@@ -54,8 +55,8 @@ export function mountPhases(root, profile, plan) {
   }).join("");
 
   const totalWeeks  = profile.durationWeeks || 16;
-  const targetKcal  = plan.targetCalories;
-  const protein     = plan.macro?.protein || 0;
+  const targetKcal  = effectiveCalorieGoal(plan);
+  const protein     = effectiveMacros(plan).protein || 0;
 
   root.innerHTML = `
     <div class="page-enter">
