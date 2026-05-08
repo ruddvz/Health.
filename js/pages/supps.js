@@ -1,6 +1,7 @@
 import { t } from "../i18n.js";
 import { todayKey } from "../foodLog.js";
-import { SUPP_DETAIL, SUPP_STACK_GUIDE, DAILY_SCHEDULE } from "../data/supplements.js";
+import { SUPP_DETAIL, SUPP_STACK_GUIDE } from "../data/supplements.js";
+import { SUPPLEMENT_CATALOG } from "../data/supplementCatalog.js";
 
 const SUPP_META = {
   creatine: { dot: "var(--accent-lime)",   name: "Creatine Monohydrate",    status: "have" },
@@ -53,7 +54,15 @@ function suppStreak(suppId) {
   return streak;
 }
 
+let suppsUiTab = "stack";
+let suppsLibQ = "";
+let suppsLibCat = "";
+
 export function mountSupps(root, profile, plan) {
+  const topTab = suppsUiTab;
+  const libQ = suppsLibQ;
+  const libCat = suppsLibCat;
+
   const hasWhey = profile.supplements?.includes("whey");
   const veg = ["veg", "vegan", "eggetarian"].includes(profile.dietType);
   const userSupps = new Set(profile.supplements || []);
@@ -188,8 +197,84 @@ export function mountSupps(root, profile, plan) {
   const empty = !plan.supps?.length
     ? `<div class="empty-hint">${t("supps.none")}</div>` : "";
 
+  const topTabs = `
+    <div class="tabs" style="margin-bottom:12px">
+      <button type="button" class="tab ${topTab === "stack" ? "active" : ""}" data-supp-tab="stack">${t("supps.tab_stack")}</button>
+      <button type="button" class="tab ${topTab === "library" ? "active" : ""}" data-supp-tab="library">${t("supps.tab_library")}</button>
+    </div>`;
+
+  if (topTab === "library") {
+    const q = libQ.trim().toLowerCase();
+    const filtered = SUPPLEMENT_CATALOG.filter((s) => {
+      if (libCat && s.category !== libCat) return false;
+      if (q.length < 1) return true;
+      return (
+        s.name.toLowerCase().includes(q) ||
+        s.category.toLowerCase().includes(q) ||
+        (s.benefits && s.benefits.toLowerCase().includes(q))
+      );
+    }).slice(0, 80);
+    const activeCat = suppsLibCat || "";
+    const chips = ["__all__", "vitamins", "minerals", "performance", "recovery", "health"]
+      .map((c) => {
+        const selected = (c === "__all__" && !activeCat) || (c !== "__all__" && c === activeCat);
+        return `<button type="button" class="chip ${selected ? "selected" : ""}" data-lib-cat="${c}" style="margin:0 4px 6px 0">${c === "__all__" ? t("supps.all_cat") : c}</button>`;
+      })
+      .join("");
+    const cards = filtered
+      .map(
+        (s) => `
+      <div class="glass" style="padding:12px 14px;margin-bottom:8px">
+        <div style="font-weight:700">${s.name}</div>
+        <div class="step-sub">${s.category} · ${s.defaultDose} ${s.unit} · ${s.timing}</div>
+        <div style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;line-height:1.45">${s.benefits || ""}</div>
+        <button type="button" class="btn btn-ghost" style="margin-top:10px;width:auto" data-copy-line="${encodeURIComponent(`${s.name}: ${s.defaultDose} ${s.unit} · ${s.timing}`)}">${t("supps.copy_dose")}</button>
+      </div>`
+      )
+      .join("");
+    root.innerHTML = `
+      <div class="page-enter">
+        ${topTabs}
+        <div class="page-header">
+          <div class="ph-eyebrow">// ${t("supps.lib_eyebrow")}</div>
+          <div class="ph-title">${t("supps.lib_title")}</div>
+          <div class="ph-desc">${t("supps.lib_desc")}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;margin-bottom:10px">${chips}</div>
+        <input type="search" class="field" id="supp-lib-q" placeholder="${t("supps.lib_search")}" value="" />
+        ${filtered.length ? cards : `<div class="empty-hint">${t("supps.lib_empty")}</div>`}
+      </div>`;
+    const inp = root.querySelector("#supp-lib-q");
+    if (inp) inp.value = libQ;
+    inp?.addEventListener("input", (e) => {
+      suppsLibQ = e.target.value;
+      mountSupps(root, profile, plan);
+    });
+    root.querySelectorAll("[data-lib-cat]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const v = b.dataset.libCat;
+        suppsLibCat = v === "__all__" ? "" : v || "";
+        mountSupps(root, profile, plan);
+      });
+    });
+    root.querySelectorAll("[data-copy-line]").forEach((b) => {
+      b.addEventListener("click", () => {
+        const line = decodeURIComponent(b.dataset.copyLine || "");
+        if (line) navigator.clipboard?.writeText(line).catch(() => {});
+      });
+    });
+    root.querySelectorAll("[data-supp-tab]").forEach((b) => {
+      b.addEventListener("click", () => {
+        suppsUiTab = b.dataset.suppTab;
+        mountSupps(root, profile, plan);
+      });
+    });
+    return;
+  }
+
   root.innerHTML = `
     <div class="page-enter">
+      ${topTabs}
       <div class="page-header">
         <div class="ph-eyebrow">// Your stack</div>
         <div class="ph-title">Supplements</div>
@@ -244,6 +329,13 @@ export function mountSupps(root, profile, plan) {
       if (cur[id]) delete cur[id];
       else cur[id] = true;
       saveSuppLog(cur);
+      mountSupps(root, profile, plan);
+    });
+  });
+
+  root.querySelectorAll("[data-supp-tab]").forEach((b) => {
+    b.addEventListener("click", () => {
+      suppsUiTab = b.dataset.suppTab;
       mountSupps(root, profile, plan);
     });
   });

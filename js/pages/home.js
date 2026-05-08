@@ -3,11 +3,68 @@ import { buildDayMeals } from "../plangen.js";
 import { todayKey, getFoodTotals } from "../foodLog.js";
 import { getWeights, logWeight } from "../weightStore.js";
 import { getSwapOverride } from "../mealSwap.js";
+import {
+  ensureBuiltinHabitSlots,
+  updateBuiltinHabitLabels,
+  isBuiltinHabitDone,
+  toggleBuiltinHabit,
+  syncWaterHabitFromGlasses,
+} from "../dashboardHabits.js";
+import { getHealthState } from "../healthStore.js";
 
 const WATER_KEY = "np_water_";
 const CHECKIN_KEY = "np_checkin_";
 const STREAK_KEY = "np_streak";
 const PHOTO_DISMISS_KEY = "np_photo_dismissed";
+
+const MOTIVATION_QUOTES = [
+  "The body achieves what the mind believes.",
+  "Success is the sum of small efforts repeated day in and day out.",
+  "You don't have to be great to start, but you have to start to be great.",
+  "Take care of your body. It's the only place you have to live.",
+  "The groundwork for all happiness is good health.",
+  "Consistency is more important than intensity.",
+  "Your health is an investment, not an expense.",
+  "Small daily improvements are the key to staggering long-term results.",
+  "The pain you feel today will be the strength you feel tomorrow.",
+  "Don't wish for a good body. Work for it.",
+  "Health is not about the weight you lose, but the life you gain.",
+  "Your body hears everything your mind says.",
+  "It's not about being perfect. It's about effort.",
+  "Movement is medicine.",
+  "Progress, not perfection.",
+  "A year from now you'll wish you started today.",
+  "One rep closer. One meal better. One habit built.",
+  "Rest when you must. But never quit.",
+  "Be the version of yourself you're trying to become.",
+  "Every day is a chance to get better.",
+];
+
+function dailyMotivationQuote() {
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((Date.now() - start.getTime()) / 86400000);
+  return MOTIVATION_QUOTES[dayOfYear % MOTIVATION_QUOTES.length];
+}
+
+/** Plan0 §8.1 — SVG calorie ring (consumed vs daily goal). */
+function renderCalorieDonut(consumed, goalKcal) {
+  const goal = goalKcal || 2000;
+  const pct = Math.min(1, (consumed || 0) / goal);
+  const size = 112;
+  const stroke = 10;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const dash = c * (1 - pct);
+  const cx = size / 2;
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" class="cal-donut-svg">
+      <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="${stroke}" />
+      <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="var(--accent-lime)" stroke-width="${stroke}"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${dash}"
+        transform="rotate(-90 ${cx} ${cx})" style="transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1)" />
+      <text x="${cx}" y="${cx + 5}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text)">${Math.round(pct * 100)}%</text>
+    </svg>`;
+}
 
 function renderWeightSection(profile) {
   const weights = getWeights();
@@ -133,10 +190,28 @@ export function mountHome(root, profile, plan) {
     return { ...bm, name: sw || bm.name };
   });
 
-  const streak   = updateStreak();
-  let water      = getWater();
-  const checkin  = getCheckin();
-  const GLASSES  = 8;
+  const glassGoal = getHealthState().settings?.waterGoal ?? 8;
+
+  ensureBuiltinHabitSlots({
+    workout: "🏋️",
+    prep: "🥡",
+    supps: "💊",
+    water: "💧",
+  });
+  updateBuiltinHabitLabels({
+    workout: isWorkout ? "Hit the gym" : "Active rest / walk",
+    prep: "Meals prepped / packed",
+    supps: "Supplements taken",
+    water: t("home.water_goal_lbl", { n: glassGoal }),
+  });
+
+  const streak = updateStreak();
+  let water = getWater();
+  syncWaterHabitFromGlasses(water, glassGoal);
+  const checkin = getCheckin();
+  const GLASSES = glassGoal;
+
+  const calGoal = getHealthState().settings?.calorieGoal ?? plan.targetCalories ?? 0;
 
   const { weekNum } = phaseForWeek(plan);
   const totalWeeks  = profile.durationWeeks || 16;
@@ -166,11 +241,11 @@ export function mountHome(root, profile, plan) {
     { id: "workout",   label: isWorkout ? "Hit the gym" : "Active rest / walk", icon: "🏋️" },
     { id: "prep",      label: "Meals prepped / packed",                          icon: "🥡" },
     { id: "supps",     label: "Supplements taken",                               icon: "💊" },
-    { id: "water",     label: "3L water goal",                                   icon: "💧" },
+    { id: "water", label: t("home.water_goal_lbl", { n: GLASSES }), icon: "💧" },
   ];
 
-  const habitHTML = habits.map(h => {
-    const done = !!checkin[h.id];
+  const habitHTML = habits.map((h) => {
+    const done = isBuiltinHabitDone(h.id);
     return `
       <button type="button" class="habit-item ${done ? "done" : ""}" data-habit="${h.id}">
         <span class="habit-icon">${h.icon}</span>
@@ -246,14 +321,27 @@ export function mountHome(root, profile, plan) {
         <span class="streak-badge">${streak > 0 ? "Active" : "Start today"}</span>
       </div>
 
+      <div class="glass quote-card" role="figure" aria-label="${t("home.daily_quote")}">
+        <div class="quote-card-eyebrow">${t("home.daily_quote")}</div>
+        <blockquote class="quote-card-text">${dailyMotivationQuote()}</blockquote>
+      </div>
+
       <!-- Plan progress bar -->
       <div class="progress-card">
         <div class="progress-card-head">
           <span class="progress-card-title">Plan Progress</span>
-          <span class="progress-card-label">Week ${weekNum} of ${totalWeeks} · ${food.kcal}/${plan.targetCalories ?? 0} ${t("home.kcal_today")}</span>
+          <span class="progress-card-label">Week ${weekNum} of ${totalWeeks} · ${food.kcal}/${calGoal || 0} ${t("home.kcal_today")}</span>
         </div>
         <div class="progress-week-bar">
           <div class="progress-week-fill" style="width:${weekPct}%"></div>
+        </div>
+        <div class="cal-donut-row">
+          ${renderCalorieDonut(food.kcal, calGoal)}
+          <div>
+            <div class="cal-donut-kcal">${Math.max(0, (calGoal || 0) - Math.round(food.kcal))}</div>
+            <div class="cal-donut-lbl">${t("home.kcal_remaining")}</div>
+            <div class="cal-donut-sub">${Math.round(food.kcal)} / ${calGoal || 0} kcal</div>
+          </div>
         </div>
         <div class="progress-ticks">
           <span class="progress-tick">Start</span>
@@ -461,25 +549,31 @@ export function mountHome(root, profile, plan) {
       water = idx < water ? idx : idx + 1;
       water = Math.max(0, Math.min(GLASSES, water));
       setWater(water);
+      syncWaterHabitFromGlasses(water, GLASSES);
       root.querySelectorAll(".water-glass").forEach((g, i) => {
         g.classList.toggle("filled", i < water);
       });
       const cnt = document.getElementById("water-count");
       if (cnt) cnt.textContent = `${water}/${GLASSES}`;
+      const wHabit = root.querySelector('[data-habit="water"]');
+      if (wHabit) {
+        const on = isBuiltinHabitDone("water");
+        wHabit.classList.toggle("done", on);
+        const chk = wHabit.querySelector(".habit-check");
+        if (chk) chk.textContent = on ? "✓" : "";
+      }
     });
   });
 
-  // ── Habit checkin ──
+  // ── Habit checkin (synced with healthStore + legacy check-in) ──
   root.querySelectorAll(".habit-item").forEach((btn) => {
     btn.addEventListener("click", () => {
       const key = btn.dataset.habit;
-      const cur = getCheckin();
-      if (cur[key]) delete cur[key];
-      else cur[key] = true;
-      saveCheckin(cur);
-      btn.classList.toggle("done", !!cur[key]);
+      toggleBuiltinHabit(key);
+      const on = isBuiltinHabitDone(key);
+      btn.classList.toggle("done", on);
       const chk = btn.querySelector(".habit-check");
-      if (chk) chk.textContent = cur[key] ? "✓" : "";
+      if (chk) chk.textContent = on ? "✓" : "";
     });
   });
 

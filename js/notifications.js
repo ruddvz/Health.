@@ -3,6 +3,7 @@
  */
 import { t } from "./i18n.js";
 import { todayKey } from "./foodLog.js";
+import { getHealthState } from "./healthStore.js";
 
 const MEAL_REMINDERS = [
   { tag: "breakfast", title: "Breakfast time", body: "Morning fuel — don't skip it.", hour: 7, min: 0 },
@@ -47,10 +48,11 @@ export function scheduleLocalReminders() {
       if (Notification.permission !== "granted") return;
       const key = "np_water_" + todayKey();
       const glasses = parseInt(localStorage.getItem(key) || "0", 10);
-      if (glasses >= 6) return;
+      const glassGoal = getHealthState().settings?.waterGoal ?? 8;
+      if (glasses >= glassGoal) return;
       try {
         new Notification(t("notify.water_title"), {
-          body: t("notify.water_body", { n: glasses }),
+          body: t("notify.water_body", { n: glasses, g: glassGoal }),
           icon,
           tag: "water-pm",
         });

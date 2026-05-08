@@ -1,6 +1,31 @@
 /**
- * NutriPal shared components — Premium Dark Athletic
+ * Health shared components — Plan0-friendly touch targets
  */
+
+.btn,
+.chip,
+.icon-btn,
+.train-day-btn,
+.lang-card,
+.mood-btn,
+.energy-btn {
+  touch-action: manipulation;
+}
+
+.field,
+.settings-field,
+.weight-input,
+.measure-input,
+.signal-input,
+textarea,
+select,
+input[type="text"],
+input[type="number"],
+input[type="search"],
+input[type="email"],
+input[type="tel"] {
+  font-size: 16px !important;
+}
 
 /* ─── Glass card ─────────────────────────────────── */
 .glass {

@@ -3,6 +3,9 @@ import { buildDayMeals, getSwapAlternatives } from "../plangen.js";
 import { getFoodTotals, isMealEaten, toggleMealEaten } from "../foodLog.js";
 import { getSwapOverride, setSwapOverride } from "../mealSwap.js";
 import { MEAL_TIMING, getMealOptionsForSlot } from "../data/mealOptions.js";
+import { MEAL_PLAN_TEMPLATES } from "../data/mealPlansLibrary.js";
+import { getHealthState, setHealthState } from "../healthStore.js";
+import { importTodayMealsToGrocery } from "../mealToGrocery.js";
 
 const SLOT_TIMES = {
   breakfast: "7:00 AM",
@@ -25,6 +28,47 @@ export function mountMeals(root, profile, plan) {
   let tab = "workout";
 
   let swapSlot = null;
+  let mealScreen = "plan";
+
+  function mealTopNav() {
+    return `
+      <div class="tabs" style="margin-bottom:4px">
+        <button type="button" class="tab ${mealScreen === "plan" ? "active" : ""}" data-meal-screen="plan">${t("meals.screen_plan")}</button>
+        <button type="button" class="tab ${mealScreen === "library" ? "active" : ""}" data-meal-screen="library">${t("meals.screen_library")}</button>
+        <button type="button" class="tab ${mealScreen === "log" ? "active" : ""}" data-meal-screen="log">${t("meals.screen_log")}</button>
+        <button type="button" class="tab ${mealScreen === "favorites" ? "active" : ""}" data-meal-screen="favorites">${t("meals.screen_favorites")}</button>
+      </div>`;
+  }
+
+  function wireMealScreen() {
+    root.querySelectorAll("[data-meal-screen]").forEach((b) => {
+      b.addEventListener("click", () => {
+        mealScreen = b.dataset.mealScreen;
+        closeDrawer();
+        renderInner();
+      });
+    });
+  }
+
+  function collectFoodLogs() {
+    const rows = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || !k.startsWith("np_food_log_")) continue;
+      const date = k.slice("np_food_log_".length);
+      let entries = [];
+      try {
+        entries = JSON.parse(localStorage.getItem(k) || "[]");
+      } catch {
+        entries = [];
+      }
+      for (const e of entries) {
+        rows.push({ date, name: e.name, kcal: e.kcal, mealId: e.mealId });
+      }
+    }
+    rows.sort((a, b) => (a.date + (a.mealId || "")).localeCompare(b.date + (b.mealId || "")));
+    return rows.slice(-100).reverse();
+  }
 
   function closeDrawer() {
     swapSlot = null;
@@ -59,6 +103,73 @@ export function mountMeals(root, profile, plan) {
   }
 
   function renderInner() {
+    if (mealScreen === "library") {
+      const lib = MEAL_PLAN_TEMPLATES.map(
+        (tpl) => `
+        <div class="glass" style="padding:14px;margin-bottom:10px">
+          <div style="font-weight:700">${tpl.name}</div>
+          <div class="step-sub">~${tpl.targetKcal} kcal · ${tpl.days?.length || 0} day pattern</div>
+          ${(tpl.days || [])
+            .map(
+              (d, i) => `
+            <div class="step-sub" style="margin-top:8px;line-height:1.45">
+              <strong>${t("meals.library_day", { n: i + 1 })}</strong><br/>
+              ${d.breakfast}<br/>${d.lunch}<br/>${d.snack || d.extra || ""}<br/>${d.dinner}
+            </div>`
+            )
+            .join("")}
+        </div>`
+      ).join("");
+      root.innerHTML = `${mealTopNav()}<div class="page-enter"><div class="page-header"><div class="ph-title">${t("meals.library_title")}</div><div class="ph-desc">${t("meals.library_sub")}</div></div>${lib}</div>`;
+      wireMealScreen();
+      return;
+    }
+
+    if (mealScreen === "log") {
+      const rows = collectFoodLogs();
+      const body = rows.length
+        ? rows
+            .map(
+              (r) => `
+          <div class="glass" style="padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;gap:8px">
+            <span>${r.name}</span>
+            <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--text-muted)">${r.date} · ${r.kcal || 0} kcal</span>
+          </div>`
+            )
+            .join("")
+        : `<div class="empty-hint">${t("meals.log_empty")}</div>`;
+      root.innerHTML = `${mealTopNav()}<div class="page-enter"><div class="page-header"><div class="ph-title">${t("meals.log_title")}</div></div>${body}</div>`;
+      wireMealScreen();
+      return;
+    }
+
+    if (mealScreen === "favorites") {
+      const favs = getHealthState().meals?.favorites || [];
+      const body = favs.length
+        ? favs
+            .map(
+              (f) => `
+          <div class="glass" style="padding:10px 12px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;gap:10px">
+            <span>${f.name}</span>
+            <button type="button" class="btn btn-ghost" data-remove-fav="${encodeURIComponent(f.name)}">${t("meals.fav_remove")}</button>
+          </div>`
+            )
+            .join("")
+        : `<div class="empty-hint">${t("meals.fav_empty")}</div>`;
+      root.innerHTML = `${mealTopNav()}<div class="page-enter"><div class="page-header"><div class="ph-title">${t("meals.fav_title")}</div></div>${body}</div>`;
+      wireMealScreen();
+      root.querySelectorAll("[data-remove-fav]").forEach((b) => {
+        b.addEventListener("click", () => {
+          const nm = decodeURIComponent(b.dataset.removeFav || "");
+          const s = getHealthState();
+          s.meals.favorites = (s.meals.favorites || []).filter((x) => x.name !== nm);
+          setHealthState(s);
+          renderInner();
+        });
+      });
+      return;
+    }
+
     const forceRest = tab === "rest";
     const baseMeals = buildDayMeals(profile, day, plan.targetCalories, { forceRest });
     const meals = baseMeals.map((bm) => {
@@ -146,6 +257,9 @@ export function mountMeals(root, profile, plan) {
             </button>
             ${hasSwap ? `<button type="button" class="meal-swap-reset" data-reset-slot="${m.slot}">${t("meals.swap_reset")}</button>` : ""}
             ${eatBtn}
+            <button type="button" class="btn btn-ghost meal-fav-btn" style="margin-top:8px;width:auto;padding:8px 12px" data-fav-name="${encodeURIComponent(m.name)}" data-fav-kcal="${m.kcal}" data-fav-slot="${m.slot}">
+              ${t("meals.fav_add")}
+            </button>
           </div>
         </div>`;
       })
@@ -158,6 +272,7 @@ export function mountMeals(root, profile, plan) {
 
     root.innerHTML = `
       <div class="page-enter">
+        ${mealTopNav()}
         <div class="page-header">
           <div class="ph-eyebrow">// 5 meals a day</div>
           <div class="ph-title">Meal Plan</div>
@@ -175,6 +290,10 @@ export function mountMeals(root, profile, plan) {
 
         ${complianceBar}
 
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button type="button" class="btn btn-outline" id="meals-to-grocery" style="width:auto">${t("meals.grocery_import_btn")}</button>
+        </div>
+
         ${totalKcal > 0 ? `
           <div class="info-box info-box-lime" style="margin-bottom:14px">
             <strong>Total today: ~${totalKcal} kcal.</strong>
@@ -183,7 +302,7 @@ export function mountMeals(root, profile, plan) {
               : " Rest day — carbs are lower but protein stays the same. Your body burns stored fat."}
           </div>` : ""}
 
-        ${mealCards || `<div class="empty-hint">${t("meals.rest")}</div>`}
+        ${mealCards || `<div class="empty-hint">${t("meals.rest_empty")}</div>`}
 
         ${(() => {
           const dietType = profile.dietType || "veg";
@@ -222,6 +341,11 @@ export function mountMeals(root, profile, plan) {
       </div>`;
 
     root.querySelector("#swap-close")?.addEventListener("click", closeDrawer);
+
+    root.querySelector("#meals-to-grocery")?.addEventListener("click", () => {
+      const n = importTodayMealsToGrocery(profile, plan);
+      window.alert(t("meals.grocery_import_done", { n: String(n) }));
+    });
 
     root.querySelectorAll("[data-tab]").forEach((b) => {
       b.addEventListener("click", () => {
@@ -264,10 +388,21 @@ export function mountMeals(root, profile, plan) {
       });
     });
 
-    if (swapSlot && templateBySlot[swapSlot]) {
-      openDrawer(swapSlot, templateBySlot[swapSlot]);
-    }
-  }
+    root.querySelectorAll(".meal-fav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const name = decodeURIComponent(btn.dataset.favName || "");
+        const kcal = +btn.dataset.favKcal || 0;
+        const slot = btn.dataset.favSlot || "";
+        const s = getHealthState();
+        const favs = s.meals.favorites || [];
+        if (!favs.some((x) => x.name === name)) favs.push({ name, kcal, slot });
+        s.meals.favorites = favs;
+        setHealthState(s);
+        btn.textContent = t("meals.fav_saved");
+      });
+    });
+
+    wireMealScreen();
 
   renderInner();
 }

@@ -1,6 +1,7 @@
 import { t } from "../i18n.js";
 import { todayKey, getFoodTotals } from "../foodLog.js";
 import { getWeights, logWeight } from "../weightStore.js";
+import { getHealthState, setHealthState } from "../healthStore.js";
 
 const MEASURE_KEY = "np_measurements";
 
@@ -42,6 +43,26 @@ function logMeasuresRow(waist, chest, arms) {
   else arr.push(row);
   arr.sort((a, b) => a.date.localeCompare(b.date));
   saveMeasures(arr);
+}
+
+function renderPhotosSection() {
+  const photos = getHealthState().stats?.photos || [];
+  const grid =
+    photos.length > 0
+      ? photos
+          .map(
+            (p) =>
+              `<div class="photo-thumb-wrap"><img src="${p.dataUrl}" alt="${t("progress.photo_alt")}" width="80" height="80" style="object-fit:cover;border-radius:12px;border:1px solid var(--border)" /></div>`
+          )
+          .join("")
+      : `<p class="step-sub">${t("progress.photos_empty")}</p>`;
+  return `
+      <div class="section-eyebrow">${t("progress.photos_title")}</div>
+      <p class="step-sub">${t("progress.photos_hint")}</p>
+      <label class="btn btn-outline" style="margin:10px 0;display:inline-block;width:auto;cursor:pointer">${t("progress.photos_add")}
+        <input type="file" id="progress-photo-input" accept="image/*" hidden />
+      </label>
+      <div class="photo-grid" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:10px">${grid}</div>`;
 }
 
 function renderWeightChart(weights, startWeight) {
@@ -293,6 +314,8 @@ export function mountProgress(root, profile, plan) {
         ${renderMeasurements(measures)}
       </div>
 
+      ${renderPhotosSection()}
+
       <div class="section-eyebrow">${t("progress.phase_timeline")}</div>
       ${renderPhaseTimeline(plan, profile)}
     </div>`;
@@ -311,5 +334,25 @@ export function mountProgress(root, profile, plan) {
     if (![w, c, a].every((x) => Number.isFinite(x) && x > 0)) return;
     logMeasuresRow(w, c, a);
     mountProgress(root, profile, plan);
+  });
+
+  root.querySelector("#progress-photo-input")?.addEventListener("change", (ev) => {
+    const file = ev.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const s = getHealthState();
+      const list = s.stats.photos || [];
+      list.unshift({
+        id: `${Date.now()}`,
+        date: todayKey(),
+        dataUrl: String(reader.result || ""),
+      });
+      s.stats.photos = list.slice(0, 12);
+      setHealthState(s);
+      mountProgress(root, profile, plan);
+    };
+    reader.readAsDataURL(file);
+    ev.target.value = "";
   });
 }

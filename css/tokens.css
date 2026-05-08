@@ -1,66 +1,76 @@
 /**
- * NutriPal design tokens — Premium Dark Athletic
- * Section 6 of PLAN.md + UI_REDESIGN_PLAN.md
+ * Health PWA — Plan0 forest palette + legacy token names for existing screens.
  */
 
 :root {
-  /* ── Fonts ── */
-  --font-display: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+  /* ── Plan0 primitives (optional direct use) ── */
+  --bg-base: #0a0f0d;
+  --bg-surface: #111a15;
+  --accent-primary: #3ddb7a;
+  --accent-secondary: #2ab862;
+  --text-primary: #f2f7f4;
+
+  /* ── Fonts (Outfit + DM Sans — Google Fonts, Plan0-style pairing) ── */
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
   --font-mono: 'SF Mono', Menlo, 'Courier New', monospace;
 
+  /* ── Layout ── */
+  --nav-height-mobile: 72px;
+  --nav-height-desktop: 64px;
+
   /* ── Background ── */
-  --bg: #000000;
+  --bg: var(--bg-base);
   --bg-gradient:
-    radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212, 245, 60, 0.13) 0%, transparent 55%),
-    radial-gradient(ellipse 80% 50% at 100% 110%, rgba(62, 255, 200, 0.07) 0%, transparent 50%);
+    radial-gradient(ellipse 120% 70% at 50% -15%, rgba(61, 219, 122, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 110%, rgba(42, 184, 98, 0.08) 0%, transparent 50%);
 
   /* ── Surface hierarchy ── */
-  --surface:        rgba(28, 28, 30, 0.72);
-  --surface-low:    rgba(255, 255, 255, 0.03);
-  --surface-mid:    rgba(255, 255, 255, 0.06);
-  --surface-high:   rgba(255, 255, 255, 0.10);
-  --surface-raised: rgba(255, 255, 255, 0.13);
+  --surface:        rgba(17, 26, 21, 0.88);
+  --surface-low:    rgba(61, 219, 122, 0.04);
+  --surface-mid:    rgba(61, 219, 122, 0.07);
+  --surface-high:   rgba(61, 219, 122, 0.11);
+  --surface-raised: rgba(61, 219, 122, 0.15);
 
   /* ── Navigation ── */
-  --nav: rgba(10, 10, 12, 0.94);
+  --nav: rgba(10, 15, 13, 0.96);
 
   /* ── Borders ── */
-  --border:     rgba(255, 255, 255, 0.09);
-  --border-mid: rgba(255, 255, 255, 0.14);
+  --border:     rgba(61, 219, 122, 0.1);
+  --border-mid: rgba(61, 219, 122, 0.18);
 
-  /* ── Primary accents ── */
-  --accent-lime:   #d4f53c;
-  --accent-teal:   #3effc8;
+  /* ── Primary accents (legacy names → Plan0 greens) ── */
+  --accent-lime:   var(--accent-primary);
+  --accent-teal:   #3ecf9a;
   --accent-orange: #ff6030;
-  --accent-purple: #b4a0ff;
-  --accent-gold:   #ffd060;
+  --accent-purple: #9b8cff;
+  --accent-gold:   #e8c547;
 
   /* ── Accent transparencies ── */
-  --lime-10:   rgba(212, 245, 60, 0.10);
-  --lime-15:   rgba(212, 245, 60, 0.15);
-  --lime-20:   rgba(212, 245, 60, 0.20);
-  --teal-10:   rgba(62, 255, 200, 0.10);
-  --teal-15:   rgba(62, 255, 200, 0.15);
-  --orange-10: rgba(255, 96, 48, 0.10);
+  --lime-10:   rgba(61, 219, 122, 0.1);
+  --lime-15:   rgba(61, 219, 122, 0.15);
+  --lime-20:   rgba(61, 219, 122, 0.2);
+  --teal-10:   rgba(62, 207, 154, 0.1);
+  --teal-15:   rgba(62, 207, 154, 0.15);
+  --orange-10: rgba(255, 96, 48, 0.1);
   --orange-15: rgba(255, 96, 48, 0.15);
-  --purple-10: rgba(180, 160, 255, 0.10);
-  --purple-15: rgba(180, 160, 255, 0.15);
+  --purple-10: rgba(155, 140, 255, 0.1);
+  --purple-15: rgba(155, 140, 255, 0.15);
 
   /* ── Text ── */
-  --text:       #ffffff;
-  --text-dim:   rgba(255, 255, 255, 0.55);
-  --text-muted: rgba(255, 255, 255, 0.30);
+  --text:       var(--text-primary);
+  --text-dim:   #8fa897;
+  --text-muted: rgba(143, 168, 151, 0.55);
 
   /* ── Glow box-shadows ── */
-  --glow-lime:   0 0 28px rgba(212, 245, 60, 0.45);
-  --glow-teal:   0 0 28px rgba(62, 255, 200, 0.35);
+  --glow-lime:   0 0 28px rgba(61, 219, 122, 0.35);
+  --glow-teal:   0 0 28px rgba(62, 207, 154, 0.3);
   --glow-orange: 0 0 24px rgba(255, 96, 48, 0.35);
-  --glow-purple: 0 0 24px rgba(180, 160, 255, 0.30);
+  --glow-purple: 0 0 24px rgba(155, 140, 255, 0.28);
 
   /* ── Gradients ── */
-  --gradient-lime: linear-gradient(135deg, #d4f53c 0%, #b8d900 100%);
-  --gradient-teal: linear-gradient(135deg, #3effc8 0%, #00d4a0 100%);
+  --gradient-lime: linear-gradient(135deg, #3ddb7a 0%, #2ab862 100%);
+  --gradient-teal: linear-gradient(135deg, #3ecf9a 0%, #1fa87a 100%);
 
   /* ── Border radius ── */
   --radius-card: 20px;
@@ -89,29 +99,83 @@
   /* ── Safe areas ── */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-top:    env(safe-area-inset-top, 0px);
+  --safe-left:   env(safe-area-inset-left, 0px);
+  --safe-right:  env(safe-area-inset-right, 0px);
 }
 
 /* ── Light mode overrides ── */
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f2f2f7;
+    --bg-base: #f4f7f5;
+    --bg-surface: #ffffff;
+    --text-primary: #0a0f0d;
+    --bg: var(--bg-base);
     --bg-gradient:
-      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(0, 122, 255, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 120% 80% at 50% -10%, rgba(61, 219, 122, 0.08) 0%, transparent 55%),
       radial-gradient(ellipse 90% 50% at 0% 100%, rgba(0, 0, 0, 0.03) 0%, transparent 45%);
-    --surface:        rgba(255, 255, 255, 0.82);
-    --surface-low:    rgba(0, 0, 0, 0.02);
-    --surface-mid:    rgba(0, 0, 0, 0.04);
-    --surface-high:   rgba(0, 0, 0, 0.07);
-    --surface-raised: rgba(0, 0, 0, 0.10);
-    --nav:        rgba(255, 255, 255, 0.92);
-    --border:     rgba(0, 0, 0, 0.08);
-    --border-mid: rgba(0, 0, 0, 0.14);
-    --text:       #0a0a0a;
-    --text-dim:   rgba(0, 0, 0, 0.55);
-    --text-muted: rgba(0, 0, 0, 0.35);
+    --surface:        rgba(255, 255, 255, 0.9);
+    --surface-low:    rgba(61, 219, 122, 0.05);
+    --surface-mid:    rgba(61, 219, 122, 0.08);
+    --surface-high:   rgba(61, 219, 122, 0.12);
+    --surface-raised: rgba(61, 219, 122, 0.16);
+    --nav:        rgba(255, 255, 255, 0.94);
+    --border:     rgba(10, 15, 13, 0.08);
+    --border-mid: rgba(10, 15, 13, 0.14);
+    --text:       var(--text-primary);
+    --text-dim:   rgba(10, 15, 13, 0.55);
+    --text-muted: rgba(10, 15, 13, 0.38);
     --shadow-glass: 0 8px 28px rgba(0, 0, 0, 0.08);
     --shadow-card:  0 4px 16px rgba(0, 0, 0, 0.06);
   }
+}
+
+/* Explicit theme on <html> (Plan0 §8.8) — wins over OS preference */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-base: #0a0f0d;
+  --bg-surface: #111a15;
+  --text-primary: #f2f7f4;
+  --bg: var(--bg-base);
+  --bg-gradient:
+    radial-gradient(ellipse 120% 70% at 50% -15%, rgba(61, 219, 122, 0.12) 0%, transparent 55%),
+    radial-gradient(ellipse 80% 50% at 100% 110%, rgba(42, 184, 98, 0.08) 0%, transparent 50%);
+  --surface:        rgba(17, 26, 21, 0.88);
+  --surface-low:    rgba(61, 219, 122, 0.04);
+  --surface-mid:    rgba(61, 219, 122, 0.07);
+  --surface-high:   rgba(61, 219, 122, 0.11);
+  --surface-raised: rgba(61, 219, 122, 0.15);
+  --nav: rgba(10, 15, 13, 0.96);
+  --border:     rgba(61, 219, 122, 0.1);
+  --border-mid: rgba(61, 219, 122, 0.18);
+  --text:       var(--text-primary);
+  --text-dim:   #8fa897;
+  --text-muted: rgba(143, 168, 151, 0.55);
+  --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.40);
+  --shadow-card:  0 4px 20px rgba(0, 0, 0, 0.30);
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg-base: #f4f7f5;
+  --bg-surface: #ffffff;
+  --text-primary: #0a0f0d;
+  --bg: var(--bg-base);
+  --bg-gradient:
+    radial-gradient(ellipse 120% 80% at 50% -10%, rgba(61, 219, 122, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 90% 50% at 0% 100%, rgba(0, 0, 0, 0.03) 0%, transparent 45%);
+  --surface:        rgba(255, 255, 255, 0.9);
+  --surface-low:    rgba(61, 219, 122, 0.05);
+  --surface-mid:    rgba(61, 219, 122, 0.08);
+  --surface-high:   rgba(61, 219, 122, 0.12);
+  --surface-raised: rgba(61, 219, 122, 0.16);
+  --nav:        rgba(255, 255, 255, 0.94);
+  --border:     rgba(10, 15, 13, 0.08);
+  --border-mid: rgba(10, 15, 13, 0.14);
+  --text:       var(--text-primary);
+  --text-dim:   rgba(10, 15, 13, 0.55);
+  --text-muted: rgba(10, 15, 13, 0.38);
+  --shadow-glass: 0 8px 28px rgba(0, 0, 0, 0.08);
+  --shadow-card:  0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
 /* ── Global reset ── */
@@ -144,6 +208,7 @@ body {
   text-size-adjust: 100%;
   padding-top: var(--safe-top);
   overflow-x: hidden;
+  overscroll-behavior-y: none;
 }
 
 button,
@@ -164,4 +229,20 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
   margin: 0;
   line-height: 1.15;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-lime);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
