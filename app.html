@@ -3,30 +3,43 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#000000" />
-    <title>NutriPal</title>
+    <meta name="theme-color" content="#3DDB7A" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#2AB862" media="(prefers-color-scheme: light)" />
+    <title>Health</title>
+    <meta name="description" content="Offline-first personal health companion — meals, supplements, and habits on your device." />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Health" />
     <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="icons/icon-152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="css/tokens.css" />
     <link rel="stylesheet" href="css/components.css" />
     <link rel="stylesheet" href="css/onboarding.css" />
     <link rel="stylesheet" href="css/app.css" />
   </head>
   <body>
-    <div class="app-shell">
-      <header class="app-top">
-        <div class="app-title" id="app-name">.</div>
-        <button type="button" class="icon-btn" id="settings-btn" aria-label="Settings">⚙</button>
-      </header>
-      <main class="page-stack" id="app-main"></main>
+    <div class="app-layout">
+      <div class="app-maincol">
+        <div class="app-shell">
+          <header class="app-top">
+            <div class="app-title" id="app-name">.</div>
+            <button type="button" class="icon-btn" id="settings-btn" aria-label="Settings">⚙</button>
+          </header>
+          <main class="page-stack" id="app-main"></main>
+        </div>
+      </div>
+      <nav class="app-nav" aria-label="Main">
+        <div class="app-nav-inner" id="bottom-nav"></div>
+      </nav>
     </div>
-    <nav class="app-nav" aria-label="Main">
-      <div class="app-nav-inner" id="bottom-nav"></div>
-    </nav>
+
     <div class="settings-panel" id="settings-panel">
       <div class="glass settings-sheet settings-sheet-wide">
         <h2 id="settings-title">Settings</h2>
@@ -64,12 +77,45 @@
           </div>
         </div>
 
+        <div class="settings-block settings-block--data">
+          <span class="label" id="lbl-data">Your data</span>
+          <p class="step-sub settings-data-hint" id="settings-data-hint"></p>
+          <div class="data-actions">
+            <button type="button" class="btn btn-outline" id="data-export"></button>
+            <button type="button" class="btn btn-outline" id="data-import-btn"></button>
+            <input type="file" id="data-import-file" accept="application/json,.json" hidden />
+            <button type="button" class="btn btn-ghost data-danger" id="data-clear-btn"></button>
+          </div>
+        </div>
+
         <div class="footer-actions settings-footer">
           <button type="button" class="btn btn-primary" id="settings-save">Save changes</button>
           <button type="button" class="btn btn-ghost" id="settings-close">Close</button>
         </div>
       </div>
     </div>
+
+    <div class="modal-root" id="clear-data-modal" hidden>
+      <div class="modal-root__backdrop" data-close-clear-modal></div>
+      <div class="glass modal-root__sheet" role="dialog" aria-modal="true" aria-labelledby="clear-modal-title">
+        <h3 class="modal-root__title" id="clear-modal-title"></h3>
+        <p class="step-sub" id="clear-modal-body"></p>
+        <label class="label" for="clear-data-input" id="clear-modal-input-lbl"></label>
+        <input class="field" type="text" id="clear-data-input" autocomplete="off" />
+        <div class="footer-actions modal-root__actions">
+          <button type="button" class="btn btn-ghost" id="clear-data-cancel"></button>
+          <button type="button" class="btn btn-primary" id="clear-data-confirm" disabled></button>
+        </div>
+      </div>
+    </div>
+
     <script type="module" src="js/app.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch(() => {});
+        });
+      }
+    </script>
   </body>
 </html>

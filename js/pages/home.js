@@ -9,6 +9,35 @@ const CHECKIN_KEY = "np_checkin_";
 const STREAK_KEY = "np_streak";
 const PHOTO_DISMISS_KEY = "np_photo_dismissed";
 
+const MOTIVATION_QUOTES = [
+  "The body achieves what the mind believes.",
+  "Success is the sum of small efforts repeated day in and day out.",
+  "You don't have to be great to start, but you have to start to be great.",
+  "Take care of your body. It's the only place you have to live.",
+  "The groundwork for all happiness is good health.",
+  "Consistency is more important than intensity.",
+  "Your health is an investment, not an expense.",
+  "Small daily improvements are the key to staggering long-term results.",
+  "The pain you feel today will be the strength you feel tomorrow.",
+  "Don't wish for a good body. Work for it.",
+  "Health is not about the weight you lose, but the life you gain.",
+  "Your body hears everything your mind says.",
+  "It's not about being perfect. It's about effort.",
+  "Movement is medicine.",
+  "Progress, not perfection.",
+  "A year from now you'll wish you started today.",
+  "One rep closer. One meal better. One habit built.",
+  "Rest when you must. But never quit.",
+  "Be the version of yourself you're trying to become.",
+  "Every day is a chance to get better.",
+];
+
+function dailyMotivationQuote() {
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((Date.now() - start.getTime()) / 86400000);
+  return MOTIVATION_QUOTES[dayOfYear % MOTIVATION_QUOTES.length];
+}
+
 function renderWeightSection(profile) {
   const weights = getWeights();
   const today = todayKey();
@@ -244,6 +273,11 @@ export function mountHome(root, profile, plan) {
           <div>Keep showing up — consistency is the entire game.</div>
         </div>
         <span class="streak-badge">${streak > 0 ? "Active" : "Start today"}</span>
+      </div>
+
+      <div class="glass quote-card" role="figure" aria-label="${t("home.daily_quote")}">
+        <div class="quote-card-eyebrow">${t("home.daily_quote")}</div>
+        <blockquote class="quote-card-text">${dailyMotivationQuote()}</blockquote>
       </div>
 
       <!-- Plan progress bar -->

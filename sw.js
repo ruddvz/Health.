@@ -1,9 +1,13 @@
-const CACHE = "nutripal-v13";
+const CACHE = "health-pwa-v1";
 /** Paths relative to the service worker scope (works on GitHub Pages `/repo/`). */
+const FONT_CSS =
+  "https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@400;500;600;700;800;900&display=swap";
+
 const ASSET_PATHS = [
   "./",
   "index.html",
   "app.html",
+  "offline.html",
   "manifest.json",
   "css/tokens.css",
   "css/components.css",
@@ -30,8 +34,20 @@ const ASSET_PATHS = [
   "js/pages/supps.js",
   "js/pages/progress.js",
   "js/pages/tools.js",
+  "icons/icon-72.png",
+  "icons/icon-96.png",
+  "icons/icon-128.png",
+  "icons/icon-144.png",
+  "icons/icon-152.png",
+  "icons/icon-192.png",
+  "icons/icon-384.png",
+  "icons/icon-512.png",
+  "icons/maskable-512.png",
+  "screenshots/mobile-home.png",
+  "screenshots/desktop-home.png",
   "assets/icons/icon-192.png",
   "assets/icons/icon-512.png",
+  FONT_CSS,
 ];
 
 function scopeUrls() {
@@ -53,7 +69,7 @@ self.addEventListener("push", (event) => {
   const scopeBase = self.registration?.scope || self.location.href.replace(/\/[^/]+$/, "/");
   const iconUrl = new URL("assets/icons/icon-192.png", scopeBase).href;
   event.waitUntil(
-    self.registration.showNotification(data.title || "NutriPal", {
+    self.registration.showNotification(data.title || "Health", {
       body: data.body || "",
       icon: iconUrl,
       badge: iconUrl,
@@ -105,7 +121,9 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   const path = url.pathname;
   const isHtml = req.mode === "navigate" || path.endsWith(".html") || path === "/" || path === "";
-  const indexUrl = new URL("index.html", self.registration?.scope || url.origin + "/").href;
+  const scopeBase = self.registration?.scope || new URL("./", url).href;
+  const indexUrl = new URL("index.html", scopeBase).href;
+  const offlineUrl = new URL("offline.html", scopeBase).href;
 
   if (isHtml) {
     e.respondWith(
@@ -115,7 +133,9 @@ self.addEventListener("fetch", (e) => {
           caches.open(CACHE).then((c) => c.put(req, copy));
           return res;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match(indexUrl)))
+        .catch(() =>
+          caches.match(req).then((r) => r || caches.match(offlineUrl).then((o) => o || caches.match(indexUrl)))
+        )
     );
     return;
   }

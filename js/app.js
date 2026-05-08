@@ -1,4 +1,13 @@
-import { getProfile, getPlan, setLang, setProfile, setPlan } from "./store.js";
+import {
+  getProfile,
+  getPlan,
+  setLang,
+  setProfile,
+  setPlan,
+  exportLocalBackup,
+  importLocalBackup,
+  clearAllAppStorage,
+} from "./store.js";
 import { generatePlan } from "./plangen.js";
 import { t } from "./i18n.js";
 import { mountHome } from "./pages/home.js";
@@ -11,7 +20,25 @@ import { mountSupps } from "./pages/supps.js";
 import { mountTools } from "./pages/tools.js";
 import { maybeAskNotifications } from "./notifications.js";
 
-let route = "home";
+const ROUTE_IDS = ["home", "phases", "meals", "prep", "progress", "grocery", "supps", "tools"];
+
+/** Map Plan0-style `?screen=` values to in-app routes (see manifest shortcuts). */
+const SCREEN_ALIAS = {
+  dashboard: "home",
+  home: "home",
+  meals: "meals",
+  supplements: "supps",
+  supps: "supps",
+  workout: "prep",
+  prep: "prep",
+  habits: "tools",
+  tools: "tools",
+  stats: "progress",
+  progress: "progress",
+  grocery: "grocery",
+  phases: "phases",
+  settings: "settings",
+};
 
 const NAV_ICONS = {
   home: `<svg viewBox="0 0 20 20" fill="currentColor"><path d="M8 17v-5h4v5h4V9.5l-6-5-6 5V17h4z"/></svg>`,
@@ -23,6 +50,52 @@ const NAV_ICONS = {
   progress: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16h14M5 13l3-4 2 2 5-6 3 4"/></svg>`,
   tools: `<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="8.5" cy="8.5" r="5"/><path d="M13 13l4 4"/></svg>`,
 };
+
+function readScreenParam() {
+  const p = new URLSearchParams(window.location.search);
+  return (p.get("screen") || "").toLowerCase().trim();
+}
+
+function readHashRoute() {
+  return (window.location.hash || "").replace(/^#\/?/, "").toLowerCase() || null;
+}
+
+function resolveRouteFromLocation() {
+  const qs = readScreenParam();
+  if (qs && SCREEN_ALIAS[qs]) return SCREEN_ALIAS[qs];
+  const h = readHashRoute();
+  if (h && ROUTE_IDS.includes(h)) return h;
+  if (h && SCREEN_ALIAS[h]) return SCREEN_ALIAS[h];
+  return null;
+}
+
+function syncUrlFromRoute() {
+  const url = new URL(window.location.href);
+  url.hash = route;
+  url.searchParams.delete("screen");
+  const cur = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  if (cur !== next) history.replaceState(null, "", next);
+}
+
+let route = "home";
+let openSettingsOnLaunch = false;
+
+function initRouteFromUrl() {
+  const resolved = resolveRouteFromLocation();
+  if (resolved === "settings") {
+    openSettingsOnLaunch = true;
+    route = "home";
+    return;
+  }
+  if (resolved && ROUTE_IDS.includes(resolved)) {
+    route = resolved;
+    return;
+  }
+  route = "home";
+}
+
+initRouteFromUrl();
 
 function ensureAuth() {
   if (!getProfile()) {
@@ -56,6 +129,7 @@ function renderNav() {
   nav.querySelectorAll("[data-route]").forEach((btn) => {
     btn.addEventListener("click", () => {
       route = btn.dataset.route;
+      syncUrlFromRoute();
       render();
     });
   });
@@ -70,7 +144,6 @@ function renderMain() {
   if (!profile) return;
 
   if (!plan) {
-    // Plan missing — try to regenerate silently before rendering.
     try {
       plan = generatePlan(profile);
       setPlan(plan);
@@ -107,11 +180,26 @@ function render() {
   if (!ensureAuth()) return;
   renderNav();
   renderMain();
+  syncUrlFromRoute();
 }
 
 document.addEventListener("np-route", (e) => {
-  if (e.detail) {
+  if (e.detail && ROUTE_IDS.includes(e.detail)) {
     route = e.detail;
+    syncUrlFromRoute();
+    render();
+  }
+});
+
+window.addEventListener("hashchange", () => {
+  const resolved = resolveRouteFromLocation();
+  if (resolved === "settings") {
+    document.getElementById("settings-panel")?.classList.add("open");
+    populateSettingsFields();
+    return;
+  }
+  if (resolved && ROUTE_IDS.includes(resolved) && resolved !== route) {
+    route = resolved;
     render();
   }
 });
@@ -133,26 +221,124 @@ function populateSettingsFields() {
   syncTrainDayButtons(profile);
 }
 
+function translateSettingsChrome(panel) {
+  const titleEl = document.getElementById("settings-title");
+  const subEl = document.getElementById("settings-sub");
+  const closeEl = document.getElementById("settings-close");
+  const saveEl = document.getElementById("settings-save");
+  if (titleEl) titleEl.textContent = t("settings.title");
+  if (subEl) subEl.textContent = t("settings.subtitle");
+  if (closeEl) closeEl.textContent = t("settings.close");
+  if (saveEl) saveEl.textContent = t("settings.save");
+  document.getElementById("lbl-weight") && (document.getElementById("lbl-weight").textContent = t("settings.weight_lbl"));
+  document.getElementById("lbl-train") && (document.getElementById("lbl-train").textContent = t("settings.train_lbl"));
+  document.getElementById("lbl-city") && (document.getElementById("lbl-city").textContent = t("settings.city_lbl"));
+  document.getElementById("lbl-lang") && (document.getElementById("lbl-lang").textContent = t("settings.lang_lbl"));
+  const cityInp = document.getElementById("edit-city");
+  if (cityInp) cityInp.placeholder = t("settings.city_ph");
+
+  document.getElementById("lbl-data") && (document.getElementById("lbl-data").textContent = t("settings.data_title"));
+  const hint = document.getElementById("settings-data-hint");
+  if (hint) hint.textContent = t("settings.data_privacy_hint");
+  const exp = document.getElementById("data-export");
+  const imp = document.getElementById("data-import-btn");
+  const clr = document.getElementById("data-clear-btn");
+  if (exp) exp.textContent = t("settings.data_export");
+  if (imp) imp.textContent = t("settings.data_import");
+  if (clr) clr.textContent = t("settings.data_clear");
+
+  document.getElementById("clear-modal-title") && (document.getElementById("clear-modal-title").textContent = t("settings.data_clear"));
+  document.getElementById("clear-modal-body") && (document.getElementById("clear-modal-body").textContent = t("settings.data_clear_modal"));
+  document.getElementById("clear-modal-input-lbl") &&
+    (document.getElementById("clear-modal-input-lbl").textContent = t("settings.data_clear_input"));
+  document.getElementById("clear-data-cancel") && (document.getElementById("clear-data-cancel").textContent = t("settings.data_cancel"));
+  document.getElementById("clear-data-confirm") && (document.getElementById("clear-data-confirm").textContent = t("settings.data_clear_btn"));
+
+  document.getElementById("settings-btn")?.setAttribute("aria-label", t("settings.title"));
+  populateSettingsFields();
+  panel?.classList.add("open");
+}
+
+function setupClearDataModal() {
+  const modal = document.getElementById("clear-data-modal");
+  const input = document.getElementById("clear-data-input");
+  const confirmBtn = document.getElementById("clear-data-confirm");
+  const cancelBtn = document.getElementById("clear-data-cancel");
+
+  function closeModal() {
+    modal?.setAttribute("hidden", "");
+    if (input) input.value = "";
+    if (confirmBtn) confirmBtn.disabled = true;
+  }
+
+  function openModal() {
+    modal?.removeAttribute("hidden");
+    if (input) {
+      input.value = "";
+      input.focus();
+    }
+    if (confirmBtn) confirmBtn.disabled = true;
+  }
+
+  input?.addEventListener("input", () => {
+    if (confirmBtn) confirmBtn.disabled = input.value.trim() !== "DELETE";
+  });
+
+  cancelBtn?.addEventListener("click", closeModal);
+  modal?.querySelectorAll("[data-close-clear-modal]").forEach((el) => {
+    el.addEventListener("click", closeModal);
+  });
+
+  confirmBtn?.addEventListener("click", () => {
+    if (input?.value.trim() !== "DELETE") return;
+    clearAllAppStorage();
+    window.location.href = "index.html";
+  });
+
+  document.getElementById("data-clear-btn")?.addEventListener("click", () => {
+    openModal();
+  });
+
+  return { openModal, closeModal };
+}
+
+function setupDataBackup() {
+  document.getElementById("data-export")?.addEventListener("click", () => {
+    const json = exportLocalBackup();
+    const blob = new Blob([json], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "health-backup.json";
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  const fileInput = document.getElementById("data-import-file");
+  document.getElementById("data-import-btn")?.addEventListener("click", () => fileInput?.click());
+
+  fileInput?.addEventListener("change", () => {
+    const f = fileInput.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const ok = importLocalBackup(String(reader.result || ""));
+      if (ok) {
+        window.alert(t("settings.data_import_ok"));
+        window.location.reload();
+      } else {
+        window.alert(t("settings.data_import_err"));
+      }
+      fileInput.value = "";
+    };
+    reader.readAsText(f);
+  });
+}
+
 function setupSettings() {
   const panel = document.getElementById("settings-panel");
 
   document.getElementById("settings-btn")?.addEventListener("click", () => {
-    const titleEl = document.getElementById("settings-title");
-    const subEl = document.getElementById("settings-sub");
-    const closeEl = document.getElementById("settings-close");
-    const saveEl = document.getElementById("settings-save");
-    if (titleEl) titleEl.textContent = t("settings.title");
-    if (subEl) subEl.textContent = t("settings.subtitle");
-    if (closeEl) closeEl.textContent = t("settings.close");
-    if (saveEl) saveEl.textContent = t("settings.save");
-    document.getElementById("lbl-weight") && (document.getElementById("lbl-weight").textContent = t("settings.weight_lbl"));
-    document.getElementById("lbl-train") && (document.getElementById("lbl-train").textContent = t("settings.train_lbl"));
-    document.getElementById("lbl-city") && (document.getElementById("lbl-city").textContent = t("settings.city_lbl"));
-    document.getElementById("lbl-lang") && (document.getElementById("lbl-lang").textContent = t("settings.lang_lbl"));
-    const cityInp = document.getElementById("edit-city");
-    if (cityInp) cityInp.placeholder = t("settings.city_ph");
-    populateSettingsFields();
-    panel?.classList.add("open");
+    translateSettingsChrome(panel);
   });
 
   panel?.addEventListener("click", (e) => {
@@ -190,6 +376,9 @@ function setupSettings() {
     panel?.classList.remove("open");
     render();
   });
+
+  setupClearDataModal();
+  setupDataBackup();
 }
 
 function setupInstallBanner() {
@@ -235,6 +424,7 @@ setupSettings();
 setupInstallBanner();
 maybeAskNotifications();
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("sw.js").catch(() => {});
+if (openSettingsOnLaunch) {
+  const panel = document.getElementById("settings-panel");
+  translateSettingsChrome(panel);
 }

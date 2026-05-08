@@ -47,7 +47,7 @@ function render() {
   if (step === 0) {
     root.innerHTML = `
       <div class="page-enter">
-        <p class="app-brand" style="margin-bottom:24px">NutriPal</p>
+        <p class="app-brand" style="margin-bottom:24px">Health</p>
         <h1 class="step-title">${t("lang.pick")}</h1>
         <p class="step-sub">Your language. Your plan.</p>
         <div class="lang-grid">
@@ -87,7 +87,7 @@ function render() {
     root.innerHTML = `
       <div class="page-enter splash-wrap">
         <div>
-          <div class="splash-brand">NutriPal.</div>
+          <div class="splash-brand">Health.</div>
           <h1 class="splash-headline">${t("lang.sample_" + lang)}</h1>
           <p class="splash-sub">Built around your body, your goal, and your life. Not a generic plan — yours.</p>
         </div>
