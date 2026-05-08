@@ -38,6 +38,26 @@ function dailyMotivationQuote() {
   return MOTIVATION_QUOTES[dayOfYear % MOTIVATION_QUOTES.length];
 }
 
+/** Plan0 §8.1 — SVG calorie ring (consumed vs daily goal). */
+function renderCalorieDonut(consumed, goalKcal) {
+  const goal = goalKcal || 2000;
+  const pct = Math.min(1, (consumed || 0) / goal);
+  const size = 112;
+  const stroke = 10;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const dash = c * (1 - pct);
+  const cx = size / 2;
+  return `
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true" class="cal-donut-svg">
+      <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="${stroke}" />
+      <circle cx="${cx}" cy="${cx}" r="${r}" fill="none" stroke="var(--accent-lime)" stroke-width="${stroke}"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${dash}"
+        transform="rotate(-90 ${cx} ${cx})" style="transition: stroke-dashoffset 0.6s cubic-bezier(0.4,0,0.2,1)" />
+      <text x="${cx}" y="${cx + 5}" text-anchor="middle" font-size="15" font-weight="800" fill="var(--text)">${Math.round(pct * 100)}%</text>
+    </svg>`;
+}
+
 function renderWeightSection(profile) {
   const weights = getWeights();
   const today = todayKey();
@@ -288,6 +308,14 @@ export function mountHome(root, profile, plan) {
         </div>
         <div class="progress-week-bar">
           <div class="progress-week-fill" style="width:${weekPct}%"></div>
+        </div>
+        <div class="cal-donut-row">
+          ${renderCalorieDonut(food.kcal, plan.targetCalories)}
+          <div>
+            <div class="cal-donut-kcal">${Math.max(0, (plan.targetCalories || 0) - Math.round(food.kcal))}</div>
+            <div class="cal-donut-lbl">${t("home.kcal_remaining")}</div>
+            <div class="cal-donut-sub">${Math.round(food.kcal)} / ${plan.targetCalories ?? 0} kcal</div>
+          </div>
         </div>
         <div class="progress-ticks">
           <span class="progress-tick">Start</span>

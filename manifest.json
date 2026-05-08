@@ -48,7 +48,7 @@
     },
     {
       "name": "Log Workout",
-      "url": "./app.html?screen=prep",
+      "url": "./app.html?screen=workout",
       "icons": [{ "src": "./icons/icon-96.png", "sizes": "96x96", "type": "image/png" }]
     },
     {
