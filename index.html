@@ -234,8 +234,10 @@
         overflow: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
-        padding: 4px 0 calc(138px + env(safe-area-inset-bottom, 0px));
-        scroll-padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px));
+        position: relative;
+        z-index: 0;
+        padding: 4px 0 calc(148px + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(138px + env(safe-area-inset-bottom, 0px));
       }
 
       #screen-form .section {
@@ -1163,19 +1165,24 @@
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 20;
-        padding: 0;
+        z-index: 100;
+        padding: 10px 0 0;
         padding-bottom: env(safe-area-inset-bottom, 0px);
         background: transparent;
-        pointer-events: auto;
+        pointer-events: none;
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
       }
 
       .sticky-bar-sheet {
+        pointer-events: auto;
+        position: relative;
+        z-index: 101;
         margin: 0;
-        padding: 12px 16px 14px;
+        padding: 18px 16px 16px;
         padding-left: max(16px, env(safe-area-inset-left, 0px));
         padding-right: max(16px, env(safe-area-inset-right, 0px));
-        padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
         background: rgba(10, 15, 13, 0.94);
         backdrop-filter: blur(26px) saturate(175%);
         -webkit-backdrop-filter: blur(26px) saturate(175%);
@@ -1188,8 +1195,8 @@
       .sticky-json-strip {
         display: flex;
         justify-content: center;
-        margin-bottom: 14px;
-        padding-top: 6px;
+        margin-bottom: 18px;
+        padding-top: 4px;
       }
 
       .btn-intake-json-pill {
@@ -1229,10 +1236,6 @@
         display: flex;
         gap: 10px;
         align-items: stretch;
-      }
-
-      .sticky-bar-row > button {
-        pointer-events: auto;
       }
 
       .sticky-bar .btn-intake-back {
@@ -6181,43 +6184,52 @@ Important instructions:
             })
           );
 
-          $("#btn-intake-back").addEventListener("click", () => {
-            const s = getIntakeStep();
-            if (s > 0) setIntakeStep(s - 1);
-          });
-          $("#btn-intake-next").addEventListener("click", () => {
-            const s = getIntakeStep();
-            if (!validateSection(s)) return;
-            if (s < INTAKE_LAST_STEP) setIntakeStep(s + 1);
-          });
-
-          $("#btn-generate").addEventListener("click", () => {
-            if (!validateAll()) return;
-            const data = collectFormData();
-            try {
-              localStorage.setItem("health_form", JSON.stringify(data));
-            } catch (_) {}
-            const prompt = buildPrompt(data);
-            sessionStorage.setItem("health_last_prompt", prompt);
-            $("#prompt-text").value = prompt;
-            setStage("prompt");
-          });
-
           wirePromptFlow();
 
-          const btnFormPlan = $$(".btn-form-upload-trigger");
-          if (btnFormPlan.length) {
-            btnFormPlan.forEach((btnFormPlanBtn) => {
-              btnFormPlanBtn.addEventListener("click", () => {
+          const stickySheet = $("#screen-form .sticky-bar-sheet");
+          if (stickySheet) {
+            stickySheet.addEventListener("click", (e) => {
+              const btn = e.target.closest("button");
+              if (!btn || !stickySheet.contains(btn)) return;
+
+              if (btn.classList.contains("btn-form-upload-trigger")) {
                 const fe = $("#form-plan-upload-error");
                 if (fe) {
                   fe.hidden = true;
                   fe.textContent = "";
                 }
-                $("#json-error-card").hidden = true;
-                $("#json-error-detail").textContent = "";
-                $("#input-plan-json").click();
-              });
+                const jec = $("#json-error-card");
+                if (jec) jec.hidden = true;
+                const jed = $("#json-error-detail");
+                if (jed) jed.textContent = "";
+                const fin = $("#input-plan-json");
+                if (fin) fin.click();
+                return;
+              }
+
+              if (btn.id === "btn-intake-back") {
+                const s = getIntakeStep();
+                if (s > 0) setIntakeStep(s - 1);
+                return;
+              }
+              if (btn.id === "btn-intake-next") {
+                const s = getIntakeStep();
+                if (!validateSection(s)) return;
+                if (s < INTAKE_LAST_STEP) setIntakeStep(s + 1);
+                return;
+              }
+              if (btn.id === "btn-generate") {
+                if (btn.disabled) return;
+                if (!validateAll()) return;
+                const data = collectFormData();
+                try {
+                  localStorage.setItem("health_form", JSON.stringify(data));
+                } catch (_) {}
+                const prompt = buildPrompt(data);
+                sessionStorage.setItem("health_last_prompt", prompt);
+                $("#prompt-text").value = prompt;
+                setStage("prompt");
+              }
             });
           }
 
