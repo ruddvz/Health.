@@ -743,8 +743,298 @@
         height: 24px;
       }
 
-      .tab-btn.on {
+      .tab-bar button.tab-btn {
+        -webkit-appearance: none;
+        appearance: none;
+        margin: 0;
+      }
+
+      .tab-btn:active {
+        opacity: 0.85;
+      }
+
+      /* Screen 3 — shell & Home */
+      .app-top-bar {
+        position: relative;
+        flex-shrink: 0;
+        z-index: 15;
+        background: var(--bg);
+        border-bottom: 0.5px solid var(--sep2);
+      }
+
+      .app-top-bar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 16px;
+        padding-top: calc(10px + env(safe-area-inset-top, 0px));
+      }
+
+      .app-brand {
+        font-weight: 700;
+        font-size: 20px;
+        letter-spacing: -0.02em;
+      }
+
+      .menu-trigger {
+        font-size: 22px;
+        line-height: 1;
+        letter-spacing: 1px;
+        padding: 8px 14px;
+      }
+
+      .app-menu-dropdown {
+        position: absolute;
+        right: 12px;
+        top: calc(100% + 4px);
+        background: var(--card);
+        border-radius: 12px;
+        box-shadow: var(--shadow-md);
+        min-width: 208px;
+        overflow: hidden;
+        z-index: 25;
+      }
+
+      .app-menu-item {
+        display: block;
+        width: 100%;
+        padding: 14px 16px;
+        border: none;
+        background: none;
+        font-size: 17px;
+        text-align: left;
+        color: var(--lbl1);
+        cursor: pointer;
+      }
+
+      .app-menu-item:active {
+        background: var(--card-pressed);
+      }
+
+      .app-body-scroll {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+
+      .app-panel {
+        animation: appFade 0.22s ease;
+      }
+
+      @keyframes appFade {
+        from {
+          opacity: 0.55;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .home-hero {
+        padding: 12px 0 16px;
+      }
+
+      .home-greeting {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        margin: 0;
+        line-height: 1.12;
+      }
+
+      .home-sub {
+        margin: 10px 0 0;
+        font-size: 15px;
+        color: var(--lbl2);
+      }
+
+      .photo-reminder-card {
+        padding: 16px;
+        margin-bottom: 16px;
+        border-radius: var(--r-card);
+        background: var(--green-bg);
+        border: 1px solid rgba(52, 199, 89, 0.38);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .photo-reminder-title {
+        margin: 0 0 6px;
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .photo-reminder-body {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .stat-cell {
+        background: var(--card);
+        border-radius: var(--r-inner);
+        padding: 12px 8px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .stat-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--lbl2);
+        margin-bottom: 6px;
+      }
+
+      .stat-value {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .home-card-title {
+        margin: 0 0 12px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--lbl2);
+      }
+
+      .schedule-day-badge {
+        display: inline-block;
+        margin: 0 0 12px;
+        padding: 6px 12px;
+        border-radius: var(--r-chip);
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--blue-bg);
         color: var(--blue);
+      }
+
+      .schedule-row {
+        display: grid;
+        grid-template-columns: 76px 1fr auto;
+        gap: 8px;
+        align-items: baseline;
+        padding: 12px 0;
+        border-bottom: 0.5px solid var(--sep2);
+        font-size: 15px;
+      }
+
+      .schedule-row:last-child {
+        border-bottom: none;
+      }
+
+      .sch-time {
+        font-family: var(--mono);
+        font-size: 13px;
+        color: var(--lbl2);
+      }
+
+      .sch-name {
+        font-weight: 600;
+      }
+
+      .sch-kcal {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--green);
+        white-space: nowrap;
+      }
+
+      .schedule-subhead {
+        margin: 16px 0 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--lbl2);
+        text-transform: uppercase;
+      }
+
+      .schedule-empty {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+      }
+
+      .quick-nav {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .quick-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 14px;
+        border-radius: var(--r-inner);
+        border: none;
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        font-size: 16px;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        color: var(--lbl1);
+      }
+
+      .quick-card:active {
+        transform: scale(0.98);
+      }
+
+      .quick-card span:last-child {
+        color: var(--lbl3);
+        font-size: 18px;
+        font-weight: 400;
+      }
+
+      .quick-card-full {
+        grid-column: 1 / -1;
+      }
+
+      .tip-card p {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.5;
+        color: var(--lbl2);
+      }
+
+      .water-banner {
+        margin: 20px 0 12px;
+        padding: 14px 16px;
+        border-radius: var(--r-card);
+        background: var(--teal-bg);
+        border: 1px solid rgba(90, 200, 250, 0.35);
+        font-weight: 600;
+        font-size: 16px;
+        text-align: center;
+      }
+
+      .tab-placeholder-inner {
+        padding: 48px 16px;
+        text-align: center;
+      }
+
+      .tab-placeholder-title {
+        margin: 0 0 10px;
+        font-size: 20px;
+        font-weight: 700;
+      }
+
+      .tab-placeholder-text {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.5;
       }
     </style>
   </head>
@@ -1232,40 +1522,142 @@
         </div>
       </div>
 
-      <!-- Screen 3 scaffold -->
+      <!-- Screen 3 — plan app -->
       <div id="screen-app" class="screen" aria-hidden="true">
-        <div class="screen-scroll">
-          <div class="placeholder-panel" id="app-placeholder">
-            <p>
-              Plan loaded for <strong id="app-plan-name">there</strong>. Tabs below will show meals, macros, and more in the next update.
-            </p>
+        <header class="app-top-bar">
+          <div class="app-top-bar-inner">
+            <span class="app-brand">Health</span>
+            <button type="button" class="icon-btn menu-trigger" id="btn-app-menu" aria-label="More options" aria-expanded="false" aria-haspopup="true">
+              ⋯
+            </button>
+          </div>
+          <div id="app-menu-dropdown" class="app-menu-dropdown" hidden role="menu">
+            <button type="button" class="app-menu-item" role="menuitem" id="menu-reupload">Re-upload plan</button>
+          </div>
+        </header>
+
+        <div class="screen-scroll app-body-scroll">
+          <div id="panel-home" class="app-panel">
+            <div class="home-hero">
+              <h2 class="home-greeting" id="home-greeting">Good morning</h2>
+              <p class="home-sub" id="home-subline"></p>
+            </div>
+
+            <div id="home-photo-card" class="photo-reminder-card" hidden>
+              <p class="photo-reminder-title">Week 1 progress photo</p>
+              <p class="photo-reminder-body">
+                Take your Week 1 progress photo today. Front, back, side. Same lighting.
+              </p>
+            </div>
+
+            <div class="stats-row">
+              <div class="stat-cell">
+                <span class="stat-label">Start weight</span>
+                <span class="stat-value" id="stat-weight">—</span>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">Duration</span>
+                <span class="stat-value" id="stat-duration">—</span>
+              </div>
+              <div class="stat-cell">
+                <span class="stat-label">Daily protein</span>
+                <span class="stat-value" id="stat-protein">—</span>
+              </div>
+            </div>
+
+            <div class="home-card">
+              <h3 class="home-card-title">Today's schedule</h3>
+              <div id="home-schedule"></div>
+            </div>
+
+            <h3 class="home-card-title" style="margin-bottom: 10px">Quick navigation</h3>
+            <div class="quick-nav">
+              <button type="button" class="quick-card" data-go-tab="phases"><span>Phases</span><span>›</span></button>
+              <button type="button" class="quick-card" data-go-tab="meals"><span>Meals</span><span>›</span></button>
+              <button type="button" class="quick-card" data-go-tab="prep"><span>Prep</span><span>›</span></button>
+              <button type="button" class="quick-card" data-go-tab="grocery"><span>Grocery</span><span>›</span></button>
+              <button type="button" class="quick-card quick-card-full" data-go-tab="supps"><span>Supplements</span><span>›</span></button>
+            </div>
+
+            <div class="home-card tip-card">
+              <h3 class="home-card-title">Today's tip</h3>
+              <p id="home-tip"></p>
+            </div>
+
+            <div class="water-banner" id="home-water">3L of water today</div>
+          </div>
+
+          <div id="panel-phases" class="app-panel" hidden>
+            <div class="tab-placeholder-inner">
+              <p class="tab-placeholder-title">Phases</p>
+              <p class="tab-placeholder-text">Phase macros and calories will appear here in the next update.</p>
+            </div>
+          </div>
+          <div id="panel-meals" class="app-panel" hidden>
+            <div class="tab-placeholder-inner">
+              <p class="tab-placeholder-title">Meals</p>
+              <p class="tab-placeholder-text">Your meal plan will appear here in the next update.</p>
+            </div>
+          </div>
+          <div id="panel-prep" class="app-panel" hidden>
+            <div class="tab-placeholder-inner">
+              <p class="tab-placeholder-title">Prep</p>
+              <p class="tab-placeholder-text">Batch prep steps will appear here in the next update.</p>
+            </div>
+          </div>
+          <div id="panel-grocery" class="app-panel" hidden>
+            <div class="tab-placeholder-inner">
+              <p class="tab-placeholder-title">Grocery</p>
+              <p class="tab-placeholder-text">Your grocery list will appear here in the next update.</p>
+            </div>
+          </div>
+          <div id="panel-supps" class="app-panel" hidden>
+            <div class="tab-placeholder-inner">
+              <p class="tab-placeholder-title">Supplements</p>
+              <p class="tab-placeholder-text">Supplement stack details will appear here in the next update.</p>
+            </div>
           </div>
         </div>
+
         <nav class="tab-bar" aria-label="Main">
-          <div class="tab-btn on" aria-current="page">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg>
+          <button type="button" class="tab-btn on" data-tab="home" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" stroke-linejoin="round" />
+            </svg>
             Home
-          </div>
-          <div class="tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 15h4m4 0h4M8 11h8M10 7h4"/></svg>
+          </button>
+          <button type="button" class="tab-btn" data-tab="phases">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M4 19h16M6 15h4m4 0h4M8 11h8M10 7h4" />
+            </svg>
             Phases
-          </div>
-          <div class="tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3M16 3v3M5 10h14M6 8h12a2 2 0 0 1 2 2v9H4v-9a2 2 0 0 1 2-2z"/></svg>
+          </button>
+          <button type="button" class="tab-btn" data-tab="meals">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M8 3v3M16 3v3M5 10h14M6 8h12a2 2 0 0 1 2 2v9H4v-9a2 2 0 0 1 2-2z" />
+            </svg>
             Meals
-          </div>
-          <div class="tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="7"/><path d="M12 6V3M12 13l3-3"/></svg>
+          </button>
+          <button type="button" class="tab-btn" data-tab="prep">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="13" r="7" />
+              <path d="M12 6V3M12 13l3-3" />
+            </svg>
             Prep
-          </div>
-          <div class="tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9h15l-1.5 9h-12z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+          </button>
+          <button type="button" class="tab-btn" data-tab="grocery">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M6 9h15l-1.5 9h-12z" />
+              <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+            </svg>
             Grocery
-          </div>
-          <div class="tab-btn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="6" width="8" height="12" rx="4"/></svg>
+          </button>
+          <button type="button" class="tab-btn" data-tab="supps">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="8" y="6" width="8" height="12" rx="4" />
+            </svg>
             Supps
-          </div>
+          </button>
         </nav>
       </div>
     </div>
@@ -1503,6 +1895,9 @@ Important instructions:
 }`;
 
 
+
+        const TAB_IDS = ["home", "phases", "meals", "prep", "grocery", "supps"];
+        const LS_ACTIVE_TAB = "health_active_tab";
 
         const EQUIPMENT = ["Instant Pot", "Air Fryer", "Stovetop", "Oven", "Microwave", "BBQ"];
         const SUPP_ITEMS = [
@@ -2012,6 +2407,245 @@ Important instructions:
           return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON);
         }
 
+        function getSavedFormPayload() {
+          try {
+            const raw = localStorage.getItem("health_form");
+            if (!raw) return null;
+            return JSON.parse(raw);
+          } catch (_) {
+            return null;
+          }
+        }
+
+        function trainingDaysPerWeek() {
+          const fd = getSavedFormPayload();
+          const n = fd && fd.trainingDays;
+          if (typeof n === "number" && n >= 1 && n <= 7) return n;
+          return 4;
+        }
+
+        function workoutWeekdaySet(daysPerWeek) {
+          const d = Math.min(7, Math.max(1, daysPerWeek));
+          const patterns = {
+            1: [0],
+            2: [0, 3],
+            3: [0, 2, 4],
+            4: [0, 1, 3, 5],
+            5: [0, 1, 2, 3, 4],
+            6: [0, 1, 2, 3, 4, 5],
+            7: [0, 1, 2, 3, 4, 5, 6],
+          };
+          return new Set(patterns[d]);
+        }
+
+        function mondayBasedWeekday() {
+          const js = new Date().getDay();
+          return (js + 6) % 7;
+        }
+
+        function isWorkoutToday() {
+          return workoutWeekdaySet(trainingDaysPerWeek()).has(mondayBasedWeekday());
+        }
+
+        function parseISODate(s) {
+          if (!s || typeof s !== "string") return null;
+          const p = Date.parse(s.slice(0, 10) + "T12:00:00");
+          return Number.isNaN(p) ? null : p;
+        }
+
+        function currentPlanWeek(plan) {
+          const meta = plan.meta || {};
+          const total = plan.user?.timeline_weeks || 12;
+          const startMs = parseISODate(meta.generated_date) || Date.now();
+          const days = Math.floor((Date.now() - startMs) / 86400000);
+          const w = Math.floor(days / 7) + 1;
+          return Math.min(Math.max(1, w), total);
+        }
+
+        function phaseForWeek(plan, weekNum) {
+          const phases = plan.phases || [];
+          for (let i = 0; i < phases.length; i++) {
+            const p = phases[i];
+            const ws = p.week_start != null ? p.week_start : 1;
+            const we = p.week_end != null ? p.week_end : ws;
+            if (weekNum >= ws && weekNum <= we) return p;
+          }
+          return phases[0] || null;
+        }
+
+        function dailyTipIndex(plan) {
+          const tips = plan.tips || [];
+          if (!tips.length) return 0;
+          const dayKey = new Date().toISOString().slice(0, 10);
+          let h = 0;
+          for (let i = 0; i < dayKey.length; i++) h = (h * 31 + dayKey.charCodeAt(i)) >>> 0;
+          return h % tips.length;
+        }
+
+        function greetingPeriod() {
+          const h = new Date().getHours();
+          if (h < 12) return "morning";
+          if (h < 17) return "afternoon";
+          return "evening";
+        }
+
+        function fmtRoundNum(n) {
+          if (n == null || Number.isNaN(Number(n))) return null;
+          return Math.round(Number(n));
+        }
+
+        function renderHomeTab() {
+          const plan = window.healthPlan;
+          if (!plan) return;
+          const user = plan.user || {};
+          const meta = plan.meta || {};
+          const displayName = meta.generated_for || user.name || "there";
+          $("#home-greeting").textContent = `Good ${greetingPeriod()}, ${displayName}`;
+          const totalW = user.timeline_weeks || 12;
+          const cw = currentPlanWeek(plan);
+          const gl = meta.goal_label || "Your plan";
+          $("#home-subline").textContent = `Week ${cw} of ${totalW} · ${gl}`;
+          $("#home-photo-card").hidden = cw !== 1;
+          const wkg = fmtRoundNum(user.weight_kg);
+          $("#stat-weight").textContent = wkg != null ? `${wkg} kg` : "—";
+          $("#stat-duration").textContent = `${totalW} wks`;
+          const ph = phaseForWeek(plan, cw);
+          let pg = ph && ph.protein_g;
+          if (pg == null && plan.phases && plan.phases[0]) pg = plan.phases[0].protein_g;
+          const pr = fmtRoundNum(pg);
+          $("#stat-protein").textContent = pr != null ? `${pr} g` : "—";
+
+          const workout = isWorkoutToday();
+          const mp = plan.meal_plan || {};
+          const meals = workout ? mp.workout_day : mp.rest_day;
+          const sched = $("#home-schedule");
+          sched.textContent = "";
+          const dayLabel = document.createElement("p");
+          dayLabel.className = "schedule-day-badge";
+          dayLabel.textContent = workout ? "Workout day" : "Rest day";
+          sched.appendChild(dayLabel);
+
+          if (meals && meals.length) {
+            meals.forEach((m) => {
+              const row = document.createElement("div");
+              row.className = "schedule-row";
+              const t = document.createElement("span");
+              t.className = "sch-time";
+              t.textContent = m.time || "";
+              const nm = document.createElement("span");
+              nm.className = "sch-name";
+              nm.textContent = m.name || "";
+              const k = document.createElement("span");
+              k.className = "sch-kcal";
+              k.textContent = m.kcal != null ? `${fmtRoundNum(m.kcal) ?? m.kcal} kcal` : "";
+              row.appendChild(t);
+              row.appendChild(nm);
+              row.appendChild(k);
+              sched.appendChild(row);
+            });
+          } else {
+            const empty = document.createElement("p");
+            empty.className = "schedule-empty";
+            empty.textContent = "No meals listed for today in your plan.";
+            sched.appendChild(empty);
+          }
+
+          const supp = plan.supplements && plan.supplements.daily_schedule;
+          if (supp && supp.length) {
+            const sub = document.createElement("h4");
+            sub.className = "schedule-subhead";
+            sub.textContent = "Supplements";
+            sched.appendChild(sub);
+            supp.forEach((s) => {
+              const row = document.createElement("div");
+              row.className = "schedule-row schedule-row-supp";
+              row.style.gridTemplateColumns = "88px 1fr";
+              const t = document.createElement("span");
+              t.className = "sch-time";
+              t.textContent = s.label || s.time_slot || "";
+              const nm = document.createElement("span");
+              nm.className = "sch-name";
+              nm.textContent = s.items || "";
+              row.appendChild(t);
+              row.appendChild(nm);
+              sched.appendChild(row);
+            });
+          }
+
+          const tips = plan.tips || [];
+          const ti = dailyTipIndex(plan);
+          $("#home-tip").textContent = tips.length ? tips[ti] : "Stay consistent — small steps add up.";
+
+          const wl = plan.water_target_litres;
+          $("#home-water").textContent =
+            wl != null && wl !== "" && !Number.isNaN(Number(wl)) ? `${wl}L of water today` : "3L of water today";
+        }
+
+        function switchTab(tabId, persist) {
+          TAB_IDS.forEach((id) => {
+            const panel = $("#panel-" + id);
+            const btn = $(`#screen-app .tab-bar button[data-tab="${id}"]`);
+            const on = id === tabId;
+            if (panel) panel.hidden = !on;
+            if (btn) {
+              btn.classList.toggle("on", on);
+              btn.setAttribute("aria-current", on ? "page" : "false");
+            }
+          });
+          const appScroll = $("#screen-app .screen-scroll");
+          if (appScroll) appScroll.scrollTop = 0;
+          if (tabId === "home") renderHomeTab();
+          if (persist !== false) {
+            try {
+              localStorage.setItem(LS_ACTIVE_TAB, tabId);
+            } catch (_) {}
+          }
+        }
+
+        function initAppView() {
+          let tab = "home";
+          try {
+            tab = localStorage.getItem(LS_ACTIVE_TAB) || "home";
+          } catch (_) {}
+          if (!TAB_IDS.includes(tab)) tab = "home";
+          switchTab(tab, false);
+        }
+
+        function wireAppChrome() {
+          $$("#screen-app .tab-bar [data-tab]").forEach((btn) => {
+            btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
+          });
+          $$("#panel-home [data-go-tab]").forEach((el) => {
+            el.addEventListener("click", () => switchTab(el.getAttribute("data-go-tab")));
+          });
+          const menuBtn = $("#btn-app-menu");
+          const menuDd = $("#app-menu-dropdown");
+          const reup = $("#menu-reupload");
+          if (!menuBtn || !menuDd) return;
+          menuBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const open = menuDd.hidden;
+            menuDd.hidden = !open;
+            menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+          });
+          document.addEventListener("click", () => {
+            menuDd.hidden = true;
+            menuBtn.setAttribute("aria-expanded", "false");
+          });
+          menuDd.addEventListener("click", (e) => e.stopPropagation());
+          if (reup) {
+            reup.addEventListener("click", () => {
+              menuDd.hidden = true;
+              menuBtn.setAttribute("aria-expanded", "false");
+              try {
+                const p = sessionStorage.getItem("health_last_prompt");
+                if (p) $("#prompt-text").value = p;
+              } catch (_) {}
+              setStage("prompt");
+            });
+          }
+        }
+
         function setStage(stage, persist) {
           $("#screen-root").setAttribute("data-stage", stage);
           $("#screen-form").setAttribute("aria-hidden", stage === "form" ? "false" : "true");
@@ -2022,6 +2656,7 @@ Important instructions:
               localStorage.setItem("health_active_screen", stage);
             } catch (_) {}
           }
+          if (stage === "app") initAppView();
         }
 
         function restoreStage() {
@@ -2039,8 +2674,6 @@ Important instructions:
               const v = validatePlan(json);
               if (v.valid) {
                 window.healthPlan = json;
-                const nameEl = $("#app-plan-name");
-                if (nameEl) nameEl.textContent = json.meta?.generated_for || json.user?.name || "there";
                 setStage("app", false);
                 return;
               }
@@ -2120,8 +2753,6 @@ Important instructions:
                   localStorage.setItem("health_plan", JSON.stringify(json));
                 } catch (_) {}
                 window.healthPlan = json;
-                const nameEl = $("#app-plan-name");
-                if (nameEl) nameEl.textContent = json.meta?.generated_for || json.user?.name || "there";
                 setStage("app");
               } catch (err) {
                 $("#json-error-detail").textContent = err && err.message ? err.message : "Could not parse JSON.";
@@ -2371,6 +3002,7 @@ Important instructions:
           });
 
           wirePromptFlow();
+          wireAppChrome();
         }
 
         loadState();
