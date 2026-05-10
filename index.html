@@ -605,12 +605,39 @@
         height: 8px;
         border-radius: 50%;
         background: var(--lbl4);
-        transition: transform 0.2s, background 0.2s;
+        transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+        cursor: pointer;
       }
 
       .dot.on {
         background: var(--blue);
         transform: scale(1.25);
+      }
+
+      .dot.at {
+        box-shadow: 0 0 0 2px var(--blue);
+      }
+
+      /* Intake wizard — one section per step */
+      #screen-form .section[data-wizard-step] {
+        display: none;
+      }
+
+      #screen-form[data-intake-step="0"] .section[data-wizard-step="0"],
+      #screen-form[data-intake-step="1"] .section[data-wizard-step="1"],
+      #screen-form[data-intake-step="2"] .section[data-wizard-step="2"],
+      #screen-form[data-intake-step="3"] .section[data-wizard-step="3"],
+      #screen-form[data-intake-step="4"] .section[data-wizard-step="4"],
+      #screen-form[data-intake-step="5"] .section[data-wizard-step="5"] {
+        display: block;
+      }
+
+      .intake-tail {
+        display: none;
+      }
+
+      #screen-form[data-intake-step="5"] .intake-tail {
+        display: block;
       }
 
       /* Sections */
@@ -956,9 +983,41 @@
         pointer-events: none;
       }
 
-      .sticky-bar button {
+      .sticky-bar-row {
+        display: flex;
+        gap: 10px;
+        align-items: stretch;
         pointer-events: auto;
-        width: 100%;
+      }
+
+      .sticky-bar-row > button {
+        pointer-events: auto;
+      }
+
+      .sticky-bar .btn-intake-back {
+        flex: 0 0 auto;
+        min-width: 92px;
+        width: auto;
+        height: 56px;
+        border-radius: 14px;
+        border: 1px solid var(--sep2);
+        background: rgba(61, 219, 122, 0.08);
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.15s, transform 0.1s;
+      }
+
+      .sticky-bar .btn-intake-back:active:not(:disabled) {
+        opacity: 0.75;
+        transform: scale(0.98);
+      }
+
+      .sticky-bar .btn-intake-next,
+      .sticky-bar #btn-generate {
+        flex: 1;
+        min-width: 0;
         height: 56px;
         border: none;
         border-radius: 14px;
@@ -972,12 +1031,14 @@
         transition: opacity 0.15s, transform 0.1s;
       }
 
-      .sticky-bar button:disabled {
+      .sticky-bar #btn-generate:disabled,
+      .sticky-bar .btn-intake-next:disabled {
         opacity: 0.45;
         cursor: not-allowed;
       }
 
-      .sticky-bar button:not(:disabled):active {
+      .sticky-bar .btn-intake-next:not(:disabled):active,
+      .sticky-bar #btn-generate:not(:disabled):active {
         opacity: 0.75;
         transform: scale(0.98);
       }
@@ -2210,6 +2271,36 @@
         line-height: 1.45;
       }
 
+      @supports (corner-shape: squircle) {
+        :where(
+          .btn-primary-full,
+          .btn-secondary-full,
+          .btn-dashed,
+          .sticky-bar .btn-intake-next,
+          .sticky-bar #btn-generate,
+          .sticky-bar .btn-intake-back,
+          .icon-btn,
+          .card,
+          .pick-card,
+          .prompt-box,
+          .error-card,
+          .pwa-install-banner,
+          .app-menu-dropdown,
+          .stat-cell,
+          .phase-card,
+          .meal-card,
+          .prep-step-card,
+          .grocery-row,
+          .chip,
+          .seg,
+          .seg button,
+          .stepper button,
+          .height-split input
+        ) {
+          corner-shape: squircle;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         .screen,
         .app-panel,
@@ -2225,7 +2316,9 @@
         .btn-primary-full,
         .btn-secondary-full,
         .btn-dashed,
-        .sticky-bar button,
+        .sticky-bar .btn-intake-next,
+        .sticky-bar #btn-generate,
+        .sticky-bar .btn-intake-back,
         .icon-btn,
         #btn-pwa-install,
         #btn-pwa-install-dismiss {
@@ -2241,7 +2334,7 @@
   <body>
     <div id="screen-root" data-stage="form">
       <!-- Screen 1 -->
-      <div id="screen-form" class="screen" aria-hidden="false">
+      <div id="screen-form" class="screen" aria-hidden="false" data-intake-step="0">
         <div class="progress-wrap">
           <div class="dots" id="progress-dots" aria-label="Section progress">
             <span class="dot" data-i="0"></span>
@@ -2264,7 +2357,7 @@
 
         <main class="screen-scroll" id="form-scroll">
           <!-- A -->
-          <section class="section" aria-labelledby="sec-a">
+          <section class="section" data-wizard-step="0" aria-labelledby="sec-a">
             <div class="section-head" id="sec-a">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="12" cy="8" r="3.5" />
@@ -2341,7 +2434,7 @@
           </section>
 
           <!-- B -->
-          <section class="section" aria-labelledby="sec-b">
+          <section class="section" data-wizard-step="1" aria-labelledby="sec-b">
             <div class="section-head" id="sec-b">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -2408,7 +2501,7 @@
           </section>
 
           <!-- C -->
-          <section class="section" aria-labelledby="sec-c">
+          <section class="section" data-wizard-step="2" aria-labelledby="sec-c">
             <div class="section-head" id="sec-c">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M6.5 20v-2a4 4 0 0 1 4-4h3a4 4 0 0 1 4 4v2" stroke-linecap="round" />
@@ -2476,7 +2569,7 @@
           </section>
 
           <!-- D -->
-          <section class="section" aria-labelledby="sec-d">
+          <section class="section" data-wizard-step="3" aria-labelledby="sec-d">
             <div class="section-head" id="sec-d">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <path d="M8 3v3M16 3v3M4 10h16M6 8h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" stroke-linecap="round" stroke-linejoin="round" />
@@ -2560,7 +2653,7 @@
           </section>
 
           <!-- E -->
-          <section class="section" aria-labelledby="sec-e">
+          <section class="section" data-wizard-step="4" aria-labelledby="sec-e">
             <div class="section-head" id="sec-e">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <rect x="7" y="7" width="10" height="14" rx="2" />
@@ -2612,7 +2705,7 @@
           </section>
 
           <!-- F -->
-          <section class="section" aria-labelledby="sec-f">
+          <section class="section" data-wizard-step="5" aria-labelledby="sec-f">
             <div class="section-head" id="sec-f">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="12" cy="12" r="9" />
@@ -2689,12 +2782,12 @@
             </div>
           </section>
 
-          <footer class="form-about-footer">
+          <footer class="form-about-footer intake-tail">
             <p class="form-about-label">About this app</p>
             <p class="form-about-line">Your data never leaves your device.</p>
           </footer>
 
-          <section class="section form-json-section" aria-labelledby="form-json-title">
+          <section class="section form-json-section intake-tail" aria-labelledby="form-json-title">
             <div class="card form-json-card">
               <h2 class="form-json-title" id="form-json-title">Already have a JSON plan?</h2>
               <p class="form-json-copy">
@@ -2711,7 +2804,11 @@
         </main>
 
         <div class="sticky-bar">
-          <button type="button" id="btn-generate" disabled>Generate My Plan</button>
+          <div class="sticky-bar-row">
+            <button type="button" id="btn-intake-back" class="btn-intake-back" hidden>Back</button>
+            <button type="button" id="btn-intake-next" class="btn-intake-next">Continue</button>
+            <button type="button" id="btn-generate" disabled hidden>Generate My Plan</button>
+          </div>
         </div>
       </div>
 
@@ -2747,8 +2844,8 @@
             <li><strong>Step 1</strong> — Open claude.ai in your browser (or the Claude app).</li>
             <li><strong>Step 2</strong> — Paste the prompt into a new conversation.</li>
             <li><strong>Step 3</strong> — Hit send and wait — Claude will think for about 30 seconds.</li>
-            <li><strong>Step 4</strong> — Claude will reply with a JSON code block.</li>
-            <li><strong>Step 5</strong> — Copy everything inside the code block (starting with <kbd>{</kbd>).</li>
+            <li><strong>Step 4</strong> — Claude should reply with plain JSON only (no Artifact): the message starts with <kbd>{</kbd> and ends with <kbd>}</kbd>.</li>
+            <li><strong>Step 5</strong> — Copy the entire JSON (from <kbd>{</kbd> through <kbd>}</kbd>). If Claude wrapped it in a code fence, copy only what’s inside.</li>
             <li><strong>Step 6</strong> — Paste into a plain text editor and save as <kbd>myplan.json</kbd>.</li>
             <li><strong>Step 7</strong> — Come back here and tap <strong>Upload My Plan</strong> above.</li>
           </ol>
@@ -2926,9 +3023,12 @@ supplement budget, and schedule.
 
 === YOUR TASK ===
 
-Generate a complete personalised plan and return it as a single JSON object. 
-The JSON must exactly match the schema below. Do not include any text before or after the JSON. 
-Do not use markdown formatting. Return only the raw JSON object starting with { and ending with }.
+Generate a complete personalised plan as one JSON object that matches the schema below.
+
+OUTPUT FORMAT — STRICT (the intake app copies from chat text only):
+- Reply with plain text only: the complete JSON object. The first character of your entire message must be { and the last character must be }.
+- Do NOT use Claude Artifacts, Canvas, side documents, or file attachments for this plan — the user must be able to select-all and copy JSON from the normal chat transcript.
+- Do NOT wrap the JSON in markdown code fences (no triple-backtick ``` blocks) and do not add headings or commentary before or after the JSON.
 
 Important instructions:
 - All calorie and macro calculations must be based on the person's actual TDEE 
@@ -3404,6 +3504,41 @@ Important instructions:
           }
         }
 
+        const INTAKE_STEP_KEY = "health_intake_step";
+        const INTAKE_LAST_STEP = 5;
+
+        function getIntakeStep() {
+          const raw = $("#screen-form").getAttribute("data-intake-step");
+          const n = Number(raw);
+          return Number.isFinite(n) && n >= 0 && n <= INTAKE_LAST_STEP ? n : 0;
+        }
+
+        function loadIntakeStep() {
+          try {
+            const raw = sessionStorage.getItem(INTAKE_STEP_KEY);
+            if (raw == null) return;
+            const n = Number(raw);
+            if (Number.isFinite(n) && n >= 0 && n <= INTAKE_LAST_STEP) {
+              $("#screen-form").setAttribute("data-intake-step", String(n));
+            }
+          } catch (_) {}
+        }
+
+        function canNavigateToStep(target) {
+          const cur = getIntakeStep();
+          if (target === cur) return true;
+          if (target < cur) return true;
+          for (let j = 0; j < target; j++) {
+            if (!sectionComplete(j)) return false;
+          }
+          return true;
+        }
+
+        function gotoIntakeStep(target) {
+          if (!canNavigateToStep(target)) return;
+          setIntakeStep(target);
+        }
+
         function minReady() {
           return (
             state.name.trim().length > 0 &&
@@ -3417,9 +3552,36 @@ Important instructions:
         }
 
         function updateProgress() {
+          const step = getIntakeStep();
           $$("#progress-dots .dot").forEach((d, i) => {
             d.classList.toggle("on", sectionComplete(i));
+            d.classList.toggle("at", i === step);
           });
+        }
+
+        function updateIntakeChrome() {
+          const step = getIntakeStep();
+          const back = $("#btn-intake-back");
+          const next = $("#btn-intake-next");
+          const gen = $("#btn-generate");
+          if (back) back.hidden = step === 0;
+          if (next) next.hidden = step === INTAKE_LAST_STEP;
+          if (gen) gen.hidden = step !== INTAKE_LAST_STEP;
+          $("#btn-generate").disabled = !minReady();
+          updateProgress();
+        }
+
+        function setIntakeStep(n, persist) {
+          const v = Math.max(0, Math.min(INTAKE_LAST_STEP, n));
+          $("#screen-form").setAttribute("data-intake-step", String(v));
+          if (persist !== false) {
+            try {
+              sessionStorage.setItem(INTAKE_STEP_KEY, String(v));
+            } catch (_) {}
+          }
+          const sc = $("#form-scroll");
+          if (sc) sc.scrollTop = 0;
+          updateIntakeChrome();
         }
 
         function syncDomFromState() {
@@ -3518,8 +3680,7 @@ Important instructions:
             (x) => x[0],
             (x) => x[1]
           );
-          $("#btn-generate").disabled = !minReady();
-          updateProgress();
+          updateIntakeChrome();
         }
 
         function clearValidation() {
@@ -3535,6 +3696,63 @@ Important instructions:
           field.classList.add("is-invalid");
           const m = field.querySelector(".field-msg");
           if (m) m.textContent = msg;
+        }
+
+        function validateSection(stepIdx) {
+          clearValidation();
+          let ok = true;
+          let firstEl = null;
+          const mark = (fid, cond, msg) => {
+            if (!cond) {
+              ok = false;
+              invalidate(fid, msg);
+              if (!firstEl) firstEl = $(fid);
+            }
+          };
+
+          switch (stepIdx) {
+            case 0:
+              mark("#field-name", state.name.trim().length > 0, "Enter your first name.");
+              mark("#field-age", Number(state.age) >= 16 && Number(state.age) <= 80, "Enter an age between 16 and 80.");
+              mark("#field-sex", !!state.sex, "Select an option.");
+              mark("#field-weight", weightValid(), "Enter a realistic weight.");
+              mark("#field-height", heightValid(), "Enter a realistic height.");
+              break;
+            case 1:
+              mark("#field-goal", !!state.goal, "Choose your primary goal.");
+              mark("#field-timeline", !!state.timeline, "Pick a timeline.");
+              mark("#field-urgency", !!state.urgency, "Pick an urgency level.");
+              break;
+            case 2:
+              mark("#field-loc", !!state.trainingLocation, "Pick where you train.");
+              mark("#field-fit", !!state.fitnessLevel, "Pick your fitness level.");
+              break;
+            case 3:
+              mark("#field-diet", !!state.dietaryPreference, "Pick a dietary preference.");
+              mark("#field-mpd", !!state.mealsPerDay, "Pick meals per day.");
+              mark("#field-cookt", !!state.cookingTime, "Pick cooking time.");
+              mark("#field-mprep", state.mealPrep !== null, "Tap Yes or No for meal prep.");
+              mark("#field-equip", state.equipment.length > 0, "Pick at least one item.");
+              break;
+            case 4:
+              mark("#field-suppown", state.supplementsOwned.length > 0, "Pick what you have (None is ok).");
+              mark("#field-sbudg", !!state.supplementBudget, "Pick a supplement budget.");
+              break;
+            case 5:
+              mark("#field-country", !!state.country, "Select your country.");
+              mark("#field-act", !!state.activityLevel, "Pick your daily activity level.");
+              mark("#field-stress", !!state.stressLevel, "Pick your stress level.");
+              mark("#field-chal", state.challenges.length > 0, "Pick at least one challenge.");
+              break;
+            default:
+              ok = false;
+          }
+          if (!ok && firstEl) {
+            try {
+              firstEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            } catch (_) {}
+          }
+          return ok;
         }
 
         function validateAll() {
@@ -3776,14 +3994,67 @@ Important instructions:
         }
 
         function stripJsonFence(text) {
-          let t = text.trim();
-          const m = t.match(/^```(?:json)?\s*\r?\n?([\s\S]*?)\r?\n?```$/im);
-          if (m) return m[1].trim();
+          let t = String(text || "").trim();
+          const full = t.match(/^```(?:json)?\s*\r?\n?([\s\S]*?)\r?\n?```$/im);
+          if (full) return full[1].trim();
+          const inner = t.match(/```(?:json)?\s*\r?\n?([\s\S]*?)\r?\n?```/im);
+          if (inner) return inner[1].trim();
           return t;
         }
 
+        function extractBalancedJson(text) {
+          const s = String(text || "").trim();
+          const start = s.indexOf("{");
+          if (start === -1) throw new Error("No JSON object found — include the full plan from { through }.");
+          let depth = 0;
+          let inStr = false;
+          let esc = false;
+          for (let i = start; i < s.length; i++) {
+            const c = s[i];
+            if (inStr) {
+              if (esc) {
+                esc = false;
+                continue;
+              }
+              if (c === "\\") {
+                esc = true;
+                continue;
+              }
+              if (c === '"') {
+                inStr = false;
+                continue;
+              }
+              continue;
+            }
+            if (c === '"') {
+              inStr = true;
+              continue;
+            }
+            if (c === "{") depth++;
+            else if (c === "}") {
+              depth--;
+              if (depth === 0) return s.slice(start, i + 1);
+            }
+          }
+          throw new Error("Incomplete JSON — copy through the final closing }.");
+        }
+
         function parsePlanText(raw) {
-          return JSON.parse(stripJsonFence(raw));
+          const cleaned = String(raw || "").trim();
+          const attempts = [
+            () => JSON.parse(cleaned),
+            () => JSON.parse(stripJsonFence(cleaned)),
+            () => JSON.parse(extractBalancedJson(cleaned)),
+          ];
+          let last = null;
+          for (const fn of attempts) {
+            try {
+              return fn();
+            } catch (e) {
+              last = e;
+            }
+          }
+          throw last || new Error("Could not parse JSON.");
         }
 
         function profilePayload(fd) {
@@ -5120,7 +5391,7 @@ Important instructions:
                 hydrateStateFromSavedForm();
                 syncDomFromState();
                 clearValidation();
-                updateProgress();
+                setIntakeStep(0);
                 setStage("form");
               });
             }
@@ -5590,6 +5861,23 @@ Important instructions:
             })
           );
 
+          $("#btn-intake-back").addEventListener("click", () => {
+            const s = getIntakeStep();
+            if (s > 0) setIntakeStep(s - 1);
+          });
+          $("#btn-intake-next").addEventListener("click", () => {
+            const s = getIntakeStep();
+            if (!validateSection(s)) return;
+            if (s < INTAKE_LAST_STEP) setIntakeStep(s + 1);
+          });
+          $$("#progress-dots .dot").forEach((dot) => {
+            dot.addEventListener("click", () => {
+              const i = Number(dot.getAttribute("data-i"));
+              if (!Number.isFinite(i)) return;
+              gotoIntakeStep(i);
+            });
+          });
+
           $("#btn-generate").addEventListener("click", () => {
             if (!validateAll()) return;
             const data = collectFormData();
@@ -5624,6 +5912,7 @@ Important instructions:
 
         registerServiceWorker();
         loadState();
+        loadIntakeStep();
         wire();
         syncDomFromState();
         restoreStage();
