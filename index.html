@@ -115,6 +115,7 @@
       .phase-pill,
       .prep-num,
       .form-about-label,
+      .form-json-title,
       .pwa-install-title,
       .tab-placeholder-title {
         font-family: var(--ff-display);
@@ -546,6 +547,50 @@
         font-size: 13px;
         color: var(--lbl2);
         line-height: 1.4;
+      }
+
+      .form-json-section {
+        margin-top: 4px;
+        padding: 0 20px 8px;
+      }
+
+      .form-json-card {
+        padding: 18px 16px;
+      }
+
+      .form-json-title {
+        margin: 0 0 10px;
+        font-size: 17px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--lbl1);
+      }
+
+      .form-json-copy {
+        margin: 0 0 14px;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .form-json-copy strong {
+        color: var(--blue);
+        font-weight: 700;
+      }
+
+      .form-plan-upload-loading {
+        margin-top: 14px;
+      }
+
+      .form-plan-error {
+        margin-top: 14px;
+        padding: 12px 14px;
+        border-radius: var(--r-inner);
+        background: var(--red-bg);
+        border: 1px solid rgba(255, 92, 92, 0.38);
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--lbl1);
       }
 
       .dots {
@@ -2648,6 +2693,21 @@
             <p class="form-about-label">About this app</p>
             <p class="form-about-line">Your data never leaves your device.</p>
           </footer>
+
+          <section class="section form-json-section" aria-labelledby="form-json-title">
+            <div class="card form-json-card">
+              <h2 class="form-json-title" id="form-json-title">Already have a JSON plan?</h2>
+              <p class="form-json-copy">
+                Upload your plan file (for example <strong>myplan.json</strong>) to jump straight into the app — you can skip generating a new Claude prompt.
+              </p>
+              <button type="button" class="btn-dashed" id="btn-form-upload-plan">Upload plan JSON</button>
+              <p id="form-plan-upload-loading" class="upload-loading form-plan-upload-loading" hidden>
+                <span class="upload-spinner" aria-hidden="true"></span>
+                Reading file…
+              </p>
+              <div id="form-plan-upload-error" class="form-plan-error" hidden role="alert"></div>
+            </div>
+          </section>
         </main>
 
         <div class="sticky-bar">
@@ -3593,6 +3653,25 @@ Important instructions:
             return out;
           } catch (_) {
             return json;
+          }
+        }
+
+        function ingestPlanFromJsonText(rawText) {
+          try {
+            const json = parsePlanText(String(rawText || ""));
+            const v = validatePlan(json);
+            if (!v.valid) {
+              return { ok: false, error: v.error || "Invalid plan." };
+            }
+            const normalized = normalizePlanForStorage(json);
+            try {
+              localStorage.setItem("health_plan", JSON.stringify(normalized));
+            } catch (_) {}
+            window.healthPlan = normalized;
+            setStage("app");
+            return { ok: true };
+          } catch (err) {
+            return { ok: false, error: err && err.message ? err.message : "Could not parse JSON." };
           }
         }
 
@@ -5203,11 +5282,23 @@ Important instructions:
 
           $("#btn-upload-plan").addEventListener("click", () => {
             $("#json-error-card").hidden = true;
+            $("#json-error-detail").textContent = "";
+            const formErr = $("#form-plan-upload-error");
+            if (formErr) {
+              formErr.hidden = true;
+              formErr.textContent = "";
+            }
             $("#input-plan-json").click();
           });
 
           $("#btn-retry-upload").addEventListener("click", () => {
             $("#json-error-card").hidden = true;
+            $("#json-error-detail").textContent = "";
+            const formErr = $("#form-plan-upload-error");
+            if (formErr) {
+              formErr.hidden = true;
+              formErr.textContent = "";
+            }
             $("#input-plan-json").click();
           });
 
@@ -5216,37 +5307,61 @@ Important instructions:
             const file = input.files && input.files[0];
             input.value = "";
             if (!file) return;
-            $("#upload-loading").hidden = false;
+
+            const root = $("#screen-root");
+            const stage = root ? root.getAttribute("data-stage") : "form";
+            const onForm = stage === "form";
+
+            const formErr = $("#form-plan-upload-error");
+            const formLoad = $("#form-plan-upload-loading");
+            const promptLoad = $("#upload-loading");
+
+            if (formErr) {
+              formErr.hidden = true;
+              formErr.textContent = "";
+            }
             $("#json-error-card").hidden = true;
             $("#json-error-detail").textContent = "";
+
+            if (onForm) {
+              if (formLoad) formLoad.hidden = false;
+              if (promptLoad) promptLoad.hidden = true;
+            } else {
+              if (formLoad) formLoad.hidden = true;
+              if (promptLoad) promptLoad.hidden = false;
+            }
+
+            const finishLoading = () => {
+              if (formLoad) formLoad.hidden = true;
+              if (promptLoad) promptLoad.hidden = true;
+            };
+
+            const showPlanError = (msg) => {
+              finishLoading();
+              if (onForm && formErr) {
+                formErr.textContent = msg;
+                formErr.hidden = false;
+                try {
+                  formErr.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                } catch (_) {}
+              } else {
+                $("#json-error-detail").textContent = msg;
+                $("#json-error-card").hidden = false;
+              }
+            };
+
             const runRead = () => {
               const reader = new FileReader();
               reader.onload = () => {
-                $("#upload-loading").hidden = true;
-                try {
-                  const json = parsePlanText(String(reader.result || ""));
-                  const v = validatePlan(json);
-                  if (!v.valid) {
-                    $("#json-error-detail").textContent = v.error || "";
-                    $("#json-error-card").hidden = false;
-                    return;
-                  }
-                  const normalized = normalizePlanForStorage(json);
-                  try {
-                    localStorage.setItem("health_plan", JSON.stringify(normalized));
-                  } catch (_) {}
-                  window.healthPlan = normalized;
-                  setStage("app");
-                } catch (err) {
-                  $("#upload-loading").hidden = true;
-                  $("#json-error-detail").textContent = err && err.message ? err.message : "Could not parse JSON.";
-                  $("#json-error-card").hidden = false;
+                const result = ingestPlanFromJsonText(String(reader.result || ""));
+                if (!result.ok) {
+                  showPlanError(result.error || "Something went wrong.");
+                  return;
                 }
+                finishLoading();
               };
               reader.onerror = () => {
-                $("#upload-loading").hidden = true;
-                $("#json-error-detail").textContent = "Could not read the file.";
-                $("#json-error-card").hidden = false;
+                showPlanError("Could not read the file.");
               };
               reader.readAsText(file);
             };
@@ -5488,6 +5603,21 @@ Important instructions:
           });
 
           wirePromptFlow();
+
+          const btnFormPlan = $("#btn-form-upload-plan");
+          if (btnFormPlan) {
+            btnFormPlan.addEventListener("click", () => {
+              const fe = $("#form-plan-upload-error");
+              if (fe) {
+                fe.hidden = true;
+                fe.textContent = "";
+              }
+              $("#json-error-card").hidden = true;
+              $("#json-error-detail").textContent = "";
+              $("#input-plan-json").click();
+            });
+          }
+
           wireAppChrome();
           wirePwaInstallPrompt();
         }
