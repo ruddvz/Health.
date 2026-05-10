@@ -233,8 +233,17 @@
         flex: 1;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
-        padding: 12px 0 calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 28px);
+        overscroll-behavior-y: contain;
+        padding: 4px 0 calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 28px);
         scroll-padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 16px);
+      }
+
+      #screen-form .section {
+        margin-top: 10px;
+      }
+
+      #screen-form .section:first-of-type {
+        margin-top: 4px;
       }
 
       #screen-prompt .prompt-scroll {
@@ -461,9 +470,10 @@
         font-size: 15px;
       }
 
-      /* Intake step header + progress */
+      /* Intake step header + progress — clear notch / Dynamic Island */
       .progress-wrap {
-        padding: 10px 20px 12px;
+        padding: 0 20px 12px;
+        padding-top: calc(10px + env(safe-area-inset-top, 0px));
         position: sticky;
         top: 0;
         z-index: 5;
@@ -726,7 +736,7 @@
       }
 
       .field {
-        scroll-margin-top: 96px;
+        scroll-margin-top: calc(env(safe-area-inset-top, 0px) + 76px);
       }
 
       .row {
@@ -833,34 +843,82 @@
         transform: scale(0.98);
       }
 
-      .input-with-unit {
+      .field-inline-label {
         display: flex;
-        flex-direction: row;
+        justify-content: space-between;
         align-items: center;
         gap: 12px;
         width: 100%;
-        flex-wrap: wrap;
       }
 
-      .input-with-unit .input-plain {
-        flex: 1 1 140px;
+      .field-inline-label .row-label {
+        flex: 1;
         min-width: 0;
       }
 
-      .input-with-unit .seg {
+      .field-inline-label .seg {
         flex-shrink: 0;
       }
 
-      .height-field-block {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
+      /* Inset “sunken” fields — clearly tappable typing areas */
+      .input-sunk-wrap {
+        width: 100%;
+        border-radius: var(--r-inner);
+        background: rgba(4, 8, 6, 0.72);
+        border: 1px solid rgba(0, 0, 0, 0.45);
+        box-shadow:
+          inset 0 2px 8px rgba(0, 0, 0, 0.52),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        padding: 12px 14px;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .input-sunk-wrap:focus-within {
+        border-color: rgba(61, 219, 122, 0.5);
+        box-shadow:
+          inset 0 2px 10px rgba(0, 0, 0, 0.55),
+          0 0 0 3px rgba(61, 219, 122, 0.25);
+      }
+
+      .input-sunk-wrap .input-plain,
+      .input-sunk-wrap textarea.input-plain,
+      .input-sunk-wrap select.input-plain {
+        display: block;
         width: 100%;
       }
 
-      .height-field-block .seg.compact {
-        align-self: flex-start;
+      .input-sunk-wrap .input-plain:focus-visible,
+      .input-sunk-wrap textarea.input-plain:focus-visible,
+      .input-sunk-wrap select.input-plain:focus-visible {
+        box-shadow: none;
+      }
+
+      .input-sunk-mini {
+        padding: 10px 12px;
+        min-width: 0;
+      }
+
+      .height-ft-sunk-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .height-ft-sunk-row .input-sunk-mini {
+        flex: 0 1 auto;
+      }
+
+      .height-ft-sunk-row .height-ft-unit {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--lbl2);
+      }
+
+      .height-ft-sunk-row .input-sunk-mini .input-plain {
+        text-align: center;
+        font-variant-numeric: tabular-nums;
       }
 
       .height-value-wrap {
@@ -892,18 +950,17 @@
         border-radius: 6px;
       }
 
-      .height-split input:focus-visible {
-        outline: none;
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(61, 219, 122, 0.28);
-      }
-
       textarea.input-plain {
         text-align: left;
         width: 100%;
         resize: vertical;
         min-height: 88px;
         padding: 8px 0;
+      }
+
+      .input-sunk-wrap textarea.input-plain {
+        min-height: 96px;
+        padding: 0;
       }
 
       select.input-plain {
@@ -1075,24 +1132,6 @@
         font-weight: 600;
         min-width: 28px;
         text-align: center;
-      }
-
-      .height-split {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-      }
-
-      .height-split input {
-        width: 52px;
-        text-align: center;
-        border: 1px solid var(--sep);
-        border-radius: 8px;
-        padding: 8px;
-        background: rgba(8, 12, 10, 0.55);
-        color: var(--lbl1);
       }
 
       .field-msg {
@@ -2466,7 +2505,7 @@
           .seg,
           .seg button,
           .stepper button,
-          .height-split input,
+          .input-sunk-wrap,
           .choice-tile-body
         ) {
           corner-shape: squircle;
@@ -2510,7 +2549,7 @@
         <div class="progress-wrap">
           <div class="intake-progress" id="intake-progress">
             <div class="intake-progress-head">
-              <p class="intake-step-title" id="intake-step-title">About you</p>
+              <h2 class="intake-step-title" id="intake-step-title">About you</h2>
               <p class="intake-step-meta" id="intake-step-meta">Step 1 of 6</p>
             </div>
             <div
@@ -2538,26 +2577,23 @@
 
         <main class="screen-scroll" id="form-scroll">
           <!-- A -->
-          <section class="section" data-wizard-step="0" aria-labelledby="sec-a">
-            <div class="section-head" id="sec-a">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="8" r="3.5" />
-                <path d="M5 20v-1a7 7 0 0 1 14 0v1" stroke-linecap="round" />
-              </svg>
-              <h2 class="section-title">About You</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="0" aria-labelledby="intake-step-title">
             <div class="card">
               <div class="field" id="field-name" data-section="a">
                 <label class="row row-stack" for="inp-name">
                   <span class="row-label">First name</span>
-                  <input class="input-plain" id="inp-name" type="text" autocomplete="given-name" placeholder="Your name" />
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-name" type="text" autocomplete="given-name" placeholder="Your name" />
+                  </div>
                 </label>
                 <p class="field-msg" role="alert"></p>
               </div>
               <div class="field" id="field-age" data-section="a">
                 <label class="row row-stack" for="inp-age">
                   <span class="row-label">Age</span>
-                  <input class="input-plain" id="inp-age" type="number" inputmode="numeric" min="16" max="80" placeholder="e.g. 30" />
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-age" type="number" inputmode="numeric" min="16" max="80" placeholder="e.g. 30" />
+                  </div>
                 </label>
                 <p class="field-msg" role="alert"></p>
               </div>
@@ -2579,42 +2615,40 @@
               </div>
               <div class="field" id="field-weight" data-section="a">
                 <div class="row row-stack">
-                  <span class="row-label">Current weight</span>
-                  <div class="input-with-unit">
-                    <input class="input-plain" id="inp-weight" type="number" inputmode="decimal" min="1" step="0.1" placeholder="e.g. 75" />
+                  <div class="field-inline-label">
+                    <span class="row-label">Current weight</span>
                     <div class="seg compact" role="group" aria-label="Weight unit">
                       <button type="button" data-wu="kg" aria-pressed="true">kg</button>
                       <button type="button" data-wu="lbs" aria-pressed="false">lbs</button>
                     </div>
+                  </div>
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-weight" type="number" inputmode="decimal" min="1" step="0.1" placeholder="e.g. 75" />
                   </div>
                 </div>
                 <p class="field-msg" role="alert"></p>
               </div>
               <div class="field" id="field-height" data-section="a">
                 <div class="row row-stack">
-                  <span class="row-label">Height</span>
-                  <div class="height-field-block">
+                  <div class="field-inline-label">
+                    <span class="row-label">Height</span>
                     <div class="seg compact" role="group" aria-label="Height unit">
                       <button type="button" data-hu="cm" aria-pressed="true">cm</button>
                       <button type="button" data-hu="ftin" aria-pressed="false">ft / in</button>
                     </div>
-                    <div id="height-cm-wrap" class="height-value-wrap">
-                      <input
-                        class="input-plain"
-                        id="inp-height-cm"
-                        type="number"
-                        inputmode="numeric"
-                        min="120"
-                        max="250"
-                        placeholder="e.g. 175"
-                      />
+                  </div>
+                  <div id="height-cm-wrap" class="height-value-wrap input-sunk-wrap">
+                    <input class="input-plain" id="inp-height-cm" type="number" inputmode="numeric" min="120" max="250" placeholder="e.g. 175" />
+                  </div>
+                  <div id="height-ft-wrap" class="height-ft-sunk-row" hidden>
+                    <div class="input-sunk-wrap input-sunk-mini">
+                      <input class="input-plain" id="inp-height-ft" type="number" inputmode="numeric" min="3" max="8" placeholder="ft" aria-label="Feet" />
                     </div>
-                    <div id="height-ft-wrap" class="height-split" hidden>
-                      <input id="inp-height-ft" type="number" inputmode="numeric" min="3" max="8" placeholder="ft" aria-label="Feet" />
-                      <span style="color: var(--lbl2)">ft</span>
-                      <input id="inp-height-in" type="number" inputmode="numeric" min="0" max="11" placeholder="in" aria-label="Inches" />
-                      <span style="color: var(--lbl2)">in</span>
+                    <span class="height-ft-unit" aria-hidden="true">ft</span>
+                    <div class="input-sunk-wrap input-sunk-mini">
+                      <input class="input-plain" id="inp-height-in" type="number" inputmode="numeric" min="0" max="11" placeholder="in" aria-label="Inches" />
                     </div>
+                    <span class="height-ft-unit" aria-hidden="true">in</span>
                   </div>
                 </div>
                 <p class="field-msg" role="alert"></p>
@@ -2625,21 +2659,16 @@
                     <span class="row-label" id="lbl-bf">Body fat %</span>
                     <p class="field-subhint" id="hint-bf">Optional. Leave blank if you do not know yours.</p>
                   </div>
-                  <input class="input-plain" id="inp-bf" type="number" inputmode="decimal" min="0" max="60" step="0.1" placeholder="e.g. 18" aria-labelledby="lbl-bf hint-bf" />
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-bf" type="number" inputmode="decimal" min="0" max="60" step="0.1" placeholder="e.g. 18" aria-labelledby="lbl-bf hint-bf" />
+                  </div>
                 </div>
               </div>
             </div>
           </section>
 
           <!-- B -->
-          <section class="section" data-wizard-step="1" aria-labelledby="sec-b">
-            <div class="section-head" id="sec-b">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
-              </svg>
-              <h2 class="section-title">Your Goal</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="1" aria-labelledby="intake-step-title">
             <div class="field" id="field-goal" data-section="b">
               <div class="card card-grid" role="group" aria-label="Primary goal">
                 <button type="button" class="pick-card" data-goal="fat_loss" aria-pressed="false">
@@ -2681,7 +2710,9 @@
               <div class="field" data-section="b">
                 <label class="row row-stack" for="inp-tw">
                   <span class="row-label">Target weight <span class="row-hint">Optional</span></span>
-                  <input class="input-plain" id="inp-tw" type="number" inputmode="decimal" min="1" step="0.1" placeholder="Goal weight (optional)" />
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-tw" type="number" inputmode="decimal" min="1" step="0.1" placeholder="Goal weight (optional)" />
+                  </div>
                 </label>
               </div>
               <div class="field" id="field-urgency" data-section="b">
@@ -2699,15 +2730,7 @@
           </section>
 
           <!-- C -->
-          <section class="section" data-wizard-step="2" aria-labelledby="sec-c">
-            <div class="section-head" id="sec-c">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M6.5 20v-2a4 4 0 0 1 4-4h3a4 4 0 0 1 4 4v2" stroke-linecap="round" />
-                <path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                <path d="M18 7l2 2M5 12h3M16 8l2-2" stroke-linecap="round" />
-              </svg>
-              <h2 class="section-title">Training</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="2" aria-labelledby="intake-step-title">
             <div class="card">
               <div class="row row-stack" data-section="c">
                 <span class="row-label">Training days per week</span>
@@ -2760,20 +2783,16 @@
               <div class="field" data-section="c">
                 <label class="row row-stack" for="inp-inj">
                   <span class="row-label">Injuries or limitations</span>
-                  <textarea class="input-plain" id="inp-inj" placeholder="E.g. bad knees, lower back pain — or leave blank"></textarea>
+                  <div class="input-sunk-wrap">
+                    <textarea class="input-plain" id="inp-inj" placeholder="E.g. bad knees, lower back pain — or leave blank"></textarea>
+                  </div>
                 </label>
               </div>
             </div>
           </section>
 
           <!-- D -->
-          <section class="section" data-wizard-step="3" aria-labelledby="sec-d">
-            <div class="section-head" id="sec-d">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path d="M8 3v3M16 3v3M4 10h16M6 8h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-              <h2 class="section-title">Diet</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="3" aria-labelledby="intake-step-title">
             <div class="field" id="field-diet" data-section="d">
               <div class="card card-grid" role="group" aria-label="Dietary preference">
                 <button type="button" class="pick-card" data-diet="omnivore" aria-pressed="false">
@@ -2803,7 +2822,9 @@
               <div class="field" data-section="d">
                 <label class="row row-stack" for="inp-dislike">
                   <span class="row-label">Foods you dislike or can’t eat</span>
-                  <textarea class="input-plain" id="inp-dislike" placeholder="E.g. I hate fish, no dairy, allergic to nuts"></textarea>
+                  <div class="input-sunk-wrap">
+                    <textarea class="input-plain" id="inp-dislike" placeholder="E.g. I hate fish, no dairy, allergic to nuts"></textarea>
+                  </div>
                 </label>
               </div>
               <div class="field" id="field-mpd" data-section="d">
@@ -2851,14 +2872,7 @@
           </section>
 
           <!-- E -->
-          <section class="section" data-wizard-step="4" aria-labelledby="sec-e">
-            <div class="section-head" id="sec-e">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <rect x="7" y="7" width="10" height="14" rx="2" />
-                <path d="M10 7V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2" stroke-linecap="round" />
-              </svg>
-              <h2 class="section-title">Supplements</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="4" aria-labelledby="intake-step-title">
             <div class="card">
               <div class="field" id="field-suppown" data-section="e">
                 <div class="row row-stack" style="border-bottom: none">
@@ -2896,33 +2910,32 @@
               <div class="field" data-section="e">
                 <label class="row row-stack" for="inp-osupp">
                   <span class="row-label">Other supplements <span class="row-hint">Optional</span></span>
-                  <textarea class="input-plain" id="inp-osupp" placeholder="List any other supplements (optional)"></textarea>
+                  <div class="input-sunk-wrap">
+                    <textarea class="input-plain" id="inp-osupp" placeholder="List any other supplements (optional)"></textarea>
+                  </div>
                 </label>
               </div>
             </div>
           </section>
 
           <!-- F -->
-          <section class="section" data-wizard-step="5" aria-labelledby="sec-f">
-            <div class="section-head" id="sec-f">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
-              </svg>
-              <h2 class="section-title">Location &amp; Lifestyle</h2>
-            </div>
+          <section class="section intake-step-section" data-wizard-step="5" aria-labelledby="intake-step-title">
             <div class="card">
               <div class="field" id="field-country" data-section="f">
                 <label class="row row-stack" for="sel-country">
                   <span class="row-label">Country</span>
-                  <select class="input-plain" id="sel-country"></select>
+                  <div class="input-sunk-wrap">
+                    <select class="input-plain" id="sel-country"></select>
+                  </div>
                 </label>
                 <p class="field-msg" role="alert"></p>
               </div>
               <div class="field" data-section="f">
                 <label class="row row-stack" for="inp-city">
                   <span class="row-label">City / region <span class="row-hint">Optional</span></span>
-                  <input class="input-plain" id="inp-city" type="text" autocomplete="address-level2" placeholder="Your city or region (optional)" />
+                  <div class="input-sunk-wrap">
+                    <input class="input-plain" id="inp-city" type="text" autocomplete="address-level2" placeholder="Your city or region (optional)" />
+                  </div>
                 </label>
               </div>
               <div class="field" id="field-act" data-section="f">
