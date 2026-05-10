@@ -75,7 +75,7 @@
         color: inherit;
       }
 
-      /* Screen system */
+      /* Screen system — slide transitions */
       #screen-root {
         position: relative;
         min-height: 100dvh;
@@ -85,14 +85,66 @@
       .screen {
         position: absolute;
         inset: 0;
-        display: none;
+        display: flex;
         flex-direction: column;
         background: var(--bg);
         overflow: hidden;
+        transition: transform 0.38s cubic-bezier(0.25, 0.1, 0.25, 1);
+        will-change: transform;
       }
 
-      .screen.is-active {
-        display: flex;
+      #screen-root[data-stage="form"] #screen-form {
+        transform: translateX(0);
+        z-index: 3;
+      }
+      #screen-root[data-stage="form"] #screen-prompt {
+        transform: translateX(100%);
+        z-index: 2;
+      }
+      #screen-root[data-stage="form"] #screen-app {
+        transform: translateX(100%);
+        z-index: 1;
+      }
+
+      #screen-root[data-stage="prompt"] #screen-form {
+        transform: translateX(-100%);
+        z-index: 2;
+      }
+      #screen-root[data-stage="prompt"] #screen-prompt {
+        transform: translateX(0);
+        z-index: 3;
+      }
+      #screen-root[data-stage="prompt"] #screen-app {
+        transform: translateX(100%);
+        z-index: 1;
+      }
+
+      #screen-root[data-stage="app"] #screen-form {
+        transform: translateX(-100%);
+        z-index: 1;
+      }
+      #screen-root[data-stage="app"] #screen-prompt {
+        transform: translateX(-100%);
+        z-index: 2;
+      }
+      #screen-root[data-stage="app"] #screen-app {
+        transform: translateX(0);
+        z-index: 3;
+      }
+
+      #screen-root[data-stage="form"] #screen-prompt,
+      #screen-root[data-stage="form"] #screen-app,
+      #screen-root[data-stage="prompt"] #screen-form,
+      #screen-root[data-stage="prompt"] #screen-app,
+      #screen-root[data-stage="app"] #screen-form,
+      #screen-root[data-stage="app"] #screen-prompt {
+        pointer-events: none;
+      }
+
+      #screen-root[data-stage="form"] #screen-form,
+      #screen-root[data-stage="prompt"] #screen-prompt,
+      #screen-root[data-stage="app"] #screen-app {
+        pointer-events: auto;
       }
 
       #screen-form .screen-scroll {
@@ -102,12 +154,192 @@
         padding: 12px 0 calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 24px);
       }
 
-      #screen-prompt .screen-scroll,
+      #screen-prompt .prompt-scroll {
+        flex: 1;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+
       #screen-app .screen-scroll {
         flex: 1;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
         padding: 16px;
+        padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .prompt-header {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 8px 8px 10px;
+        padding-top: calc(10px + env(safe-area-inset-top, 0px));
+        background: var(--bg);
+        border-bottom: 0.5px solid var(--sep2);
+      }
+
+      .icon-btn {
+        border: none;
+        background: transparent;
+        font-size: 22px;
+        line-height: 1;
+        padding: 10px 14px;
+        color: var(--blue);
+        cursor: pointer;
+        border-radius: var(--r-inner);
+      }
+
+      .icon-btn:active {
+        opacity: 0.6;
+        transform: scale(0.96);
+      }
+
+      .prompt-title {
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0;
+        flex: 1;
+      }
+
+      .prompt-box {
+        width: 100%;
+        flex: 1;
+        min-height: 200px;
+        padding: 14px;
+        border: 1px solid var(--sep);
+        border-radius: var(--r-inner);
+        font-family: var(--mono);
+        font-size: 13px;
+        line-height: 1.45;
+        background: var(--card);
+        resize: vertical;
+      }
+
+      .btn-primary-full {
+        width: 100%;
+        height: 56px;
+        margin-top: 16px;
+        border: none;
+        border-radius: 14px;
+        background: var(--blue);
+        color: #fff;
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+      }
+
+      .btn-primary-full:active:not(:disabled) {
+        opacity: 0.75;
+        transform: scale(0.98);
+      }
+
+      .btn-secondary-full {
+        width: 100%;
+        height: 52px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 14px;
+        background: var(--bg2);
+        color: var(--blue);
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-secondary-full:active {
+        opacity: 0.75;
+        transform: scale(0.98);
+      }
+
+      .divider-label {
+        margin: 24px 0 8px;
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--lbl2);
+        text-align: center;
+      }
+
+      .btn-dashed {
+        width: 100%;
+        height: 52px;
+        margin-top: 4px;
+        border-radius: 14px;
+        border: 2px dashed var(--sep);
+        background: var(--card);
+        color: var(--lbl1);
+        font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .btn-dashed:active {
+        background: var(--card-pressed);
+      }
+
+      .error-card {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: var(--r-card);
+        background: var(--red-bg);
+        border: 1px solid rgba(255, 59, 48, 0.28);
+      }
+
+      .error-card-title {
+        margin: 0 0 8px;
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--lbl1);
+      }
+
+      .error-card-body {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .error-detail {
+        font-size: 14px;
+        color: var(--red);
+        margin: 10px 0;
+        font-family: var(--mono);
+      }
+
+      .upload-loading {
+        text-align: center;
+        font-size: 15px;
+        color: var(--lbl2);
+        margin-top: 12px;
+      }
+
+      .steps-list {
+        margin: 28px 0 0;
+        padding-left: 22px;
+        color: var(--lbl2);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .steps-list li {
+        margin-bottom: 10px;
+      }
+
+      kbd {
+        font-family: var(--mono);
+        font-size: 12px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--bg2);
+      }
+
+      .steps-list strong {
+        color: var(--lbl1);
       }
 
       .placeholder-panel {
@@ -517,9 +749,9 @@
     </style>
   </head>
   <body>
-    <div id="screen-root">
+    <div id="screen-root" data-stage="form">
       <!-- Screen 1 -->
-      <div id="screen-form" class="screen is-active" aria-hidden="false">
+      <div id="screen-form" class="screen" aria-hidden="false">
         <div class="progress-wrap">
           <div class="dots" id="progress-dots" aria-label="Section progress">
             <span class="dot" data-i="0"></span>
@@ -966,15 +1198,48 @@
         </div>
       </div>
 
-      <!-- Screen 2 placeholder -->
+      <!-- Screen 2 — Claude prompt -->
       <div id="screen-prompt" class="screen" aria-hidden="true">
-        <div class="placeholder-panel">Prompt screen — coming next.</div>
+        <header class="prompt-header">
+          <button type="button" class="icon-btn" id="btn-back-prompt" aria-label="Back to intake form">←</button>
+          <h1 class="prompt-title">Your Claude prompt</h1>
+        </header>
+        <div class="prompt-scroll">
+          <textarea id="prompt-text" class="prompt-box" readonly spellcheck="false" aria-label="Generated Claude prompt"></textarea>
+          <button type="button" class="btn-primary-full" id="btn-copy-prompt">Copy Prompt</button>
+          <button type="button" class="btn-secondary-full" id="btn-open-claude">Open Claude</button>
+          <p class="divider-label">When you have your JSON ready:</p>
+          <button type="button" class="btn-dashed" id="btn-upload-plan">Upload My Plan</button>
+          <input type="file" id="input-plan-json" accept=".json,application/json" hidden />
+          <p id="upload-loading" class="upload-loading" hidden>Reading file…</p>
+          <div id="json-error-card" class="error-card" hidden role="alert">
+            <p class="error-card-title">This JSON doesn't look right.</p>
+            <p class="error-card-body">
+              Make sure you copied the entire response from Claude including the opening { and closing }. Try again.
+            </p>
+            <p id="json-error-detail" class="error-detail"></p>
+            <button type="button" class="btn-secondary-full" id="btn-retry-upload">Try again</button>
+          </div>
+          <ol class="steps-list">
+            <li><strong>Step 1</strong> — Open claude.ai in your browser (or the Claude app).</li>
+            <li><strong>Step 2</strong> — Paste the prompt into a new conversation.</li>
+            <li><strong>Step 3</strong> — Hit send and wait — Claude will think for about 30 seconds.</li>
+            <li><strong>Step 4</strong> — Claude will reply with a JSON code block.</li>
+            <li><strong>Step 5</strong> — Copy everything inside the code block (starting with <kbd>{</kbd>).</li>
+            <li><strong>Step 6</strong> — Paste into a plain text editor and save as <kbd>myplan.json</kbd>.</li>
+            <li><strong>Step 7</strong> — Come back here and tap <strong>Upload My Plan</strong> above.</li>
+          </ol>
+        </div>
       </div>
 
       <!-- Screen 3 scaffold -->
       <div id="screen-app" class="screen" aria-hidden="true">
         <div class="screen-scroll">
-          <div class="placeholder-panel">Plan app — tabs below are a scaffold for the next milestones.</div>
+          <div class="placeholder-panel" id="app-placeholder">
+            <p>
+              Plan loaded for <strong id="app-plan-name">there</strong>. Tabs below will show meals, macros, and more in the next update.
+            </p>
+          </div>
         </div>
         <nav class="tab-bar" aria-label="Main">
           <div class="tab-btn on" aria-current="page">
@@ -1008,6 +1273,236 @@
     <script>
       (function () {
         const STORAGE_KEY = "health_form_session";
+
+const PROMPT_TEMPLATE = `You are a certified sports nutritionist, personal trainer, and meal planning expert. 
+Your job is to create a complete, highly personalised health and fitness plan for a real person.
+
+Read the person's profile carefully. Every recommendation must be specific to their data — 
+not generic advice. Account for their dietary restrictions, cooking equipment, location, 
+supplement budget, and schedule.
+
+=== PERSON'S PROFILE ===
+{FORM_DATA_JSON}
+
+=== YOUR TASK ===
+
+Generate a complete personalised plan and return it as a single JSON object. 
+The JSON must exactly match the schema below. Do not include any text before or after the JSON. 
+Do not use markdown formatting. Return only the raw JSON object starting with { and ending with }.
+
+Important instructions:
+- All calorie and macro calculations must be based on the person's actual TDEE 
+  (use Mifflin-St Jeor formula adjusted for their activity level)
+- All meals must respect their dietary preference and avoid any listed dislikes
+- Grocery lists must use items available in their country
+- Supplement recommendations must fit within their stated budget
+- Protein powder section must list 3 real products available in their country 
+  (Best / Budget / Premium) with real approximate prices in their local currency
+- Grocery store tips must be specific to their city/country if provided
+- Every meal must have real specific ingredients with gram amounts — not vague descriptions
+- Flavour rotations must be actual spice combinations, not just labels
+- The tips array must have at least 10 genuinely useful, specific tips 
+  (not generic fitness clichés)
+- Phase descriptions must be motivational and honest — mention what they will 
+  actually feel and experience during that phase
+
+=== JSON SCHEMA ===
+
+{
+  "meta": {
+    "version": "1.0",
+    "generated_for": "string — person's first name",
+    "generated_date": "string — today's date YYYY-MM-DD",
+    "goal_label": "string — e.g. Body Recomposition"
+  },
+  "user": {
+    "name": "string",
+    "age": number,
+    "sex": "male" | "female",
+    "weight_kg": number,
+    "height_cm": number,
+    "body_fat_pct": number | null,
+    "goal": "fat_loss" | "muscle_gain" | "recomp" | "maintenance",
+    "timeline_weeks": number,
+    "target_weight_kg": number | null,
+    "urgency": "sustainable" | "balanced" | "aggressive",
+    "tdee": number,
+    "bmr": number
+  },
+  "phases": [
+    {
+      "id": number,
+      "name": "string",
+      "weeks": "string — e.g. 1–4",
+      "week_start": number,
+      "week_end": number,
+      "kcal_daily": number,
+      "kcal_workout_day": number,
+      "kcal_rest_day": number,
+      "protein_g": number,
+      "carbs_g": number,
+      "fat_g": number,
+      "description": "string — 3–4 sentences. What happens this phase, what to expect physically, what the key focus is.",
+      "key_focus": "string — one sentence",
+      "flavour_rotation": "string — specific spices and marinades for this phase",
+      "training_note": "string — what to focus on in the gym this phase"
+    }
+  ],
+  "meal_plan": {
+    "meals_per_day": number,
+    "workout_day": [
+      {
+        "slot": number,
+        "time": "string — e.g. 7:00 AM",
+        "name": "string",
+        "kcal": number,
+        "description": "string — 2–3 sentences of clear cooking instructions",
+        "ingredients": [
+          {
+            "name": "string",
+            "grams": number,
+            "category": "protein" | "carbs" | "veg" | "fat" | "dairy" | "pantry"
+          }
+        ],
+        "prep_method": "string — e.g. Instant Pot / Pan / No cook / Microwave",
+        "prep_minutes": number,
+        "tags": ["string"]
+      }
+    ],
+    "rest_day": [
+      {
+        "slot": number,
+        "time": "string",
+        "name": "string",
+        "kcal": number,
+        "description": "string",
+        "ingredients": [
+          {
+            "name": "string",
+            "grams": number,
+            "category": "protein" | "carbs" | "veg" | "fat" | "dairy" | "pantry"
+          }
+        ],
+        "prep_method": "string",
+        "prep_minutes": number,
+        "tags": ["string"]
+      }
+    ],
+    "daily_totals": {
+      "workout_day_kcal": number,
+      "rest_day_kcal": number,
+      "workout_day_protein_g": number,
+      "rest_day_protein_g": number
+    }
+  },
+  "prep_guide": {
+    "total_minutes": number,
+    "sunday_steps": [
+      {
+        "step": number,
+        "name": "string",
+        "detail": "string — full step-by-step instructions, specific amounts, temperatures, times",
+        "time_minutes": number,
+        "equipment": "string — e.g. Instant Pot / 12-inch pan"
+      }
+    ],
+    "wednesday_topup": [
+      {
+        "step": number,
+        "name": "string",
+        "detail": "string",
+        "time_minutes": number
+      }
+    ],
+    "tips": ["string — at least 5 meal prep tips specific to their setup"]
+  },
+  "grocery": {
+    "protein": [
+      { "name": "string", "qty": "string", "notes": "string | null" }
+    ],
+    "carbs": [
+      { "name": "string", "qty": "string", "notes": "string | null" }
+    ],
+    "veg": [
+      { "name": "string", "qty": "string", "notes": "string | null" }
+    ],
+    "fat": [
+      { "name": "string", "qty": "string", "notes": "string | null" }
+    ],
+    "pantry": [
+      { "name": "string", "qty": "string", "notes": "string | null" }
+    ],
+    "budget_swaps": [
+      {
+        "original": "string — the standard item",
+        "swap": "string — cheaper alternative",
+        "saving": "string — e.g. saves ~$8/week",
+        "trade_off": "string — what you give up"
+      }
+    ],
+    "store_tip": "string — specific store recommendation for their city/country with actual store names and what to buy where"
+  },
+  "supplements": {
+    "daily_schedule": [
+      {
+        "time_slot": "morning" | "pre_gym" | "post_gym" | "bedtime" | "with_meal",
+        "label": "string — e.g. Morning",
+        "items": "string — what to take",
+        "note": "string — why and how"
+      }
+    ],
+    "stack": [
+      {
+        "name": "string",
+        "status": "have" | "buy" | "optional" | "skip",
+        "dose": "string — e.g. 5g",
+        "timing": "string",
+        "frequency": "daily" | "workout_days_only" | "as_needed",
+        "why": "string — 3–4 sentences. Specific mechanism, realistic benefit for this person.",
+        "brand_recommendation": "string | null — specific brand available in their country",
+        "colour": "string — hex colour for the UI dot e.g. #34C759"
+      }
+    ],
+    "protein_powder": [
+      {
+        "rank": "best" | "budget" | "premium",
+        "rank_label": "string — e.g. Best Overall",
+        "name": "string — full product name",
+        "price_local": "string — e.g. CAD $129 / 5lb",
+        "protein_per_scoop_g": number,
+        "available_at": "string — where to buy in their location",
+        "why": "string — 2–3 sentences"
+      }
+    ],
+    "skip_list": [
+      {
+        "name": "string — supplement to avoid",
+        "reason": "string — why it's a waste of money for this person"
+      }
+    ]
+  },
+  "flavour_rotations": [
+    {
+      "phase": number,
+      "weeks": "string",
+      "name": "string — e.g. Garlic Lemon Paprika",
+      "recipe": "string — exact spice amounts and method e.g. 2 tsp paprika, 1 tsp garlic powder, juice of 1 lemon, pinch of cayenne"
+    }
+  ],
+  "water_target_litres": number,
+  "tips": [
+    "string — at least 10 specific, actionable tips for this exact person. Not generic. Reference their specific goal, schedule, and situation."
+  ],
+  "weekly_check_in": {
+    "what_to_track": ["string"],
+    "expected_progress_week4": "string",
+    "expected_progress_week8": "string",
+    "expected_progress_week16": "string",
+    "red_flags": ["string — signs something is wrong and they should adjust"]
+  }
+}`;
+
+
 
         const EQUIPMENT = ["Instant Pot", "Air Fryer", "Stovetop", "Oven", "Microwave", "BBQ"];
         const SUPP_ITEMS = [
@@ -1445,9 +1940,201 @@
           };
         }
 
-        /** Placeholder until Screen 2 prompt template lands (PR-3). */
+        function validatePlan(json) {
+          if (!json || typeof json !== "object") {
+            return { valid: false, error: "Invalid JSON structure" };
+          }
+          const required = ["meta", "user", "phases", "meal_plan", "prep_guide", "grocery", "supplements", "tips"];
+          const missing = required.filter((k) => !(k in json));
+          if (missing.length > 0) {
+            return { valid: false, error: `Missing sections: ${missing.join(", ")}` };
+          }
+          if (!Array.isArray(json.phases) || json.phases.length === 0) {
+            return { valid: false, error: "Phases array is empty or missing" };
+          }
+          if (!json.meal_plan || !json.meal_plan.workout_day || !json.meal_plan.rest_day) {
+            return { valid: false, error: "Meal plan must have workout_day and rest_day" };
+          }
+          return { valid: true };
+        }
+
+        function stripJsonFence(text) {
+          let t = text.trim();
+          const m = t.match(/^```(?:json)?\s*\r?\n?([\s\S]*?)\r?\n?```$/im);
+          if (m) return m[1].trim();
+          return t;
+        }
+
+        function parsePlanText(raw) {
+          return JSON.parse(stripJsonFence(raw));
+        }
+
+        function profilePayload(fd) {
+          let heightStr;
+          if (fd.heightUnit === "cm") heightStr = `${fd.heightCm} cm`;
+          else heightStr = `${fd.heightFt} ft ${fd.heightIn} in`;
+          const tw = fd.targetWeight;
+          return {
+            name: fd.name,
+            age: fd.age,
+            sex: fd.sex,
+            weight: `${fd.weight} ${fd.weightUnit}`,
+            height: heightStr,
+            body_fat_pct: fd.bodyFat == null ? "not provided" : fd.bodyFat,
+            goal: fd.goal,
+            timeline: `${fd.timelineWeeks} weeks`,
+            target_weight: tw == null ? "not specified" : `${tw} ${fd.weightUnit}`,
+            urgency: fd.urgency,
+            training_days_per_week: fd.trainingDays,
+            training_location: fd.trainingLocation,
+            fitness_level: fd.fitnessLevel,
+            injuries: fd.injuries == null || fd.injuries === "" ? "none" : fd.injuries,
+            dietary_preference: fd.dietaryPreference,
+            food_dislikes: fd.foodDislikes == null || fd.foodDislikes === "" ? "none" : fd.foodDislikes,
+            meals_per_day: fd.mealsPerDay,
+            cooking_time: fd.cookingTime,
+            meal_prep: fd.mealPrep,
+            cooking_equipment: fd.equipment,
+            supplements_owned: fd.supplementsOwned,
+            supplement_budget: fd.supplementBudget,
+            other_supplements: fd.otherSupplements == null || fd.otherSupplements === "" ? "none" : fd.otherSupplements,
+            country: fd.country,
+            city: fd.city == null || fd.city === "" ? "not provided" : fd.city,
+            activity_outside_gym: fd.activityLevel,
+            sleep_hours: fd.sleepHours,
+            stress_level: fd.stressLevel,
+            biggest_challenges: fd.challenges,
+          };
+        }
+
         function buildPrompt(formData) {
-          return "[Prompt template placeholder]\n" + JSON.stringify(formData, null, 2);
+          const profileJSON = JSON.stringify(profilePayload(formData), null, 2);
+          return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON);
+        }
+
+        function setStage(stage, persist) {
+          $("#screen-root").setAttribute("data-stage", stage);
+          $("#screen-form").setAttribute("aria-hidden", stage === "form" ? "false" : "true");
+          $("#screen-prompt").setAttribute("aria-hidden", stage === "prompt" ? "false" : "true");
+          $("#screen-app").setAttribute("aria-hidden", stage === "app" ? "false" : "true");
+          if (persist !== false) {
+            try {
+              localStorage.setItem("health_active_screen", stage);
+            } catch (_) {}
+          }
+        }
+
+        function restoreStage() {
+          let stage = "form";
+          try {
+            stage = localStorage.getItem("health_active_screen") || "form";
+          } catch (_) {}
+          let rawPlan = null;
+          try {
+            rawPlan = localStorage.getItem("health_plan");
+          } catch (_) {}
+          if (stage === "app" && rawPlan) {
+            try {
+              const json = JSON.parse(rawPlan);
+              const v = validatePlan(json);
+              if (v.valid) {
+                window.healthPlan = json;
+                const nameEl = $("#app-plan-name");
+                if (nameEl) nameEl.textContent = json.meta?.generated_for || json.user?.name || "there";
+                setStage("app", false);
+                return;
+              }
+            } catch (_) {}
+          }
+          if (stage === "prompt") {
+            const p = sessionStorage.getItem("health_last_prompt");
+            if (p) {
+              $("#prompt-text").value = p;
+              setStage("prompt", false);
+              return;
+            }
+          }
+          setStage("form", false);
+        }
+
+        function wirePromptFlow() {
+          $("#btn-back-prompt").addEventListener("click", () => {
+            setStage("form");
+          });
+
+          $("#btn-copy-prompt").addEventListener("click", async () => {
+            const ta = $("#prompt-text");
+            const text = ta.value;
+            try {
+              await navigator.clipboard.writeText(text);
+            } catch (_) {
+              ta.focus();
+              ta.select();
+              try {
+                document.execCommand("copy");
+              } catch (__) {}
+            }
+            const btn = $("#btn-copy-prompt");
+            const prev = btn.textContent;
+            btn.textContent = "Copied!";
+            clearTimeout(window.__copyPromptTimer);
+            window.__copyPromptTimer = setTimeout(() => {
+              btn.textContent = prev;
+            }, 2000);
+          });
+
+          $("#btn-open-claude").addEventListener("click", () => {
+            window.open("https://claude.ai", "_blank", "noopener,noreferrer");
+          });
+
+          $("#btn-upload-plan").addEventListener("click", () => {
+            $("#json-error-card").hidden = true;
+            $("#input-plan-json").click();
+          });
+
+          $("#btn-retry-upload").addEventListener("click", () => {
+            $("#json-error-card").hidden = true;
+            $("#input-plan-json").click();
+          });
+
+          $("#input-plan-json").addEventListener("change", (e) => {
+            const input = e.target;
+            const file = input.files && input.files[0];
+            input.value = "";
+            if (!file) return;
+            $("#upload-loading").hidden = false;
+            $("#json-error-card").hidden = true;
+            $("#json-error-detail").textContent = "";
+            const reader = new FileReader();
+            reader.onload = () => {
+              $("#upload-loading").hidden = true;
+              try {
+                const json = parsePlanText(String(reader.result || ""));
+                const v = validatePlan(json);
+                if (!v.valid) {
+                  $("#json-error-detail").textContent = v.error || "";
+                  $("#json-error-card").hidden = false;
+                  return;
+                }
+                try {
+                  localStorage.setItem("health_plan", JSON.stringify(json));
+                } catch (_) {}
+                window.healthPlan = json;
+                const nameEl = $("#app-plan-name");
+                if (nameEl) nameEl.textContent = json.meta?.generated_for || json.user?.name || "there";
+                setStage("app");
+              } catch (err) {
+                $("#json-error-detail").textContent = err && err.message ? err.message : "Could not parse JSON.";
+                $("#json-error-card").hidden = false;
+              }
+            };
+            reader.onerror = () => {
+              $("#upload-loading").hidden = true;
+              $("#json-error-detail").textContent = "Could not read the file.";
+              $("#json-error-card").hidden = false;
+            };
+            reader.readAsText(file);
+          });
         }
 
         function wire() {
@@ -1674,13 +2361,22 @@
           $("#btn-generate").addEventListener("click", () => {
             if (!validateAll()) return;
             const data = collectFormData();
-            console.log(buildPrompt(data));
+            try {
+              localStorage.setItem("health_form", JSON.stringify(data));
+            } catch (_) {}
+            const prompt = buildPrompt(data);
+            sessionStorage.setItem("health_last_prompt", prompt);
+            $("#prompt-text").value = prompt;
+            setStage("prompt");
           });
+
+          wirePromptFlow();
         }
 
         loadState();
         wire();
         syncDomFromState();
+        restoreStage();
       })();
     </script>
   </body>
