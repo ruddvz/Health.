@@ -3645,6 +3645,15 @@ Important instructions:
           }
         }
 
+        /**
+         * Read `data-*` attributes from HTML markup.
+         * Use this instead of `element.dataset.*` for intake controls: WebKit/Safari can
+         * leave `dataset` undefined for some short attribute names (e.g. `data-hu`, `data-tl`).
+         */
+        function dataRead(el, suffix) {
+          return el.getAttribute("data-" + suffix) || "";
+        }
+
         function $(sel, root) {
           return (root || document).querySelector(sel);
         }
@@ -3835,27 +3844,29 @@ Important instructions:
           cmPanel.setAttribute("aria-hidden", showCm ? "false" : "true");
           ftPanel.setAttribute("aria-hidden", showCm ? "true" : "false");
           $("#inp-bf").value = state.bodyFat;
-          $$("[data-goal].pick-card").forEach((b) => b.setAttribute("aria-pressed", b.dataset.goal === state.goal ? "true" : "false"));
+          $$("[data-goal].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", dataRead(b, "goal") === state.goal ? "true" : "false")
+          );
           setSegExclusive($("#field-timeline .seg"), "data-tl", state.timeline);
           $("#inp-tw").value = state.targetWeight;
           setSegExclusive($("#field-urgency .seg"), "data-ur", state.urgency);
           $("#out-td").textContent = String(state.trainingDays);
           $$("[data-loc].pick-card").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.loc === state.trainingLocation ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "loc") === state.trainingLocation ? "true" : "false")
           );
           $$("[data-fit].pick-card").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.fit === state.fitnessLevel ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "fit") === state.fitnessLevel ? "true" : "false")
           );
           $("#inp-inj").value = state.injuries;
           $$("[data-diet].pick-card").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.diet === state.dietaryPreference ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "diet") === state.dietaryPreference ? "true" : "false")
           );
           $("#inp-dislike").value = state.foodDislikes;
           setSegExclusive($("#field-mpd .seg"), "data-mpd", state.mealsPerDay);
           setSegExclusive($("#field-cookt .seg"), "data-ct", state.cookingTime);
           const mpSegVal = state.mealPrep === null ? "unset" : state.mealPrep ? "yes" : "no";
           $$("#field-mprep [data-mprep]").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.mprep === mpSegVal ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "mprep") === mpSegVal ? "true" : "false")
           );
           renderChips(
             $("#chips-equip"),
@@ -3893,13 +3904,13 @@ Important instructions:
             (x) => x
           );
           $$("[data-sb].pick-card").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.sb === state.supplementBudget ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "sb") === state.supplementBudget ? "true" : "false")
           );
           $("#inp-osupp").value = state.otherSupplements;
           $("#sel-country").value = state.country || "";
           $("#inp-city").value = state.city;
           $$("[data-act].pick-card").forEach((b) =>
-            b.setAttribute("aria-pressed", b.dataset.act === state.activityLevel ? "true" : "false")
+            b.setAttribute("aria-pressed", dataRead(b, "act") === state.activityLevel ? "true" : "false")
           );
           $("#out-sl").textContent = String(state.sleepHours);
           setSegExclusive($("#field-stress .seg"), "data-st", state.stressLevel);
@@ -5963,7 +5974,7 @@ Important instructions:
           });
           $$("[data-goal].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.goal = b.dataset.goal;
+              state.goal = dataRead(b, "goal");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -5971,7 +5982,7 @@ Important instructions:
           );
           $$("#field-timeline [data-tl]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.timeline = b.dataset.tl;
+              state.timeline = dataRead(b, "tl");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -5983,7 +5994,7 @@ Important instructions:
           });
           $$("#field-urgency [data-ur]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.urgency = b.dataset.ur;
+              state.urgency = dataRead(b, "ur");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6002,7 +6013,7 @@ Important instructions:
           });
           $$("[data-loc].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.trainingLocation = b.dataset.loc;
+              state.trainingLocation = dataRead(b, "loc");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6010,7 +6021,7 @@ Important instructions:
           );
           $$("[data-fit].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.fitnessLevel = b.dataset.fit;
+              state.fitnessLevel = dataRead(b, "fit");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6023,7 +6034,7 @@ Important instructions:
 
           $$("[data-diet].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.dietaryPreference = b.dataset.diet;
+              state.dietaryPreference = dataRead(b, "diet");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6035,7 +6046,7 @@ Important instructions:
           });
           $$("#field-mpd [data-mpd]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.mealsPerDay = b.dataset.mpd;
+              state.mealsPerDay = dataRead(b, "mpd");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6043,7 +6054,7 @@ Important instructions:
           );
           $$("#field-cookt [data-ct]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.cookingTime = b.dataset.ct;
+              state.cookingTime = dataRead(b, "ct");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6052,7 +6063,7 @@ Important instructions:
 
           $$("#field-mprep [data-mprep]").forEach((b) =>
             b.addEventListener("click", () => {
-              const v = b.dataset.mprep;
+              const v = dataRead(b, "mprep");
               state.mealPrep = v === "unset" ? null : v === "yes";
               saveState();
               syncDomFromState();
@@ -6062,7 +6073,7 @@ Important instructions:
 
           $$("[data-sb].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.supplementBudget = b.dataset.sb;
+              state.supplementBudget = dataRead(b, "sb");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6079,7 +6090,7 @@ Important instructions:
           });
           $$("[data-act].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
-              state.activityLevel = b.dataset.act;
+              state.activityLevel = dataRead(b, "act");
               saveState();
               syncDomFromState();
               clearValidation();
@@ -6097,7 +6108,7 @@ Important instructions:
           });
           $$("#field-stress [data-st]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.stressLevel = b.dataset.st;
+              state.stressLevel = dataRead(b, "st");
               saveState();
               syncDomFromState();
               clearValidation();
