@@ -1036,6 +1036,350 @@
         color: var(--lbl2);
         line-height: 1.5;
       }
+
+      /* Phases & Meals tabs */
+      .tab-section-label {
+        margin: 16px 0 8px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--lbl2);
+      }
+
+      .tab-section-label:first-child {
+        margin-top: 4px;
+      }
+
+      .phase-card {
+        background: var(--card);
+        border-radius: var(--r-card);
+        padding: 18px 16px;
+        margin-bottom: 14px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .phase-card-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .phase-card-title {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .phase-week-badge {
+        flex-shrink: 0;
+        padding: 6px 10px;
+        border-radius: var(--r-chip);
+        font-size: 12px;
+        font-weight: 600;
+        background: var(--indigo-bg);
+        color: var(--indigo);
+      }
+
+      .phase-kcal-big {
+        margin: 4px 0 14px;
+        font-size: 36px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--green);
+        line-height: 1;
+      }
+
+      .phase-kcal-hint {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--lbl2);
+        margin-left: 8px;
+      }
+
+      .macro-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .macro-chip {
+        padding: 8px 12px;
+        border-radius: var(--r-chip);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .macro-chip.p {
+        background: var(--teal-bg);
+        color: #0878a3;
+      }
+
+      .macro-chip.c {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .macro-chip.f {
+        background: var(--orange-bg);
+        color: #cc7700;
+      }
+
+      .phase-desc {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.45;
+        color: var(--lbl2);
+      }
+
+      .phase-flavour {
+        margin: 12px 0 0;
+        padding-top: 12px;
+        border-top: 0.5px solid var(--sep2);
+        font-size: 14px;
+        color: var(--lbl1);
+      }
+
+      .phase-flavour strong {
+        display: block;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--lbl2);
+        margin-bottom: 6px;
+      }
+
+      .flavour-global-card {
+        margin-top: 8px;
+        padding: 16px;
+        border-radius: var(--r-card);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .flavour-global-card h3 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        font-weight: 700;
+      }
+
+      .flavour-scroll {
+        max-height: 260px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .flavour-item {
+        padding: 12px 0;
+        border-bottom: 0.5px solid var(--sep2);
+        font-size: 14px;
+      }
+
+      .flavour-item:last-child {
+        border-bottom: none;
+      }
+
+      .flavour-item-name {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .flavour-item-meta {
+        font-size: 12px;
+        color: var(--lbl2);
+        margin-bottom: 6px;
+      }
+
+      .phase-pill-strip {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        padding: 4px 0 8px;
+        margin-bottom: 4px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .phase-pill {
+        flex-shrink: 0;
+        padding: 8px 14px;
+        border-radius: var(--r-chip);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--lbl1);
+      }
+
+      .phase-pill.on {
+        border-color: var(--blue);
+        background: var(--blue-bg);
+        color: var(--blue);
+      }
+
+      .meals-plan-note {
+        font-size: 13px;
+        color: var(--lbl2);
+        line-height: 1.4;
+        margin-bottom: 12px;
+        padding: 10px 12px;
+        border-radius: var(--r-inner);
+        background: var(--yellow-bg);
+      }
+
+      .meal-card {
+        background: var(--card);
+        border-radius: var(--r-card);
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .meal-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .meal-time-badge {
+        font-family: var(--mono);
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--lbl2);
+      }
+
+      .meal-kcal-badge {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .meal-name {
+        margin: 0 0 8px;
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .meal-desc {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .meal-ing-head {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--lbl2);
+        margin-bottom: 8px;
+      }
+
+      .meal-ing-row {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        font-size: 14px;
+        padding: 6px 0;
+        border-bottom: 0.5px solid var(--sep2);
+      }
+
+      .meal-ing-row:last-child {
+        border-bottom: none;
+      }
+
+      .ing-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .ing-dot.cat-protein {
+        background: var(--teal);
+      }
+
+      .ing-dot.cat-carbs {
+        background: var(--green);
+      }
+
+      .ing-dot.cat-veg {
+        background: var(--orange);
+      }
+
+      .ing-dot.cat-fat {
+        background: var(--yellow);
+      }
+
+      .ing-dot.cat-dairy {
+        background: var(--lbl4);
+        border: 1px solid var(--sep);
+      }
+
+      .ing-dot.cat-pantry {
+        background: var(--lbl3);
+      }
+
+      .meal-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 12px;
+      }
+
+      .meal-tag {
+        font-size: 12px;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background: var(--bg2);
+        color: var(--lbl2);
+        font-weight: 500;
+      }
+
+      .meals-summary-card {
+        margin-top: 16px;
+        padding: 16px;
+        border-radius: var(--r-card);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .meals-summary-card h3 {
+        margin: 0 0 10px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: var(--lbl2);
+      }
+
+      .meals-summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 8px 0;
+        font-size: 16px;
+      }
+
+      .meals-summary-row span:last-child {
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .empty-tab-msg {
+        margin: 24px 0;
+        padding: 20px;
+        text-align: center;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
     </style>
   </head>
   <body>
@@ -1588,15 +1932,20 @@
           </div>
 
           <div id="panel-phases" class="app-panel" hidden>
-            <div class="tab-placeholder-inner">
-              <p class="tab-placeholder-title">Phases</p>
-              <p class="tab-placeholder-text">Phase macros and calories will appear here in the next update.</p>
-            </div>
+            <div id="phases-mount"></div>
           </div>
           <div id="panel-meals" class="app-panel" hidden>
-            <div class="tab-placeholder-inner">
-              <p class="tab-placeholder-title">Meals</p>
-              <p class="tab-placeholder-text">Your meal plan will appear here in the next update.</p>
+            <div class="meals-tab-inner">
+              <p class="tab-section-label">Day type</p>
+              <div class="seg compact meals-day-toggle" role="group" aria-label="Workout or rest day meals">
+                <button type="button" data-meal-day="workout" aria-pressed="true">Workout day</button>
+                <button type="button" data-meal-day="rest" aria-pressed="false">Rest day</button>
+              </div>
+              <p class="tab-section-label">Phase</p>
+              <div class="phase-pill-strip" id="meals-phase-pills" role="tablist" aria-label="Program phase"></div>
+              <div id="meals-plan-note" class="meals-plan-note" hidden></div>
+              <div id="meals-list-mount"></div>
+              <div id="meals-summary-mount"></div>
             </div>
           </div>
           <div id="panel-prep" class="app-panel" hidden>
@@ -1898,6 +2247,9 @@ Important instructions:
 
         const TAB_IDS = ["home", "phases", "meals", "prep", "grocery", "supps"];
         const LS_ACTIVE_TAB = "health_active_tab";
+
+        let mealsUiState = { day: "workout", phaseIndex: 0 };
+        let mealsPlanRef = null;
 
         const EQUIPMENT = ["Instant Pot", "Air Fryer", "Stovetop", "Oven", "Microwave", "BBQ"];
         const SUPP_ITEMS = [
@@ -2581,6 +2933,417 @@ Important instructions:
             wl != null && wl !== "" && !Number.isNaN(Number(wl)) ? `${wl}L of water today` : "3L of water today";
         }
 
+        function defaultPhaseIndexForMeals(plan) {
+          const phases = plan.phases || [];
+          const cw = currentPlanWeek(plan);
+          for (let i = 0; i < phases.length; i++) {
+            const p = phases[i];
+            const ws = p.week_start != null ? p.week_start : 1;
+            const we = p.week_end != null ? p.week_end : ws;
+            if (cw >= ws && cw <= we) return i;
+          }
+          return 0;
+        }
+
+        function getMealPlanSliceForPhase(plan, phase) {
+          if (!plan) return null;
+          const id = phase && phase.id;
+          const by = plan.meal_plans_by_phase || plan.meals_by_phase || plan.phase_meal_plans;
+          if (by != null && id != null) {
+            const slice = by[id] || by[String(id)];
+            if (slice && (Array.isArray(slice.workout_day) || Array.isArray(slice.rest_day))) return slice;
+          }
+          return plan.meal_plan || null;
+        }
+
+        function phaseHasOwnMeals(plan, phase) {
+          if (!plan || !phase) return false;
+          const id = phase.id;
+          const by = plan.meal_plans_by_phase || plan.meals_by_phase || plan.phase_meal_plans;
+          if (by == null || id == null) return false;
+          const slice = by[id] || by[String(id)];
+          return !!(slice && (Array.isArray(slice.workout_day) || Array.isArray(slice.rest_day)));
+        }
+
+        function sumMealKcal(meals) {
+          if (!meals || !meals.length) return null;
+          let t = 0;
+          let any = false;
+          for (let i = 0; i < meals.length; i++) {
+            const k = Number(meals[i].kcal);
+            if (!Number.isNaN(k)) {
+              t += k;
+              any = true;
+            }
+          }
+          return any ? t : null;
+        }
+
+        function ingDotClass(cat) {
+          const k = String(cat || "pantry").toLowerCase();
+          const map = {
+            protein: "cat-protein",
+            carbs: "cat-carbs",
+            veg: "cat-veg",
+            fat: "cat-fat",
+            dairy: "cat-dairy",
+            pantry: "cat-pantry",
+          };
+          return map[k] || "cat-pantry";
+        }
+
+        function renderPhasesTab() {
+          const mount = $("#phases-mount");
+          const plan = window.healthPlan;
+          if (!mount) return;
+          mount.textContent = "";
+          if (!plan) {
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = "No plan loaded.";
+            mount.appendChild(p);
+            return;
+          }
+          const phases = plan.phases || [];
+          if (!phases.length) {
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = "No phases in this plan.";
+            mount.appendChild(p);
+            return;
+          }
+          phases.forEach((ph, idx) => {
+            const card = document.createElement("section");
+            card.className = "phase-card";
+            const head = document.createElement("div");
+            head.className = "phase-card-head";
+            const title = document.createElement("h2");
+            title.className = "phase-card-title";
+            const pid = ph.id != null ? ph.id : idx + 1;
+            title.textContent = `Phase ${pid} · ${ph.name || "Phase"}`;
+            const badge = document.createElement("span");
+            badge.className = "phase-week-badge";
+            badge.textContent =
+              ph.weeks || (ph.week_start != null && ph.week_end != null ? `Weeks ${ph.week_start}–${ph.week_end}` : "");
+            head.appendChild(title);
+            head.appendChild(badge);
+            card.appendChild(head);
+
+            const kcalMain = ph.kcal_daily != null ? ph.kcal_daily : ph.kcal_workout_day;
+            const kcalEl = document.createElement("div");
+            kcalEl.className = "phase-kcal-big";
+            const mainNum = kcalMain != null ? fmtRoundNum(kcalMain) ?? kcalMain : null;
+            kcalEl.appendChild(document.createTextNode(mainNum != null ? `${mainNum} kcal` : "— kcal"));
+            if (ph.kcal_workout_day != null && ph.kcal_rest_day != null) {
+              const hint = document.createElement("span");
+              hint.className = "phase-kcal-hint";
+              const w = fmtRoundNum(ph.kcal_workout_day) ?? ph.kcal_workout_day;
+              const r = fmtRoundNum(ph.kcal_rest_day) ?? ph.kcal_rest_day;
+              hint.textContent = ` · Workout ${w} · Rest ${r}`;
+              kcalEl.appendChild(hint);
+            }
+            card.appendChild(kcalEl);
+
+            const macros = document.createElement("div");
+            macros.className = "macro-row";
+            [
+              ["P", ph.protein_g, "p"],
+              ["C", ph.carbs_g, "c"],
+              ["F", ph.fat_g, "f"],
+            ].forEach(([lab, val, cls]) => {
+              const chip = document.createElement("span");
+              chip.className = `macro-chip ${cls}`;
+              const v = fmtRoundNum(val);
+              chip.textContent = v != null ? `${lab} ${v}g` : `${lab} —`;
+              macros.appendChild(chip);
+            });
+            card.appendChild(macros);
+
+            if (ph.description) {
+              const desc = document.createElement("p");
+              desc.className = "phase-desc";
+              desc.textContent = ph.description;
+              card.appendChild(desc);
+            }
+
+            if (ph.key_focus) {
+              const kf = document.createElement("p");
+              kf.className = "phase-desc";
+              kf.style.marginTop = "10px";
+              kf.style.fontWeight = "600";
+              kf.style.color = "var(--lbl1)";
+              kf.textContent = ph.key_focus;
+              card.appendChild(kf);
+            }
+
+            if (ph.flavour_rotation) {
+              const fv = document.createElement("div");
+              fv.className = "phase-flavour";
+              const strong = document.createElement("strong");
+              strong.textContent = "Flavour rotation";
+              fv.appendChild(strong);
+              const span = document.createElement("span");
+              span.textContent = ph.flavour_rotation;
+              fv.appendChild(span);
+              card.appendChild(fv);
+            }
+
+            if (ph.training_note) {
+              const tn = document.createElement("div");
+              tn.className = "phase-flavour";
+              const strong = document.createElement("strong");
+              strong.textContent = "Training focus";
+              tn.appendChild(strong);
+              const span = document.createElement("span");
+              span.textContent = ph.training_note;
+              tn.appendChild(span);
+              card.appendChild(tn);
+            }
+
+            mount.appendChild(card);
+          });
+
+          const fr = plan.flavour_rotations;
+          if (fr && fr.length) {
+            const box = document.createElement("div");
+            box.className = "flavour-global-card";
+            const h = document.createElement("h3");
+            h.textContent = "Full flavour rotation schedule";
+            box.appendChild(h);
+            const scroll = document.createElement("div");
+            scroll.className = "flavour-scroll";
+            fr.forEach((item) => {
+              const row = document.createElement("div");
+              row.className = "flavour-item";
+              const nm = document.createElement("div");
+              nm.className = "flavour-item-name";
+              nm.textContent = item.name || "Rotation";
+              const meta = document.createElement("div");
+              meta.className = "flavour-item-meta";
+              meta.textContent = [item.weeks ? `Weeks ${item.weeks}` : "", item.phase != null ? `Phase ${item.phase}` : ""]
+                .filter(Boolean)
+                .join(" · ");
+              const rec = document.createElement("div");
+              rec.style.fontSize = "14px";
+              rec.style.color = "var(--lbl2)";
+              rec.style.lineHeight = "1.45";
+              rec.textContent = item.recipe || "";
+              row.appendChild(nm);
+              row.appendChild(meta);
+              row.appendChild(rec);
+              scroll.appendChild(row);
+            });
+            box.appendChild(scroll);
+            mount.appendChild(box);
+          }
+        }
+
+        function renderMealsTab() {
+          const plan = window.healthPlan;
+          const pillsMount = $("#meals-phase-pills");
+          const listMount = $("#meals-list-mount");
+          const sumMount = $("#meals-summary-mount");
+          const noteEl = $("#meals-plan-note");
+          if (!pillsMount || !listMount || !sumMount) return;
+
+          if (!plan) {
+            pillsMount.textContent = "";
+            listMount.textContent = "";
+            sumMount.textContent = "";
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = "No plan loaded.";
+            listMount.appendChild(p);
+            if (noteEl) noteEl.hidden = true;
+            return;
+          }
+
+          if (mealsPlanRef !== plan) {
+            mealsPlanRef = plan;
+            mealsUiState.phaseIndex = defaultPhaseIndexForMeals(plan);
+            mealsUiState.day = "workout";
+          }
+
+          const phases = plan.phases || [];
+          pillsMount.textContent = "";
+          if (!phases.length) {
+            listMount.textContent = "";
+            sumMount.textContent = "";
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = "No phases in this plan.";
+            listMount.appendChild(p);
+            if (noteEl) noteEl.hidden = true;
+            return;
+          }
+
+          mealsUiState.phaseIndex = Math.min(Math.max(0, mealsUiState.phaseIndex), phases.length - 1);
+          const phase = phases[mealsUiState.phaseIndex];
+          const mp = getMealPlanSliceForPhase(plan, phase);
+
+          if (noteEl) {
+            if (phaseHasOwnMeals(plan, phase)) {
+              noteEl.hidden = false;
+              noteEl.textContent = "Showing meals defined for this phase.";
+            } else if (phases.length > 1) {
+              noteEl.hidden = false;
+              noteEl.textContent =
+                "This plan uses one meal list for all phases. Targets shift each phase — scale portions to match the selected phase calories and macros.";
+            } else {
+              noteEl.hidden = true;
+            }
+          }
+
+          phases.forEach((p, i) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "phase-pill" + (i === mealsUiState.phaseIndex ? " on" : "");
+            b.setAttribute("role", "tab");
+            b.setAttribute("aria-selected", i === mealsUiState.phaseIndex ? "true" : "false");
+            b.dataset.phasePill = String(i);
+            b.textContent = p.name ? String(p.name) : `Phase ${p.id != null ? p.id : i + 1}`;
+            pillsMount.appendChild(b);
+          });
+
+          $$('#panel-meals [data-meal-day]').forEach((btn) => {
+            const want = mealsUiState.day === "rest" ? "rest" : "workout";
+            btn.setAttribute("aria-pressed", btn.dataset.mealDay === want ? "true" : "false");
+          });
+
+          const workout = mealsUiState.day !== "rest";
+          const mealList = workout ? mp && mp.workout_day : mp && mp.rest_day;
+          listMount.textContent = "";
+
+          if (!mp || !mealList || !mealList.length) {
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = workout ? "No workout-day meals in this plan section." : "No rest-day meals in this plan section.";
+            listMount.appendChild(p);
+          } else {
+            mealList.forEach((m) => {
+              const card = document.createElement("article");
+              card.className = "meal-card";
+              const top = document.createElement("div");
+              top.className = "meal-card-top";
+              const time = document.createElement("span");
+              time.className = "meal-time-badge";
+              time.textContent = m.time || "";
+              const kcalSp = document.createElement("span");
+              kcalSp.className = "meal-kcal-badge";
+              kcalSp.textContent = m.kcal != null ? `${fmtRoundNum(m.kcal) ?? m.kcal} kcal` : "";
+              top.appendChild(time);
+              top.appendChild(kcalSp);
+              card.appendChild(top);
+              const nm = document.createElement("h3");
+              nm.className = "meal-name";
+              nm.textContent = m.name || "Meal";
+              card.appendChild(nm);
+              if (m.description) {
+                const d = document.createElement("p");
+                d.className = "meal-desc";
+                d.textContent = m.description;
+                card.appendChild(d);
+              }
+              if (m.ingredients && m.ingredients.length) {
+                const ih = document.createElement("div");
+                ih.className = "meal-ing-head";
+                ih.textContent = "Ingredients";
+                card.appendChild(ih);
+                m.ingredients.forEach((ing) => {
+                  const row = document.createElement("div");
+                  row.className = "meal-ing-row";
+                  const dot = document.createElement("span");
+                  dot.className = "ing-dot " + ingDotClass(ing.category);
+                  row.appendChild(dot);
+                  const grams = ing.grams != null ? `${fmtRoundNum(ing.grams) ?? ing.grams}g ` : "";
+                  const label = document.createElement("span");
+                  label.textContent = `${grams}${ing.name || ""}`;
+                  row.appendChild(label);
+                  card.appendChild(row);
+                });
+              }
+              const tagParts = [];
+              if (m.tags && m.tags.length) tagParts.push(...m.tags);
+              if (m.prep_method) tagParts.push(String(m.prep_method));
+              if (m.prep_minutes != null) tagParts.push(`${m.prep_minutes} min`);
+              if (tagParts.length) {
+                const tags = document.createElement("div");
+                tags.className = "meal-tags";
+                tagParts.forEach((t) => {
+                  const span = document.createElement("span");
+                  span.className = "meal-tag";
+                  span.textContent = t;
+                  tags.appendChild(span);
+                });
+                card.appendChild(tags);
+              }
+              listMount.appendChild(card);
+            });
+          }
+
+          sumMount.textContent = "";
+          const dt = mp && mp.daily_totals;
+          let totalK;
+          let totalP;
+          if (dt) {
+            if (workout) {
+              totalK = dt.workout_day_kcal;
+              totalP = dt.workout_day_protein_g;
+            } else {
+              totalK = dt.rest_day_kcal;
+              totalP = dt.rest_day_protein_g;
+            }
+          }
+          if (totalK == null) totalK = sumMealKcal(mealList);
+
+          const summary = document.createElement("div");
+          summary.className = "meals-summary-card";
+          const sh = document.createElement("h3");
+          sh.textContent = "Daily totals";
+          summary.appendChild(sh);
+          const rowK = document.createElement("div");
+          rowK.className = "meals-summary-row";
+          const kLab = document.createElement("span");
+          kLab.textContent = workout ? "Calories (workout day)" : "Calories (rest day)";
+          const kVal = document.createElement("span");
+          kVal.textContent = totalK != null ? `${fmtRoundNum(totalK) ?? totalK} kcal` : "—";
+          rowK.appendChild(kLab);
+          rowK.appendChild(kVal);
+          summary.appendChild(rowK);
+          const rowP = document.createElement("div");
+          rowP.className = "meals-summary-row";
+          const pLab = document.createElement("span");
+          pLab.textContent = "Protein (from plan totals)";
+          const pVal = document.createElement("span");
+          pVal.textContent = totalP != null ? `${fmtRoundNum(totalP) ?? totalP} g` : "—";
+          rowP.appendChild(pLab);
+          rowP.appendChild(pVal);
+          summary.appendChild(rowP);
+          sumMount.appendChild(summary);
+        }
+
+        function wireMealsInteractions() {
+          const panel = $("#panel-meals");
+          if (!panel || panel.dataset.wiredMeals === "1") return;
+          panel.dataset.wiredMeals = "1";
+          panel.addEventListener("click", (e) => {
+            const pill = e.target.closest("[data-phase-pill]");
+            if (pill) {
+              const idx = Number(pill.dataset.phasePill);
+              if (!Number.isNaN(idx)) {
+                mealsUiState.phaseIndex = idx;
+                renderMealsTab();
+              }
+              return;
+            }
+            const dayBtn = e.target.closest("[data-meal-day]");
+            if (dayBtn) {
+              mealsUiState.day = dayBtn.dataset.mealDay === "rest" ? "rest" : "workout";
+              renderMealsTab();
+            }
+          });
+        }
+
         function switchTab(tabId, persist) {
           TAB_IDS.forEach((id) => {
             const panel = $("#panel-" + id);
@@ -2595,6 +3358,8 @@ Important instructions:
           const appScroll = $("#screen-app .screen-scroll");
           if (appScroll) appScroll.scrollTop = 0;
           if (tabId === "home") renderHomeTab();
+          if (tabId === "phases") renderPhasesTab();
+          if (tabId === "meals") renderMealsTab();
           if (persist !== false) {
             try {
               localStorage.setItem(LS_ACTIVE_TAB, tabId);
@@ -2612,6 +3377,7 @@ Important instructions:
         }
 
         function wireAppChrome() {
+          wireMealsInteractions();
           $$("#screen-app .tab-bar [data-tab]").forEach((btn) => {
             btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
           });
@@ -2621,28 +3387,29 @@ Important instructions:
           const menuBtn = $("#btn-app-menu");
           const menuDd = $("#app-menu-dropdown");
           const reup = $("#menu-reupload");
-          if (!menuBtn || !menuDd) return;
-          menuBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const open = menuDd.hidden;
-            menuDd.hidden = !open;
-            menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-          });
-          document.addEventListener("click", () => {
-            menuDd.hidden = true;
-            menuBtn.setAttribute("aria-expanded", "false");
-          });
-          menuDd.addEventListener("click", (e) => e.stopPropagation());
-          if (reup) {
-            reup.addEventListener("click", () => {
+          if (menuBtn && menuDd) {
+            menuBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              const open = menuDd.hidden;
+              menuDd.hidden = !open;
+              menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+            });
+            document.addEventListener("click", () => {
               menuDd.hidden = true;
               menuBtn.setAttribute("aria-expanded", "false");
-              try {
-                const p = sessionStorage.getItem("health_last_prompt");
-                if (p) $("#prompt-text").value = p;
-              } catch (_) {}
-              setStage("prompt");
             });
+            menuDd.addEventListener("click", (e) => e.stopPropagation());
+            if (reup) {
+              reup.addEventListener("click", () => {
+                menuDd.hidden = true;
+                menuBtn.setAttribute("aria-expanded", "false");
+                try {
+                  const p = sessionStorage.getItem("health_last_prompt");
+                  if (p) $("#prompt-text").value = p;
+                } catch (_) {}
+                setStage("prompt");
+              });
+            }
           }
         }
 
