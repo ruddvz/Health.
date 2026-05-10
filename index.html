@@ -234,8 +234,8 @@
         overflow: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
-        padding: 4px 0 calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 28px);
-        scroll-padding-bottom: calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 16px);
+        padding: 4px 0 calc(138px + env(safe-area-inset-bottom, 0px));
+        scroll-padding-bottom: calc(128px + env(safe-area-inset-bottom, 0px));
       }
 
       #screen-form .section {
@@ -1157,23 +1157,78 @@
         outline: 1px solid rgba(255, 59, 48, 0.35);
       }
 
-      /* Sticky CTA */
+      /* Sticky CTA — iOS-style bottom sheet + pill buttons */
       .sticky-bar {
         position: fixed;
         left: 0;
         right: 0;
         bottom: 0;
         z-index: 20;
-        padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
-        background: linear-gradient(to top, var(--bg) 65%, transparent);
-        pointer-events: none;
+        padding: 0;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+        background: transparent;
+        pointer-events: auto;
+      }
+
+      .sticky-bar-sheet {
+        margin: 0;
+        padding: 12px 16px 14px;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+        background: rgba(10, 15, 13, 0.94);
+        backdrop-filter: blur(26px) saturate(175%);
+        -webkit-backdrop-filter: blur(26px) saturate(175%);
+        border-radius: 22px 22px 0 0;
+        border: 1px solid rgba(61, 219, 122, 0.14);
+        border-bottom: none;
+        box-shadow: 0 -10px 44px rgba(0, 0, 0, 0.42);
+      }
+
+      .sticky-json-strip {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 14px;
+        padding-top: 6px;
+      }
+
+      .btn-intake-json-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        max-width: 420px;
+        min-height: 46px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        border: 1.5px dashed rgba(61, 219, 122, 0.38);
+        background: rgba(61, 219, 122, 0.07);
+        color: var(--lbl1);
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        cursor: pointer;
+        transition: opacity 0.15s, transform 0.1s, background 0.15s;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      .btn-intake-json-pill:active {
+        opacity: 0.88;
+        transform: scale(0.99);
+        background: rgba(61, 219, 122, 0.12);
+      }
+
+      .btn-intake-json-pill .btn-intake-json-ico {
+        font-size: 17px;
+        opacity: 0.85;
       }
 
       .sticky-bar-row {
         display: flex;
         gap: 10px;
         align-items: stretch;
-        pointer-events: auto;
       }
 
       .sticky-bar-row > button {
@@ -1182,14 +1237,14 @@
 
       .sticky-bar .btn-intake-back {
         flex: 0 0 auto;
-        min-width: 92px;
+        min-width: 88px;
         width: auto;
-        height: 56px;
-        border-radius: 14px;
+        height: 52px;
+        border-radius: 999px;
         border: 1px solid var(--sep2);
         background: rgba(61, 219, 122, 0.08);
         color: var(--blue);
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 700;
         cursor: pointer;
         transition: opacity 0.15s, transform 0.1s;
@@ -1204,12 +1259,12 @@
       .sticky-bar #btn-generate {
         flex: 1;
         min-width: 0;
-        height: 56px;
+        height: 52px;
         border: none;
-        border-radius: 14px;
+        border-radius: 999px;
         background: var(--gradient-cta);
         color: #081210;
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 800;
         letter-spacing: -0.02em;
         cursor: pointer;
@@ -3007,9 +3062,8 @@
             <div class="card form-json-card">
               <h2 class="form-json-title" id="form-json-title">Already have a JSON plan?</h2>
               <p class="form-json-copy">
-                Upload your plan file (for example <strong>myplan.json</strong>) to jump straight into the app — you can skip generating a new Claude prompt.
+                Use <strong>Upload plan JSON</strong> in the fixed bar at the bottom anytime (for example <strong>myplan.json</strong>) to jump straight into the app — you can skip generating a new Claude prompt.
               </p>
-              <button type="button" class="btn-dashed" id="btn-form-upload-plan">Upload plan JSON</button>
               <p id="form-plan-upload-loading" class="upload-loading form-plan-upload-loading" hidden>
                 <span class="upload-spinner" aria-hidden="true"></span>
                 Reading file…
@@ -3020,10 +3074,18 @@
         </main>
 
         <div class="sticky-bar">
-          <div class="sticky-bar-row">
-            <button type="button" id="btn-intake-back" class="btn-intake-back" hidden>Back</button>
-            <button type="button" id="btn-intake-next" class="btn-intake-next">Continue</button>
-            <button type="button" id="btn-generate" disabled hidden>Generate My Plan</button>
+          <div class="sticky-bar-sheet">
+            <div class="sticky-json-strip">
+              <button type="button" class="btn-intake-json-pill btn-form-upload-trigger" id="btn-intake-upload-json">
+                <span class="btn-intake-json-ico" aria-hidden="true">⇪</span>
+                Upload plan JSON
+              </button>
+            </div>
+            <div class="sticky-bar-row">
+              <button type="button" id="btn-intake-back" class="btn-intake-back" hidden>Back</button>
+              <button type="button" id="btn-intake-next" class="btn-intake-next">Continue</button>
+              <button type="button" id="btn-generate" disabled hidden>Generate My Plan</button>
+            </div>
           </div>
         </div>
       </div>
@@ -3662,12 +3724,14 @@ Important instructions:
         }
 
         function setSegExclusive(container, attr, value) {
+          if (!container) return;
           $$(`button[${attr}]`, container).forEach((b) => {
             b.setAttribute("aria-pressed", b.getAttribute(attr) === value ? "true" : "false");
           });
         }
 
         function renderChips(container, items, selected, onToggle, keyFn, labelFn) {
+          if (!container) return;
           container.innerHTML = "";
           items.forEach((item) => {
             const key = keyFn(item);
@@ -3838,11 +3902,13 @@ Important instructions:
           $("#inp-height-in").value = state.heightIn;
           const cmPanel = $("#height-cm-wrap");
           const ftPanel = $("#height-ft-wrap");
-          const showCm = state.heightUnit === "cm";
-          cmPanel.hidden = !showCm;
-          ftPanel.hidden = showCm;
-          cmPanel.setAttribute("aria-hidden", showCm ? "false" : "true");
-          ftPanel.setAttribute("aria-hidden", showCm ? "true" : "false");
+          if (cmPanel && ftPanel) {
+            const showCm = state.heightUnit === "cm";
+            cmPanel.hidden = !showCm;
+            ftPanel.hidden = showCm;
+            cmPanel.setAttribute("aria-hidden", showCm ? "false" : "true");
+            ftPanel.setAttribute("aria-hidden", showCm ? "true" : "false");
+          }
           $("#inp-bf").value = state.bodyFat;
           $$("[data-goal].pick-card").forEach((b) =>
             b.setAttribute("aria-pressed", dataRead(b, "goal") === state.goal ? "true" : "false")
@@ -6139,17 +6205,19 @@ Important instructions:
 
           wirePromptFlow();
 
-          const btnFormPlan = $("#btn-form-upload-plan");
-          if (btnFormPlan) {
-            btnFormPlan.addEventListener("click", () => {
-              const fe = $("#form-plan-upload-error");
-              if (fe) {
-                fe.hidden = true;
-                fe.textContent = "";
-              }
-              $("#json-error-card").hidden = true;
-              $("#json-error-detail").textContent = "";
-              $("#input-plan-json").click();
+          const btnFormPlan = $$(".btn-form-upload-trigger");
+          if (btnFormPlan.length) {
+            btnFormPlan.forEach((btnFormPlanBtn) => {
+              btnFormPlanBtn.addEventListener("click", () => {
+                const fe = $("#form-plan-upload-error");
+                if (fe) {
+                  fe.hidden = true;
+                  fe.textContent = "";
+                }
+                $("#json-error-card").hidden = true;
+                $("#json-error-detail").textContent = "";
+                $("#input-plan-json").click();
+              });
             });
           }
 
