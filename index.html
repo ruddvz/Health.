@@ -1639,6 +1639,256 @@
         color: var(--blue);
         margin-bottom: 8px;
       }
+
+      /* Supplements tab */
+      .supps-section-title {
+        margin: 20px 0 12px;
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--lbl2);
+      }
+
+      .supps-section-title:first-child {
+        margin-top: 4px;
+      }
+
+      .supps-schedule-card {
+        background: var(--card);
+        border-radius: var(--r-card);
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .supps-schedule-card > h3 {
+        margin: 0 0 14px;
+        font-size: 17px;
+        font-weight: 700;
+      }
+
+      .supps-slot {
+        padding: 12px 0;
+        border-bottom: 0.5px solid var(--sep2);
+      }
+
+      .supps-slot:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .supps-slot-label {
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+
+      .supps-slot-items {
+        font-size: 15px;
+        color: var(--lbl1);
+        line-height: 1.4;
+      }
+
+      .supps-slot-note {
+        margin-top: 8px;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .supp-stack-card {
+        display: flex;
+        gap: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        border-radius: var(--r-card);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .supp-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 4px;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+      }
+
+      .supp-stack-body {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .supp-stack-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+
+      .supp-stack-name {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0;
+      }
+
+      .supp-status {
+        flex-shrink: 0;
+        padding: 5px 10px;
+        border-radius: var(--r-chip);
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .supp-status-have {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .supp-status-buy {
+        background: var(--orange-bg);
+        color: #cc7700;
+      }
+
+      .supp-status-optional {
+        background: var(--teal-bg);
+        color: #0878a3;
+      }
+
+      .supp-status-skip {
+        background: var(--bg2);
+        color: var(--lbl2);
+      }
+
+      .supp-meta-line {
+        font-size: 14px;
+        color: var(--lbl2);
+        margin-bottom: 4px;
+      }
+
+      .supp-meta-line strong {
+        color: var(--lbl1);
+        font-weight: 600;
+      }
+
+      .supp-why {
+        margin: 10px 0 0;
+        font-size: 15px;
+        line-height: 1.45;
+        color: var(--lbl2);
+      }
+
+      .supp-brand {
+        margin-top: 10px;
+        font-size: 13px;
+        color: var(--blue);
+        font-weight: 600;
+      }
+
+      .powder-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .powder-card {
+        padding: 16px;
+        border-radius: var(--r-card);
+        background: var(--card);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--sep2);
+      }
+
+      .powder-card.best {
+        border-color: rgba(52, 199, 89, 0.45);
+        box-shadow: 0 2px 12px rgba(52, 199, 89, 0.12);
+      }
+
+      .powder-rank-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .powder-rank-badge {
+        padding: 5px 12px;
+        border-radius: var(--r-chip);
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+      }
+
+      .powder-rank-badge.best {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+
+      .powder-rank-badge.budget {
+        background: var(--teal-bg);
+        color: #0878a3;
+      }
+
+      .powder-rank-badge.premium {
+        background: linear-gradient(135deg, var(--purple), #7c4dff);
+        color: #fff;
+      }
+
+      .powder-price {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--green);
+      }
+
+      .powder-name {
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 8px;
+      }
+
+      .powder-detail {
+        font-size: 14px;
+        color: var(--lbl2);
+        margin-bottom: 6px;
+        line-height: 1.4;
+      }
+
+      .powder-why {
+        margin: 10px 0 0;
+        font-size: 15px;
+        line-height: 1.45;
+        color: var(--lbl2);
+      }
+
+      .skip-section {
+        margin-top: 8px;
+      }
+
+      .skip-card {
+        padding: 14px;
+        margin-bottom: 10px;
+        border-radius: var(--r-inner);
+        background: var(--red-bg);
+        border: 1px solid rgba(255, 59, 48, 0.22);
+      }
+
+      .skip-name {
+        font-size: 16px;
+        font-weight: 700;
+        margin: 0 0 6px;
+      }
+
+      .skip-reason {
+        margin: 0;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
     </style>
   </head>
   <body>
@@ -2231,10 +2481,7 @@
             </div>
           </div>
           <div id="panel-supps" class="app-panel" hidden>
-            <div class="tab-placeholder-inner">
-              <p class="tab-placeholder-title">Supplements</p>
-              <p class="tab-placeholder-text">Supplement stack details will appear here in the next update.</p>
-            </div>
+            <div id="supps-mount"></div>
           </div>
         </div>
 
@@ -3909,6 +4156,239 @@ Important instructions:
           }
         }
 
+        function safeSuppHexColor(c) {
+          if (typeof c === "string" && /^#[0-9A-Fa-f]{6}$/.test(c.trim())) return c.trim();
+          return "#34C759";
+        }
+
+        function suppStatusLabel(status) {
+          const m = { have: "Have it", buy: "Need to buy", optional: "Optional", skip: "Skip" };
+          const k = String(status || "").toLowerCase();
+          return m[k] || (status ? String(status) : "—");
+        }
+
+        function suppStatusBadgeClass(status) {
+          const s = String(status || "").toLowerCase();
+          if (s === "have") return "supp-status-have";
+          if (s === "buy") return "supp-status-buy";
+          if (s === "optional") return "supp-status-optional";
+          if (s === "skip") return "supp-status-skip";
+          return "supp-status-skip";
+        }
+
+        function renderSuppsTab() {
+          const mount = $("#supps-mount");
+          if (!mount) return;
+          mount.textContent = "";
+          const plan = window.healthPlan;
+          if (!plan) {
+            mount.appendChild(emptyTabMsg("No plan loaded."));
+            return;
+          }
+          const sup = plan.supplements;
+          if (!sup) {
+            mount.appendChild(emptyTabMsg("No supplement section in this plan."));
+            return;
+          }
+
+          const sched = sup.daily_schedule || [];
+          const stack = sup.stack || [];
+          const powders = sup.protein_powder || [];
+          const skips = sup.skip_list || [];
+
+          if (sched.length) {
+            const st = document.createElement("h2");
+            st.className = "supps-section-title";
+            st.textContent = "Daily schedule";
+            mount.appendChild(st);
+            const card = document.createElement("div");
+            card.className = "supps-schedule-card";
+            const h = document.createElement("h3");
+            h.textContent = "Today's supplement timing";
+            card.appendChild(h);
+            sched.forEach((slot) => {
+              const row = document.createElement("div");
+              row.className = "supps-slot";
+              const lab = document.createElement("div");
+              lab.className = "supps-slot-label";
+              lab.textContent = slot.label || slot.time_slot || "Slot";
+              const items = document.createElement("div");
+              items.className = "supps-slot-items";
+              items.textContent = slot.items || "";
+              row.appendChild(lab);
+              row.appendChild(items);
+              if (slot.note) {
+                const note = document.createElement("div");
+                note.className = "supps-slot-note";
+                note.textContent = slot.note;
+                row.appendChild(note);
+              }
+              card.appendChild(row);
+            });
+            mount.appendChild(card);
+          }
+
+          if (stack.length) {
+            const st = document.createElement("h2");
+            st.className = "supps-section-title";
+            st.textContent = "Your stack";
+            mount.appendChild(st);
+            stack.forEach((item) => {
+              const card = document.createElement("div");
+              card.className = "supp-stack-card";
+              const dot = document.createElement("span");
+              dot.className = "supp-dot";
+              dot.style.backgroundColor = safeSuppHexColor(item.colour);
+              dot.setAttribute("aria-hidden", "true");
+              const body = document.createElement("div");
+              body.className = "supp-stack-body";
+              const head = document.createElement("div");
+              head.className = "supp-stack-head";
+              const name = document.createElement("h3");
+              name.className = "supp-stack-name";
+              name.textContent = item.name || "Supplement";
+              const badge = document.createElement("span");
+              badge.className = "supp-status " + suppStatusBadgeClass(item.status);
+              badge.textContent = suppStatusLabel(item.status);
+              head.appendChild(name);
+              head.appendChild(badge);
+              body.appendChild(head);
+              if (item.dose) {
+                const line = document.createElement("div");
+                line.className = "supp-meta-line";
+                const strong = document.createElement("strong");
+                strong.textContent = "Dose";
+                line.appendChild(strong);
+                line.appendChild(document.createTextNode(" · " + item.dose));
+                body.appendChild(line);
+              }
+              if (item.timing) {
+                const line = document.createElement("div");
+                line.className = "supp-meta-line";
+                const strong = document.createElement("strong");
+                strong.textContent = "Timing";
+                line.appendChild(strong);
+                line.appendChild(document.createTextNode(" · " + item.timing));
+                body.appendChild(line);
+              }
+              if (item.frequency) {
+                const line = document.createElement("div");
+                line.className = "supp-meta-line";
+                const strong = document.createElement("strong");
+                strong.textContent = "Frequency";
+                line.appendChild(strong);
+                line.appendChild(document.createTextNode(" · " + item.frequency));
+                body.appendChild(line);
+              }
+              if (item.why) {
+                const p = document.createElement("p");
+                p.className = "supp-why";
+                p.textContent = item.why;
+                body.appendChild(p);
+              }
+              if (item.brand_recommendation) {
+                const br = document.createElement("div");
+                br.className = "supp-brand";
+                br.textContent = item.brand_recommendation;
+                body.appendChild(br);
+              }
+              card.appendChild(dot);
+              card.appendChild(body);
+              mount.appendChild(card);
+            });
+          }
+
+          if (powders.length) {
+            const st = document.createElement("h2");
+            st.className = "supps-section-title";
+            st.textContent = "Protein powder picks";
+            mount.appendChild(st);
+            const grid = document.createElement("div");
+            grid.className = "powder-grid";
+            const order = { best: 0, budget: 1, premium: 2 };
+            const sorted = [...powders].sort((a, b) => {
+              const ra = order[String(a.rank || "").toLowerCase()];
+              const rb = order[String(b.rank || "").toLowerCase()];
+              return (ra != null ? ra : 99) - (rb != null ? rb : 99);
+            });
+            sorted.forEach((pw) => {
+              const rank = String(pw.rank || "").toLowerCase();
+              let badgeCls = "best";
+              if (rank === "budget") badgeCls = "budget";
+              else if (rank === "premium") badgeCls = "premium";
+              const card = document.createElement("article");
+              card.className = "powder-card" + (rank === "best" ? " best" : "");
+              const top = document.createElement("div");
+              top.className = "powder-rank-row";
+              const badge = document.createElement("span");
+              badge.className = "powder-rank-badge " + badgeCls;
+              badge.textContent =
+                pw.rank_label ||
+                (rank === "budget" ? "Budget" : rank === "premium" ? "Premium" : "Best overall");
+              const price = document.createElement("span");
+              price.className = "powder-price";
+              price.textContent = pw.price_local || "";
+              top.appendChild(badge);
+              top.appendChild(price);
+              card.appendChild(top);
+              const nm = document.createElement("h3");
+              nm.className = "powder-name";
+              nm.textContent = pw.name || "Protein powder";
+              card.appendChild(nm);
+              if (pw.protein_per_scoop_g != null) {
+                const d = document.createElement("div");
+                d.className = "powder-detail";
+                const pg = fmtRoundNum(pw.protein_per_scoop_g);
+                d.textContent = `${pg != null ? pg : pw.protein_per_scoop_g}g protein per scoop`;
+                card.appendChild(d);
+              }
+              if (pw.available_at) {
+                const d = document.createElement("div");
+                d.className = "powder-detail";
+                d.textContent = pw.available_at;
+                card.appendChild(d);
+              }
+              if (pw.why) {
+                const p = document.createElement("p");
+                p.className = "powder-why";
+                p.textContent = pw.why;
+                card.appendChild(p);
+              }
+              grid.appendChild(card);
+            });
+            mount.appendChild(grid);
+          }
+
+          if (skips.length) {
+            const st = document.createElement("h2");
+            st.className = "supps-section-title";
+            st.textContent = "Don't buy";
+            mount.appendChild(st);
+            const wrap = document.createElement("div");
+            wrap.className = "skip-section";
+            skips.forEach((sk) => {
+              const c = document.createElement("div");
+              c.className = "skip-card";
+              const nm = document.createElement("h3");
+              nm.className = "skip-name";
+              nm.textContent = sk.name || "Supplement";
+              c.appendChild(nm);
+              if (sk.reason) {
+                const r = document.createElement("p");
+                r.className = "skip-reason";
+                r.textContent = sk.reason;
+                c.appendChild(r);
+              }
+              wrap.appendChild(c);
+            });
+            mount.appendChild(wrap);
+          }
+
+          if (!sched.length && !stack.length && !powders.length && !skips.length) {
+            mount.appendChild(emptyTabMsg("No supplement details were included in this plan."));
+          }
+        }
+
         function wirePrepInteractions() {
           const panel = $("#panel-prep");
           if (!panel || panel.dataset.wiredPrep === "1") return;
@@ -4035,6 +4515,7 @@ Important instructions:
           if (tabId === "meals") renderMealsTab();
           if (tabId === "prep") renderPrepTab();
           if (tabId === "grocery") renderGroceryTab();
+          if (tabId === "supps") renderSuppsTab();
           if (persist !== false) {
             try {
               localStorage.setItem(LS_ACTIVE_TAB, tabId);
