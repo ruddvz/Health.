@@ -925,6 +925,11 @@
         width: 100%;
       }
 
+      #height-cm-wrap[hidden],
+      #height-ft-wrap[hidden] {
+        display: none !important;
+      }
+
       .height-value-wrap .input-plain {
         width: 100%;
       }
@@ -3620,6 +3625,7 @@ Important instructions:
             if (!raw) return;
             const o = JSON.parse(raw);
             state = { ...defaultState(), ...o };
+            normalizeUnits();
           } catch (_) {}
         }
 
@@ -3627,6 +3633,16 @@ Important instructions:
           try {
             sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
           } catch (_) {}
+        }
+
+        /** Keep unit enums valid — bad values can hide both height panels and block Continue. */
+        function normalizeUnits() {
+          if (state.heightUnit !== "cm" && state.heightUnit !== "ftin") {
+            state.heightUnit = "cm";
+          }
+          if (state.weightUnit !== "kg" && state.weightUnit !== "lbs") {
+            state.weightUnit = "kg";
+          }
         }
 
         function $(sel, root) {
@@ -3657,7 +3673,8 @@ Important instructions:
         }
 
         function heightValid() {
-          if (state.heightUnit === "cm") {
+          const u = state.heightUnit === "ftin" ? "ftin" : "cm";
+          if (u === "cm") {
             const v = Number(state.heightCm);
             return v >= 120 && v <= 250;
           }
@@ -3798,6 +3815,7 @@ Important instructions:
         }
 
         function syncDomFromState() {
+          normalizeUnits();
           $("#inp-name").value = state.name;
           $("#inp-age").value = state.age;
           $$('#field-sex input[name="intake-sex"]').forEach((inp) => {
@@ -3809,8 +3827,13 @@ Important instructions:
           $("#inp-height-cm").value = state.heightCm;
           $("#inp-height-ft").value = state.heightFt;
           $("#inp-height-in").value = state.heightIn;
-          $("#height-cm-wrap").hidden = state.heightUnit !== "cm";
-          $("#height-ft-wrap").hidden = state.heightUnit !== "ftin";
+          const cmPanel = $("#height-cm-wrap");
+          const ftPanel = $("#height-ft-wrap");
+          const showCm = state.heightUnit === "cm";
+          cmPanel.hidden = !showCm;
+          ftPanel.hidden = showCm;
+          cmPanel.setAttribute("aria-hidden", showCm ? "false" : "true");
+          ftPanel.setAttribute("aria-hidden", showCm ? "true" : "false");
           $("#inp-bf").value = state.bodyFat;
           $$("[data-goal].pick-card").forEach((b) => b.setAttribute("aria-pressed", b.dataset.goal === state.goal ? "true" : "false"));
           setSegExclusive($("#field-timeline .seg"), "data-tl", state.timeline);
@@ -5899,17 +5922,21 @@ Important instructions:
             saveState();
             syncDomFromState();
           });
-          $$('[data-wu]').forEach((b) =>
+          $$("#field-weight button[data-wu]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.weightUnit = b.dataset.wu;
+              const v = b.getAttribute("data-wu");
+              if (v !== "kg" && v !== "lbs") return;
+              state.weightUnit = v;
               saveState();
               syncDomFromState();
               clearValidation();
             })
           );
-          $$('[data-hu]').forEach((b) =>
+          $$("#field-height button[data-hu]").forEach((b) =>
             b.addEventListener("click", () => {
-              state.heightUnit = b.dataset.hu;
+              const v = b.getAttribute("data-hu");
+              if (v !== "cm" && v !== "ftin") return;
+              state.heightUnit = v;
               saveState();
               syncDomFromState();
               clearValidation();
