@@ -4,32 +4,1684 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#F2F2F7" />
-    <title>Health</title>
-    <meta name="description" content="Your personalised nutrition and fitness plan — full app UI coming in the next release." />
+    <title>Health — Personalised Plan</title>
+    <meta name="description" content="Build your personalised health plan with Claude." />
     <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="assets/icon-192.png" />
     <style>
+      :root {
+        --bg: #f2f2f7;
+        --bg2: #e5e5ea;
+        --card: #ffffff;
+        --card-pressed: #f9f9f9;
+        --lbl1: #000000;
+        --lbl2: rgba(60, 60, 67, 0.6);
+        --lbl3: rgba(60, 60, 67, 0.3);
+        --lbl4: rgba(60, 60, 67, 0.18);
+        --blue: #007aff;
+        --green: #34c759;
+        --orange: #ff9500;
+        --red: #ff3b30;
+        --purple: #af52de;
+        --teal: #5ac8fa;
+        --yellow: #ffcc00;
+        --indigo: #5856d6;
+        --blue-bg: rgba(0, 122, 255, 0.1);
+        --green-bg: rgba(52, 199, 89, 0.1);
+        --orange-bg: rgba(255, 149, 0, 0.1);
+        --red-bg: rgba(255, 59, 48, 0.1);
+        --teal-bg: rgba(90, 200, 250, 0.1);
+        --yellow-bg: rgba(255, 204, 0, 0.1);
+        --indigo-bg: rgba(88, 86, 214, 0.1);
+        --sep: rgba(60, 60, 67, 0.18);
+        --sep2: rgba(60, 60, 67, 0.08);
+        --r-card: 16px;
+        --r-inner: 10px;
+        --r-sm: 8px;
+        --r-chip: 20px;
+        --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+        --ff: -apple-system, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+        --mono: "SF Mono", ui-monospace, "Fira Code", monospace;
+        --sticky-h: 72px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+
       body {
         margin: 0;
+        font-family: var(--ff);
+        font-size: 17px;
+        font-weight: 400;
+        line-height: 1.35;
+        color: var(--lbl1);
+        background: var(--bg);
         min-height: 100dvh;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+        color: inherit;
+      }
+
+      /* Screen system */
+      #screen-root {
+        position: relative;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+
+      .screen {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        background: var(--bg);
+        overflow: hidden;
+      }
+
+      .screen.is-active {
+        display: flex;
+      }
+
+      #screen-form .screen-scroll {
+        flex: 1;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 12px 0 calc(var(--sticky-h) + env(safe-area-inset-bottom, 0px) + 24px);
+      }
+
+      #screen-prompt .screen-scroll,
+      #screen-app .screen-scroll {
+        flex: 1;
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 16px;
+      }
+
+      .placeholder-panel {
+        max-width: 400px;
+        margin: 48px auto;
+        padding: 24px;
+        text-align: center;
+        color: var(--lbl2);
+        font-size: 15px;
+      }
+
+      /* Progress */
+      .progress-wrap {
+        padding: 8px 20px 4px;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: linear-gradient(to bottom, var(--bg) 70%, transparent);
+      }
+
+      .dots {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--lbl4);
+        transition: transform 0.2s, background 0.2s;
+      }
+
+      .dot.on {
+        background: var(--blue);
+        transform: scale(1.25);
+      }
+
+      /* Sections */
+      .section {
+        margin-top: 24px;
+        padding: 0 20px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 4px 8px;
+      }
+
+      .section-head svg {
+        width: 22px;
+        height: 22px;
+        color: var(--blue);
+        flex-shrink: 0;
+      }
+
+      .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--lbl2);
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--r-card);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+      }
+
+      .field {
+        scroll-margin-top: 96px;
+      }
+
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 44px;
+        padding: 10px 16px;
+        border-bottom: 0.5px solid var(--sep2);
+      }
+
+      .row:last-child {
+        border-bottom: none;
+      }
+
+      .row-stack {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 12px 16px;
+      }
+
+      .row-label {
+        font-size: 17px;
+        font-weight: 600;
+        color: var(--lbl1);
+      }
+
+      .row-hint {
+        font-size: 13px;
+        color: var(--lbl2);
+        margin-top: 2px;
+      }
+
+      .input-plain {
+        flex: 1;
+        text-align: right;
+        border: none;
+        outline: none;
+        background: transparent;
+        min-width: 0;
+      }
+
+      .input-plain::placeholder {
+        color: var(--lbl3);
+      }
+
+      textarea.input-plain {
+        text-align: left;
+        width: 100%;
+        resize: vertical;
+        min-height: 88px;
+        padding: 8px 0;
+      }
+
+      select.input-plain {
+        appearance: none;
+        background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23999' d='M6 8L1 3h10z'/%3E%3C/svg%3E")
+          no-repeat right center;
+        padding-right: 20px;
+      }
+
+      .seg {
+        display: inline-flex;
+        padding: 3px;
+        border-radius: 9px;
+        background: rgba(118, 118, 128, 0.12);
+        gap: 2px;
+      }
+
+      .seg button {
+        border: none;
+        background: transparent;
+        padding: 6px 12px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--lbl1);
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .seg button[aria-pressed="true"] {
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+
+      .seg.compact button {
+        padding: 6px 8px;
+        font-size: 12px;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        padding: 12px;
+      }
+
+      .pick-card {
+        position: relative;
+        border: 2px solid var(--sep);
+        border-radius: var(--r-inner);
+        padding: 14px 12px;
+        text-align: left;
+        background: var(--card);
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s, transform 0.1s;
+        min-height: 72px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .pick-card:active {
+        transform: scale(0.98);
+      }
+
+      .pick-card[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: var(--blue-bg);
+      }
+
+      .pick-card .pk-title {
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .pick-card .pk-sub {
+        font-size: 12px;
+        color: var(--lbl2);
+        margin-top: 4px;
+        line-height: 1.3;
+      }
+
+      .pick-card .check {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid var(--sep);
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 24px;
-        font-family: -apple-system, system-ui, sans-serif;
-        background: #f2f2f7;
-        color: #000;
+        font-size: 11px;
+        color: transparent;
+      }
+
+      .pick-card[aria-pressed="true"] .check {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #fff;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 4px 0 8px;
+      }
+
+      .chip {
+        border: 1px solid var(--sep);
+        background: var(--card-pressed);
+        border-radius: var(--r-chip);
+        padding: 8px 14px;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--lbl1);
+        cursor: pointer;
+        transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      }
+
+      .chip:active {
+        transform: scale(0.98);
+      }
+
+      .chip[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: var(--blue-bg);
+        color: var(--blue);
+      }
+
+      .stepper {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .stepper button {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: none;
+        background: var(--bg2);
+        font-size: 20px;
+        font-weight: 600;
+        cursor: pointer;
+        color: var(--blue);
+      }
+
+      .stepper button:active {
+        opacity: 0.7;
+        transform: scale(0.96);
+      }
+
+      .stepper output {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+        min-width: 28px;
         text-align: center;
       }
-      p {
+
+      .height-split {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+      }
+
+      .height-split input {
+        width: 52px;
+        text-align: center;
+        border: 1px solid var(--sep2);
+        border-radius: 8px;
+        padding: 8px;
+      }
+
+      .field-msg {
+        font-size: 13px;
+        color: var(--red);
+        padding: 0 16px 10px;
         margin: 0;
-        max-width: 320px;
-        line-height: 1.5;
-        color: rgba(60, 60, 67, 0.6);
+        display: none;
+      }
+
+      .field.is-invalid .field-msg {
+        display: block;
+      }
+
+      .field.is-invalid .row,
+      .field.is-invalid .pick-card {
+        outline: 1px solid rgba(255, 59, 48, 0.35);
+      }
+
+      /* Sticky CTA */
+      .sticky-bar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        padding: 12px 20px calc(12px + env(safe-area-inset-bottom, 0px));
+        background: linear-gradient(to top, var(--bg) 65%, transparent);
+        pointer-events: none;
+      }
+
+      .sticky-bar button {
+        pointer-events: auto;
+        width: 100%;
+        height: 56px;
+        border: none;
+        border-radius: 14px;
+        background: var(--blue);
+        color: #fff;
         font-size: 17px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: var(--shadow-md);
+        transition: opacity 0.15s, transform 0.1s;
+      }
+
+      .sticky-bar button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .sticky-bar button:not(:disabled):active {
+        opacity: 0.75;
+        transform: scale(0.98);
+      }
+
+      /* Screen 3 tab bar (scaffold) */
+      #screen-app {
+        padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+      }
+
+      .tab-bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: flex-end;
+        padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+      }
+
+      .tab-btn {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 4px 2px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        color: rgba(60, 60, 67, 0.4);
+        font-size: 10px;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        cursor: default;
+      }
+
+      .tab-btn svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .tab-btn.on {
+        color: var(--blue);
       }
     </style>
   </head>
   <body>
-    <p>Health — personalised plan. The full intake and plan UI is shipping next; repo cleanup is complete.</p>
+    <div id="screen-root">
+      <!-- Screen 1 -->
+      <div id="screen-form" class="screen is-active" aria-hidden="false">
+        <div class="progress-wrap">
+          <div class="dots" id="progress-dots" aria-label="Section progress">
+            <span class="dot" data-i="0"></span>
+            <span class="dot" data-i="1"></span>
+            <span class="dot" data-i="2"></span>
+            <span class="dot" data-i="3"></span>
+            <span class="dot" data-i="4"></span>
+            <span class="dot" data-i="5"></span>
+          </div>
+        </div>
+
+        <main class="screen-scroll" id="form-scroll">
+          <!-- A -->
+          <section class="section" aria-labelledby="sec-a">
+            <div class="section-head" id="sec-a">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="8" r="3.5" />
+                <path d="M5 20v-1a7 7 0 0 1 14 0v1" stroke-linecap="round" />
+              </svg>
+              <h2 class="section-title">About You</h2>
+            </div>
+            <div class="card">
+              <div class="field" id="field-name" data-section="a">
+                <label class="row row-stack" for="inp-name">
+                  <span class="row-label">First name</span>
+                  <input class="input-plain" id="inp-name" type="text" autocomplete="given-name" placeholder="Your name" />
+                </label>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-age" data-section="a">
+                <label class="row row-stack" for="inp-age">
+                  <span class="row-label">Age</span>
+                  <input class="input-plain" id="inp-age" type="number" inputmode="numeric" min="16" max="80" placeholder="16–80" />
+                </label>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-sex" data-section="a">
+                <div class="row row-stack">
+                  <span class="row-label">Biological sex</span>
+                  <div class="seg" role="group" aria-label="Biological sex">
+                    <button type="button" data-sex="male" aria-pressed="false">Male</button>
+                    <button type="button" data-sex="female" aria-pressed="false">Female</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-weight" data-section="a">
+                <div class="row row-stack">
+                  <span class="row-label">Current weight</span>
+                  <div style="display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex-wrap: wrap">
+                    <input class="input-plain" id="inp-weight" type="number" inputmode="decimal" min="1" step="0.1" placeholder="0" style="max-width: 120px" />
+                    <div class="seg compact" role="group" aria-label="Weight unit">
+                      <button type="button" data-wu="kg" aria-pressed="true">kg</button>
+                      <button type="button" data-wu="lbs" aria-pressed="false">lbs</button>
+                    </div>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-height" data-section="a">
+                <div class="row row-stack">
+                  <span class="row-label">Height</span>
+                  <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px; width: 100%">
+                    <div class="seg compact" role="group" aria-label="Height unit">
+                      <button type="button" data-hu="cm" aria-pressed="true">cm</button>
+                      <button type="button" data-hu="ftin" aria-pressed="false">ft / in</button>
+                    </div>
+                    <div id="height-cm-wrap">
+                      <input class="input-plain" id="inp-height-cm" type="number" inputmode="numeric" min="120" max="250" placeholder="cm" style="text-align: right; width: 100%" />
+                    </div>
+                    <div id="height-ft-wrap" class="height-split" hidden>
+                      <input id="inp-height-ft" type="number" inputmode="numeric" min="3" max="8" placeholder="ft" aria-label="Feet" />
+                      <span style="color: var(--lbl2)">ft</span>
+                      <input id="inp-height-in" type="number" inputmode="numeric" min="0" max="11" placeholder="in" aria-label="Inches" />
+                      <span style="color: var(--lbl2)">in</span>
+                    </div>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" data-section="a">
+                <label class="row row-stack" for="inp-bf">
+                  <span class="row-label">Body fat % <span class="row-hint">Optional — skip if unsure</span></span>
+                  <input class="input-plain" id="inp-bf" type="number" inputmode="decimal" min="0" max="60" step="0.1" placeholder="—" />
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- B -->
+          <section class="section" aria-labelledby="sec-b">
+            <div class="section-head" id="sec-b">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none" />
+              </svg>
+              <h2 class="section-title">Your Goal</h2>
+            </div>
+            <div class="field" id="field-goal" data-section="b">
+              <div class="card card-grid" role="group" aria-label="Primary goal">
+                <button type="button" class="pick-card" data-goal="fat_loss" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Fat Loss</span>
+                  <span class="pk-sub">Trim body fat while keeping muscle</span>
+                </button>
+                <button type="button" class="pick-card" data-goal="muscle_gain" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Muscle Gain</span>
+                  <span class="pk-sub">Build size and strength</span>
+                </button>
+                <button type="button" class="pick-card" data-goal="recomp" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Body Recomp</span>
+                  <span class="pk-sub">Lose fat and gain muscle slowly</span>
+                </button>
+                <button type="button" class="pick-card" data-goal="maintenance" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Maintenance</span>
+                  <span class="pk-sub">Stay steady and healthy</span>
+                </button>
+              </div>
+              <p class="field-msg" role="alert"></p>
+            </div>
+            <div class="card" style="margin-top: 12px">
+              <div class="field" id="field-timeline" data-section="b">
+                <div class="row row-stack">
+                  <span class="row-label">Timeline</span>
+                  <div class="seg" role="group" aria-label="Program length">
+                    <button type="button" data-tl="8" aria-pressed="false">8 wks</button>
+                    <button type="button" data-tl="12" aria-pressed="false">12 wks</button>
+                    <button type="button" data-tl="16" aria-pressed="false">16 wks</button>
+                    <button type="button" data-tl="20" aria-pressed="false">20 wks</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" data-section="b">
+                <label class="row row-stack" for="inp-tw">
+                  <span class="row-label">Target weight <span class="row-hint">Optional</span></span>
+                  <input class="input-plain" id="inp-tw" type="number" inputmode="decimal" min="1" step="0.1" placeholder="—" />
+                </label>
+              </div>
+              <div class="field" id="field-urgency" data-section="b">
+                <div class="row row-stack">
+                  <span class="row-label">How urgent</span>
+                  <div class="seg" role="group" aria-label="Pace">
+                    <button type="button" data-ur="sustainable" aria-pressed="false">Slow</button>
+                    <button type="button" data-ur="balanced" aria-pressed="false">Balanced</button>
+                    <button type="button" data-ur="aggressive" aria-pressed="false">Aggressive</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+            </div>
+          </section>
+
+          <!-- C -->
+          <section class="section" aria-labelledby="sec-c">
+            <div class="section-head" id="sec-c">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M6.5 20v-2a4 4 0 0 1 4-4h3a4 4 0 0 1 4 4v2" stroke-linecap="round" />
+                <path d="M12 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                <path d="M18 7l2 2M5 12h3M16 8l2-2" stroke-linecap="round" />
+              </svg>
+              <h2 class="section-title">Training</h2>
+            </div>
+            <div class="card">
+              <div class="row row-stack" data-section="c">
+                <span class="row-label">Training days per week</span>
+                <div class="stepper">
+                  <button type="button" id="td-minus" aria-label="Decrease training days">−</button>
+                  <output id="out-td" for="td-minus td-plus">3</output>
+                  <button type="button" id="td-plus" aria-label="Increase training days">+</button>
+                </div>
+              </div>
+              <div class="field" id="field-loc" data-section="c">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Training location</span>
+                </div>
+                <div class="card-grid" style="padding-top: 0">
+                  <button type="button" class="pick-card" data-loc="full_gym" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Full gym</span>
+                  </button>
+                  <button type="button" class="pick-card" data-loc="home_equipment" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Home + equipment</span>
+                  </button>
+                  <button type="button" class="pick-card" data-loc="home_bodyweight" aria-pressed="false" style="grid-column: span 2">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Home bodyweight only</span>
+                  </button>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-fit" data-section="c">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Current fitness level</span>
+                </div>
+                <div class="card-grid" style="padding-top: 0">
+                  <button type="button" class="pick-card" data-fit="beginner" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Beginner</span>
+                  </button>
+                  <button type="button" class="pick-card" data-fit="intermediate" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Intermediate</span>
+                  </button>
+                  <button type="button" class="pick-card" data-fit="advanced" aria-pressed="false" style="grid-column: span 2">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Advanced</span>
+                  </button>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" data-section="c">
+                <label class="row row-stack" for="inp-inj">
+                  <span class="row-label">Injuries or limitations</span>
+                  <textarea class="input-plain" id="inp-inj" placeholder="E.g. bad knees, lower back pain — or leave blank"></textarea>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- D -->
+          <section class="section" aria-labelledby="sec-d">
+            <div class="section-head" id="sec-d">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M8 3v3M16 3v3M4 10h16M6 8h12a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2z" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <h2 class="section-title">Diet</h2>
+            </div>
+            <div class="field" id="field-diet" data-section="d">
+              <div class="card card-grid" role="group" aria-label="Dietary preference">
+                <button type="button" class="pick-card" data-diet="omnivore" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Omnivore</span>
+                </button>
+                <button type="button" class="pick-card" data-diet="vegetarian" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Vegetarian</span>
+                </button>
+                <button type="button" class="pick-card" data-diet="vegan" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Vegan</span>
+                </button>
+                <button type="button" class="pick-card" data-diet="halal" aria-pressed="false">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Halal</span>
+                </button>
+                <button type="button" class="pick-card" data-diet="pescatarian" aria-pressed="false" style="grid-column: span 2">
+                  <span class="check" aria-hidden="true">✓</span>
+                  <span class="pk-title">Pescatarian</span>
+                </button>
+              </div>
+              <p class="field-msg" role="alert"></p>
+            </div>
+            <div class="card" style="margin-top: 12px">
+              <div class="field" data-section="d">
+                <label class="row row-stack" for="inp-dislike">
+                  <span class="row-label">Foods you dislike or can’t eat</span>
+                  <textarea class="input-plain" id="inp-dislike" placeholder="E.g. I hate fish, no dairy, allergic to nuts"></textarea>
+                </label>
+              </div>
+              <div class="field" id="field-mpd" data-section="d">
+                <div class="row row-stack">
+                  <span class="row-label">Meals per day</span>
+                  <div class="seg" role="group" aria-label="Meals per day">
+                    <button type="button" data-mpd="3" aria-pressed="false">3</button>
+                    <button type="button" data-mpd="4" aria-pressed="false">4</button>
+                    <button type="button" data-mpd="5" aria-pressed="false">5</button>
+                    <button type="button" data-mpd="6" aria-pressed="false">6</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-cookt" data-section="d">
+                <div class="row row-stack">
+                  <span class="row-label">Cooking time</span>
+                  <div class="seg" role="group" aria-label="Cooking time">
+                    <button type="button" data-ct="under_20" aria-pressed="false">&lt;20m</button>
+                    <button type="button" data-ct="30_45" aria-pressed="false">30–45m</button>
+                    <button type="button" data-ct="enjoy" aria-pressed="false">Enjoy cooking</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-mprep" data-section="d">
+                <div class="row row-stack">
+                  <span class="row-label">Do you meal prep?</span>
+                  <div class="seg compact" role="group" aria-label="Meal prep">
+                    <button type="button" data-mprep="unset" aria-pressed="false">Choose</button>
+                    <button type="button" data-mprep="yes" aria-pressed="false">Yes</button>
+                    <button type="button" data-mprep="no" aria-pressed="false">No</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-equip" data-section="d">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Cooking equipment</span>
+                  <div class="chips" id="chips-equip" role="group" aria-label="Cooking equipment"></div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+            </div>
+          </section>
+
+          <!-- E -->
+          <section class="section" aria-labelledby="sec-e">
+            <div class="section-head" id="sec-e">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <rect x="7" y="7" width="10" height="14" rx="2" />
+                <path d="M10 7V5a2 2 0 0 1 2-2h0a2 2 0 0 1 2 2v2" stroke-linecap="round" />
+              </svg>
+              <h2 class="section-title">Supplements</h2>
+            </div>
+            <div class="card">
+              <div class="field" id="field-suppown" data-section="e">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Supplements you already have</span>
+                  <div class="chips" id="chips-supp" role="group"></div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-sbudg" data-section="e">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Supplement budget</span>
+                </div>
+                <div class="card-grid">
+                  <button type="button" class="pick-card" data-sb="have" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">I have what I need</span>
+                  </button>
+                  <button type="button" class="pick-card" data-sb="budget_2040" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Budget</span>
+                    <span class="pk-sub">$20–40/mo</span>
+                  </button>
+                  <button type="button" class="pick-card" data-sb="mid_4080" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Mid-range</span>
+                    <span class="pk-sub">$40–80/mo</span>
+                  </button>
+                  <button type="button" class="pick-card" data-sb="no_limit" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">No limit</span>
+                  </button>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" data-section="e">
+                <label class="row row-stack" for="inp-osupp">
+                  <span class="row-label">Other supplements <span class="row-hint">Optional</span></span>
+                  <textarea class="input-plain" id="inp-osupp" placeholder="—"></textarea>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <!-- F -->
+          <section class="section" aria-labelledby="sec-f">
+            <div class="section-head" id="sec-f">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+              </svg>
+              <h2 class="section-title">Location &amp; Lifestyle</h2>
+            </div>
+            <div class="card">
+              <div class="field" id="field-country" data-section="f">
+                <label class="row row-stack" for="sel-country">
+                  <span class="row-label">Country</span>
+                  <select class="input-plain" id="sel-country"></select>
+                </label>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" data-section="f">
+                <label class="row row-stack" for="inp-city">
+                  <span class="row-label">City / region <span class="row-hint">Optional</span></span>
+                  <input class="input-plain" id="inp-city" type="text" autocomplete="address-level2" placeholder="—" />
+                </label>
+              </div>
+              <div class="field" id="field-act" data-section="f">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Daily activity outside gym</span>
+                </div>
+                <div class="card-grid">
+                  <button type="button" class="pick-card" data-act="sedentary" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Desk job</span>
+                    <span class="pk-sub">Mostly sedentary</span>
+                  </button>
+                  <button type="button" class="pick-card" data-act="light" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Light movement</span>
+                  </button>
+                  <button type="button" class="pick-card" data-act="active_job" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Active job</span>
+                  </button>
+                  <button type="button" class="pick-card" data-act="very_active_job" aria-pressed="false">
+                    <span class="check" aria-hidden="true">✓</span>
+                    <span class="pk-title">Very active job</span>
+                  </button>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="row row-stack" data-section="f">
+                <span class="row-label">Sleep hours per night</span>
+                <div class="stepper">
+                  <button type="button" id="sl-minus" aria-label="Decrease sleep hours">−</button>
+                  <output id="out-sl" for="sl-minus sl-plus">7</output>
+                  <button type="button" id="sl-plus" aria-label="Increase sleep hours">+</button>
+                </div>
+              </div>
+              <div class="field" id="field-stress" data-section="f">
+                <div class="row row-stack">
+                  <span class="row-label">Stress level</span>
+                  <div class="seg compact" role="group" aria-label="Stress">
+                    <button type="button" data-st="low" aria-pressed="false">Low</button>
+                    <button type="button" data-st="moderate" aria-pressed="false">Mod</button>
+                    <button type="button" data-st="high" aria-pressed="false">High</button>
+                    <button type="button" data-st="very_high" aria-pressed="false">Very high</button>
+                  </div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+              <div class="field" id="field-chal" data-section="f">
+                <div class="row row-stack" style="border-bottom: none">
+                  <span class="row-label">Biggest challenge</span>
+                  <div class="chips" id="chips-chal" role="group"></div>
+                </div>
+                <p class="field-msg" role="alert"></p>
+              </div>
+            </div>
+          </section>
+
+          <p style="text-align: center; font-size: 13px; color: var(--lbl2); padding: 16px 24px 32px">Your data never leaves your device.</p>
+        </main>
+
+        <div class="sticky-bar">
+          <button type="button" id="btn-generate" disabled>Generate My Plan</button>
+        </div>
+      </div>
+
+      <!-- Screen 2 placeholder -->
+      <div id="screen-prompt" class="screen" aria-hidden="true">
+        <div class="placeholder-panel">Prompt screen — coming next.</div>
+      </div>
+
+      <!-- Screen 3 scaffold -->
+      <div id="screen-app" class="screen" aria-hidden="true">
+        <div class="screen-scroll">
+          <div class="placeholder-panel">Plan app — tabs below are a scaffold for the next milestones.</div>
+        </div>
+        <nav class="tab-bar" aria-label="Main">
+          <div class="tab-btn on" aria-current="page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" stroke-linejoin="round"/></svg>
+            Home
+          </div>
+          <div class="tab-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M6 15h4m4 0h4M8 11h8M10 7h4"/></svg>
+            Phases
+          </div>
+          <div class="tab-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3M16 3v3M5 10h14M6 8h12a2 2 0 0 1 2 2v9H4v-9a2 2 0 0 1 2-2z"/></svg>
+            Meals
+          </div>
+          <div class="tab-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="7"/><path d="M12 6V3M12 13l3-3"/></svg>
+            Prep
+          </div>
+          <div class="tab-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9h15l-1.5 9h-12z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg>
+            Grocery
+          </div>
+          <div class="tab-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="6" width="8" height="12" rx="4"/></svg>
+            Supps
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const STORAGE_KEY = "health_form_session";
+
+        const EQUIPMENT = ["Instant Pot", "Air Fryer", "Stovetop", "Oven", "Microwave", "BBQ"];
+        const SUPP_ITEMS = [
+          "Creatine",
+          "Whey Protein",
+          "Pre-Workout",
+          "Omega-3",
+          "Multivitamin",
+          "Vitamin D",
+          "Magnesium",
+          "Ashwagandha",
+          "ZMA",
+          "BCAAs",
+          "Casein",
+          "Caffeine Pills",
+          "None",
+        ];
+        const CHALLENGES = [
+          ["consistent", "Staying consistent"],
+          ["meal_prep_time", "Meal prep time"],
+          ["cravings", "Cravings"],
+          ["low_energy", "Low energy"],
+          ["plateauing", "Plateauing"],
+          ["motivation", "Motivation"],
+          ["cooking_skills", "Cooking skills"],
+        ];
+
+        const COUNTRIES = [
+          "Argentina",
+          "Australia",
+          "Austria",
+          "Bangladesh",
+          "Belgium",
+          "Brazil",
+          "Canada",
+          "Chile",
+          "China",
+          "Colombia",
+          "Czech Republic",
+          "Denmark",
+          "Egypt",
+          "Finland",
+          "France",
+          "Germany",
+          "Ghana",
+          "Greece",
+          "Hong Kong",
+          "Hungary",
+          "India",
+          "Indonesia",
+          "Ireland",
+          "Israel",
+          "Italy",
+          "Japan",
+          "Kenya",
+          "Malaysia",
+          "Mexico",
+          "Netherlands",
+          "New Zealand",
+          "Nigeria",
+          "Norway",
+          "Pakistan",
+          "Philippines",
+          "Poland",
+          "Portugal",
+          "Romania",
+          "Saudi Arabia",
+          "Singapore",
+          "South Africa",
+          "South Korea",
+          "Spain",
+          "Sweden",
+          "Switzerland",
+          "Taiwan",
+          "Thailand",
+          "Turkey",
+          "United Arab Emirates",
+          "United Kingdom",
+          "United States",
+          "Vietnam",
+        ];
+
+        function defaultState() {
+          return {
+            name: "",
+            age: "",
+            sex: "",
+            weight: "",
+            weightUnit: "kg",
+            heightUnit: "cm",
+            heightCm: "",
+            heightFt: "",
+            heightIn: "",
+            bodyFat: "",
+            goal: "",
+            timeline: "",
+            targetWeight: "",
+            urgency: "",
+            trainingDays: 3,
+            trainingLocation: "",
+            fitnessLevel: "",
+            injuries: "",
+            dietaryPreference: "",
+            foodDislikes: "",
+            mealsPerDay: "",
+            cookingTime: "",
+            mealPrep: null,
+            equipment: [],
+            supplementsOwned: [],
+            supplementBudget: "",
+            otherSupplements: "",
+            country: "",
+            city: "",
+            activityLevel: "",
+            sleepHours: 7,
+            stressLevel: "",
+            challenges: [],
+          };
+        }
+
+        let state = defaultState();
+
+        function loadState() {
+          try {
+            const raw = sessionStorage.getItem(STORAGE_KEY);
+            if (!raw) return;
+            const o = JSON.parse(raw);
+            state = { ...defaultState(), ...o };
+          } catch (_) {}
+        }
+
+        function saveState() {
+          try {
+            sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          } catch (_) {}
+        }
+
+        function $(sel, root) {
+          return (root || document).querySelector(sel);
+        }
+        function $$(sel, root) {
+          return Array.from((root || document).querySelectorAll(sel));
+        }
+
+        function setSegExclusive(container, attr, value) {
+          $$(`button[${attr}]`, container).forEach((b) => {
+            b.setAttribute("aria-pressed", b.getAttribute(attr) === value ? "true" : "false");
+          });
+        }
+
+        function renderChips(container, items, selected, onToggle, keyFn, labelFn) {
+          container.innerHTML = "";
+          items.forEach((item) => {
+            const key = keyFn(item);
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "chip";
+            btn.textContent = labelFn(item);
+            btn.setAttribute("aria-pressed", selected.includes(key) ? "true" : "false");
+            btn.addEventListener("click", () => onToggle(key));
+            container.appendChild(btn);
+          });
+        }
+
+        function heightValid() {
+          if (state.heightUnit === "cm") {
+            const v = Number(state.heightCm);
+            return v >= 120 && v <= 250;
+          }
+          const ft = Number(state.heightFt);
+          const inch = Number(state.heightIn);
+          if (!(ft >= 3 && ft <= 8)) return false;
+          if (!(inch >= 0 && inch <= 11)) return false;
+          const totalIn = ft * 12 + inch;
+          return totalIn >= 48 && totalIn <= 96;
+        }
+
+        function weightValid() {
+          const w = Number(state.weight);
+          if (!(w > 0)) return false;
+          if (state.weightUnit === "kg") return w >= 30 && w <= 250;
+          return w >= 66 && w <= 550;
+        }
+
+        function sectionComplete(idx) {
+          switch (idx) {
+            case 0:
+              return (
+                state.name.trim().length > 0 &&
+                Number(state.age) >= 16 &&
+                Number(state.age) <= 80 &&
+                !!state.sex &&
+                weightValid() &&
+                heightValid()
+              );
+            case 1:
+              return !!(state.goal && state.timeline && state.urgency);
+            case 2:
+              return !!(state.trainingDays && state.trainingLocation && state.fitnessLevel);
+            case 3:
+              return !!(
+                state.dietaryPreference &&
+                state.mealsPerDay &&
+                state.cookingTime &&
+                state.mealPrep !== null &&
+                state.equipment.length > 0
+              );
+            case 4:
+              return state.supplementsOwned.length > 0 && !!state.supplementBudget;
+            case 5:
+              return !!(
+                state.country &&
+                state.activityLevel &&
+                state.sleepHours >= 4 &&
+                state.sleepHours <= 10 &&
+                state.stressLevel &&
+                state.challenges.length > 0
+              );
+            default:
+              return false;
+          }
+        }
+
+        function minReady() {
+          return (
+            state.name.trim().length > 0 &&
+            Number(state.age) >= 16 &&
+            Number(state.age) <= 80 &&
+            !!state.sex &&
+            weightValid() &&
+            heightValid() &&
+            !!state.goal
+          );
+        }
+
+        function updateProgress() {
+          $$("#progress-dots .dot").forEach((d, i) => {
+            d.classList.toggle("on", sectionComplete(i));
+          });
+        }
+
+        function syncDomFromState() {
+          $("#inp-name").value = state.name;
+          $("#inp-age").value = state.age;
+          $$('[data-sex]').forEach((b) => b.setAttribute("aria-pressed", b.dataset.sex === state.sex ? "true" : "false"));
+          $("#inp-weight").value = state.weight;
+          setSegExclusive($("#field-weight .seg"), "data-wu", state.weightUnit);
+          setSegExclusive($("#field-height .seg"), "data-hu", state.heightUnit);
+          $("#inp-height-cm").value = state.heightCm;
+          $("#inp-height-ft").value = state.heightFt;
+          $("#inp-height-in").value = state.heightIn;
+          $("#height-cm-wrap").hidden = state.heightUnit !== "cm";
+          $("#height-ft-wrap").hidden = state.heightUnit !== "ftin";
+          $("#inp-bf").value = state.bodyFat;
+          $$("[data-goal].pick-card").forEach((b) => b.setAttribute("aria-pressed", b.dataset.goal === state.goal ? "true" : "false"));
+          setSegExclusive($("#field-timeline .seg"), "data-tl", state.timeline);
+          $("#inp-tw").value = state.targetWeight;
+          setSegExclusive($("#field-urgency .seg"), "data-ur", state.urgency);
+          $("#out-td").textContent = String(state.trainingDays);
+          $$("[data-loc].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.loc === state.trainingLocation ? "true" : "false")
+          );
+          $$("[data-fit].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.fit === state.fitnessLevel ? "true" : "false")
+          );
+          $("#inp-inj").value = state.injuries;
+          $$("[data-diet].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.diet === state.dietaryPreference ? "true" : "false")
+          );
+          $("#inp-dislike").value = state.foodDislikes;
+          setSegExclusive($("#field-mpd .seg"), "data-mpd", state.mealsPerDay);
+          setSegExclusive($("#field-cookt .seg"), "data-ct", state.cookingTime);
+          const mpSegVal = state.mealPrep === null ? "unset" : state.mealPrep ? "yes" : "no";
+          $$("#field-mprep [data-mprep]").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.mprep === mpSegVal ? "true" : "false")
+          );
+          renderChips(
+            $("#chips-equip"),
+            EQUIPMENT,
+            state.equipment,
+            (key) => {
+              const i = state.equipment.indexOf(key);
+              if (i >= 0) state.equipment.splice(i, 1);
+              else state.equipment.push(key);
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            },
+            (x) => x,
+            (x) => x
+          );
+          renderChips(
+            $("#chips-supp"),
+            SUPP_ITEMS,
+            state.supplementsOwned,
+            (key) => {
+              if (key === "None") {
+                state.supplementsOwned = state.supplementsOwned.includes("None") ? [] : ["None"];
+              } else {
+                state.supplementsOwned = state.supplementsOwned.filter((x) => x !== "None");
+                const ix = state.supplementsOwned.indexOf(key);
+                if (ix >= 0) state.supplementsOwned.splice(ix, 1);
+                else state.supplementsOwned.push(key);
+              }
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            },
+            (x) => x,
+            (x) => x
+          );
+          $$("[data-sb].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.sb === state.supplementBudget ? "true" : "false")
+          );
+          $("#inp-osupp").value = state.otherSupplements;
+          $("#sel-country").value = state.country || "";
+          $("#inp-city").value = state.city;
+          $$("[data-act].pick-card").forEach((b) =>
+            b.setAttribute("aria-pressed", b.dataset.act === state.activityLevel ? "true" : "false")
+          );
+          $("#out-sl").textContent = String(state.sleepHours);
+          setSegExclusive($("#field-stress .seg"), "data-st", state.stressLevel);
+          renderChips(
+            $("#chips-chal"),
+            CHALLENGES,
+            state.challenges,
+            (key) => {
+              const ix = state.challenges.indexOf(key);
+              if (ix >= 0) state.challenges.splice(ix, 1);
+              else state.challenges.push(key);
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            },
+            (x) => x[0],
+            (x) => x[1]
+          );
+          $("#btn-generate").disabled = !minReady();
+          updateProgress();
+        }
+
+        function clearValidation() {
+          $$(".field.is-invalid").forEach((el) => el.classList.remove("is-invalid"));
+          $$(".field-msg").forEach((p) => {
+            p.textContent = "";
+          });
+        }
+
+        function invalidate(id, msg) {
+          const field = $(id);
+          if (!field) return;
+          field.classList.add("is-invalid");
+          const m = field.querySelector(".field-msg");
+          if (m) m.textContent = msg;
+        }
+
+        function validateAll() {
+          clearValidation();
+          let ok = true;
+          let firstEl = null;
+          const mark = (fid, cond, msg) => {
+            if (!cond) {
+              ok = false;
+              invalidate(fid, msg);
+              if (!firstEl) firstEl = $(fid);
+            }
+          };
+
+          mark("#field-name", state.name.trim().length > 0, "Enter your first name.");
+          mark("#field-age", Number(state.age) >= 16 && Number(state.age) <= 80, "Enter an age between 16 and 80.");
+          mark("#field-sex", !!state.sex, "Select an option.");
+          mark("#field-weight", weightValid(), "Enter a realistic weight.");
+          mark("#field-height", heightValid(), "Enter a realistic height.");
+
+          mark("#field-goal", !!state.goal, "Choose your primary goal.");
+          mark("#field-timeline", !!state.timeline, "Pick a timeline.");
+          mark("#field-urgency", !!state.urgency, "Pick an urgency level.");
+
+          mark("#field-loc", !!state.trainingLocation, "Pick where you train.");
+          mark("#field-fit", !!state.fitnessLevel, "Pick your fitness level.");
+
+          mark("#field-diet", !!state.dietaryPreference, "Pick a dietary preference.");
+          mark("#field-mpd", !!state.mealsPerDay, "Pick meals per day.");
+          mark("#field-cookt", !!state.cookingTime, "Pick cooking time.");
+          mark("#field-mprep", state.mealPrep !== null, "Tap Yes or No for meal prep.");
+          mark("#field-equip", state.equipment.length > 0, "Pick at least one item.");
+
+          mark("#field-suppown", state.supplementsOwned.length > 0, "Pick what you have (None is ok).");
+          mark("#field-sbudg", !!state.supplementBudget, "Pick a supplement budget.");
+
+          mark("#field-country", !!state.country, "Select your country.");
+          mark("#field-act", !!state.activityLevel, "Pick your daily activity level.");
+          mark("#field-stress", !!state.stressLevel, "Pick your stress level.");
+          mark("#field-chal", state.challenges.length > 0, "Pick at least one challenge.");
+
+          if (!ok && firstEl) firstEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          return ok;
+        }
+
+        function collectFormData() {
+          return {
+            name: state.name.trim(),
+            age: Number(state.age),
+            sex: state.sex,
+            weight: Number(state.weight),
+            weightUnit: state.weightUnit,
+            heightUnit: state.heightUnit,
+            heightCm: state.heightUnit === "cm" ? Number(state.heightCm) : null,
+            heightFt: state.heightUnit === "ftin" ? Number(state.heightFt) : null,
+            heightIn: state.heightUnit === "ftin" ? Number(state.heightIn) : null,
+            bodyFat: state.bodyFat === "" ? null : Number(state.bodyFat),
+            goal: state.goal,
+            timelineWeeks: Number(state.timeline),
+            targetWeight: state.targetWeight === "" ? null : Number(state.targetWeight),
+            urgency: state.urgency,
+            trainingDays: state.trainingDays,
+            trainingLocation: state.trainingLocation,
+            fitnessLevel: state.fitnessLevel,
+            injuries: state.injuries.trim() || null,
+            dietaryPreference: state.dietaryPreference,
+            foodDislikes: state.foodDislikes.trim() || null,
+            mealsPerDay: Number(state.mealsPerDay),
+            cookingTime: state.cookingTime,
+            mealPrep: state.mealPrep,
+            equipment: [...state.equipment],
+            supplementsOwned: [...state.supplementsOwned],
+            supplementBudget: state.supplementBudget,
+            otherSupplements: state.otherSupplements.trim() || null,
+            country: state.country,
+            city: state.city.trim() || null,
+            activityLevel: state.activityLevel,
+            sleepHours: state.sleepHours,
+            stressLevel: state.stressLevel,
+            challenges: [...state.challenges],
+          };
+        }
+
+        /** Placeholder until Screen 2 prompt template lands (PR-3). */
+        function buildPrompt(formData) {
+          return "[Prompt template placeholder]\n" + JSON.stringify(formData, null, 2);
+        }
+
+        function wire() {
+          const sel = $("#sel-country");
+          sel.textContent = "";
+          const ph = document.createElement("option");
+          ph.value = "";
+          ph.textContent = "Select country";
+          sel.appendChild(ph);
+          COUNTRIES.forEach((c) => {
+            const o = document.createElement("option");
+            o.value = c;
+            o.textContent = c;
+            sel.appendChild(o);
+          });
+          sel.addEventListener("change", () => {
+            state.country = sel.value;
+            saveState();
+            syncDomFromState();
+            clearValidation();
+          });
+
+          $("#inp-name").addEventListener("input", (e) => {
+            state.name = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $("#inp-age").addEventListener("input", (e) => {
+            state.age = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $$('[data-sex]').forEach((b) =>
+            b.addEventListener("click", () => {
+              state.sex = b.dataset.sex;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-weight").addEventListener("input", (e) => {
+            state.weight = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $$('[data-wu]').forEach((b) =>
+            b.addEventListener("click", () => {
+              state.weightUnit = b.dataset.wu;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $$('[data-hu]').forEach((b) =>
+            b.addEventListener("click", () => {
+              state.heightUnit = b.dataset.hu;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-height-cm").addEventListener("input", (e) => {
+            state.heightCm = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $("#inp-height-ft").addEventListener("input", (e) => {
+            state.heightFt = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $("#inp-height-in").addEventListener("input", (e) => {
+            state.heightIn = e.target.value;
+            saveState();
+            syncDomFromState();
+          });
+          $("#inp-bf").addEventListener("input", (e) => {
+            state.bodyFat = e.target.value;
+            saveState();
+          });
+          $$("[data-goal].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.goal = b.dataset.goal;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $$("#field-timeline [data-tl]").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.timeline = b.dataset.tl;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-tw").addEventListener("input", (e) => {
+            state.targetWeight = e.target.value;
+            saveState();
+          });
+          $$("#field-urgency [data-ur]").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.urgency = b.dataset.ur;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+
+          $("#td-minus").addEventListener("click", () => {
+            state.trainingDays = Math.max(1, state.trainingDays - 1);
+            saveState();
+            syncDomFromState();
+          });
+          $("#td-plus").addEventListener("click", () => {
+            state.trainingDays = Math.min(7, state.trainingDays + 1);
+            saveState();
+            syncDomFromState();
+          });
+          $$("[data-loc].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.trainingLocation = b.dataset.loc;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $$("[data-fit].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.fitnessLevel = b.dataset.fit;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-inj").addEventListener("input", (e) => {
+            state.injuries = e.target.value;
+            saveState();
+          });
+
+          $$("[data-diet].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.dietaryPreference = b.dataset.diet;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-dislike").addEventListener("input", (e) => {
+            state.foodDislikes = e.target.value;
+            saveState();
+          });
+          $$("#field-mpd [data-mpd]").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.mealsPerDay = b.dataset.mpd;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $$("#field-cookt [data-ct]").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.cookingTime = b.dataset.ct;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+
+          $$("#field-mprep [data-mprep]").forEach((b) =>
+            b.addEventListener("click", () => {
+              const v = b.dataset.mprep;
+              state.mealPrep = v === "unset" ? null : v === "yes";
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+
+          $$("[data-sb].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.supplementBudget = b.dataset.sb;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#inp-osupp").addEventListener("input", (e) => {
+            state.otherSupplements = e.target.value;
+            saveState();
+          });
+
+          $("#inp-city").addEventListener("input", (e) => {
+            state.city = e.target.value;
+            saveState();
+          });
+          $$("[data-act].pick-card").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.activityLevel = b.dataset.act;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+          $("#sl-minus").addEventListener("click", () => {
+            state.sleepHours = Math.max(4, state.sleepHours - 1);
+            saveState();
+            syncDomFromState();
+          });
+          $("#sl-plus").addEventListener("click", () => {
+            state.sleepHours = Math.min(10, state.sleepHours + 1);
+            saveState();
+            syncDomFromState();
+          });
+          $$("#field-stress [data-st]").forEach((b) =>
+            b.addEventListener("click", () => {
+              state.stressLevel = b.dataset.st;
+              saveState();
+              syncDomFromState();
+              clearValidation();
+            })
+          );
+
+          $("#btn-generate").addEventListener("click", () => {
+            if (!validateAll()) return;
+            const data = collectFormData();
+            console.log(buildPrompt(data));
+          });
+        }
+
+        loadState();
+        wire();
+        syncDomFromState();
+      })();
+    </script>
   </body>
 </html>
