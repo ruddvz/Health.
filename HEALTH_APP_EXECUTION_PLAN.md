@@ -1,6 +1,6 @@
 # Health App — Final UI/UX, Content, Data, and Product Improvement Plan
 
-This file is the **canonical execution roadmap** for turning the Health PWA into a premium, local-first daily companion. It condenses the full product specification into actionable engineering work while preserving every major requirement (information architecture, schema v2, validation tiers, PR sequence, privacy, PWA, accessibility, and QA).
+This file is the **canonical execution roadmap** for turning the Health PWA into a premium, local-first daily companion. It condenses the full product specification into actionable engineering work while preserving every major requirement (information architecture, schema v2, validation tiers, PR sequence, privacy, PWA, accessibility, and QA). The original long-form narrative from the product brief can be archived alongside this file if a verbatim copy is required for compliance or design reviews.
 
 **Project:** `ruddvz/Health`  
 **Live site:** `https://ruddvz.github.io/Health/`  
