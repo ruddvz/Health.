@@ -1,28 +1,66 @@
-# Health — Personalised Plan
+# Health — Personal Plan
 
-A mobile web app that turns a personalised Claude-generated health plan into a beautiful, interactive guide.
+Health is a **local-first PWA** that turns a structured JSON health plan into an interactive daily dashboard. This repository is being rebuilt as **SvelteKit + TypeScript** with a Nothing OS–inspired interface (see `docs/HEALTH_APP_REBUILD_PLAN.md`). The previous single-file app lives in `legacy/` for reference.
 
-## How it works
+- **Privacy:** The app does not send your plan to a server by default. Data stays in browser storage once you import a plan (import UI arrives in Phase 2).
+- **Offline:** After the first load, assets are cached by the service worker. An offline fallback page is included.
+- **Install:** Use your browser’s “Add to Home Screen” / install flow; Chromium shows a prompt when `beforeinstallprompt` fires.
+- **Hosting:** Static build output is deployed to **GitHub Pages** at `https://ruddvz.github.io/Health/` (production build uses base path `/Health`).
 
-1. Fill in your details in the intake form
-2. The app generates a pre-built prompt tailored to you
-3. Paste the prompt into Claude at [claude.ai](https://claude.ai)
-4. Upload the JSON plan Claude gives you
-5. Your personalised plan — meals, macros, phases, grocery list, supplements — renders as a native-feeling mobile app
+## Requirements
 
-## Features
+- Node.js 22+ (matches GitHub Actions)
 
-- Six-section intake form covering nutrition, training, lifestyle, and supplements
-- Pre-filled Claude prompt — zero editing required, just copy and paste
-- JSON-driven rendering — every piece of content comes from Claude's analysis
-- Grocery checklist with persistent check-off state
-- Meal prep guide with checkable steps
-- Supplement stack with timing schedule
-- Budget versus premium options for protein powder and grocery items
-- Works offline after first load (PWA)
+## Run locally
 
-## Tech
+```bash
+npm install
+npm run dev
+```
 
-Single `index.html` file (full UI is being rebuilt). No framework. No build step. No backend. All data stays on your device — nothing is sent anywhere.
+Open the URL Vite prints (dev uses an empty base path, so routes are `/`, `/meals`, and so on).
 
-Hosted on GitHub Pages: [https://ruddvz.github.io/Health/](https://ruddvz.github.io/Health/)
+## Build
+
+```bash
+npm run build
+```
+
+Output is written to `build/`, suitable for GitHub Pages.
+
+## Preview the production build
+
+```bash
+npm run preview
+```
+
+Use the printed URL; asset URLs will include `/Health` when built for production.
+
+## Deploy
+
+Pushes to `main` run `.github/workflows/pages.yml`, which runs `npm ci`, `npm run build`, and publishes the `build/` folder via GitHub Pages.
+
+## Tests and checks
+
+```bash
+npm test
+npm run check
+npm run lint
+```
+
+## Upload JSON (roadmap)
+
+Phase 2 adds file upload, paste, Zod validation, persistence, and System diagnostics. A placeholder sample lives at `static/samples/rudra-plan-v2.json`.
+
+## Reset data (roadmap)
+
+Phase 2+ will expose “delete local data” in System; until then, clear site data for this origin in the browser.
+
+## Schema
+
+The plan schema is documented in the rebuild plan; TypeScript types start in `src/lib/types/plan.ts` and will expand with validation.
+
+## Known limitations
+
+- Today / Meals / Train / Progress / System screens are **shell placeholders** until Phases 2–7 land.
+- The legacy HTML app is not removed from the repo; use `legacy/` only as a reference or fallback.

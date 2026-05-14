@@ -1,0 +1,33 @@
+/* Nothing OS–inspired utility layer: borders, mono labels, press states */
+
+.nothing-surface {
+	background: var(--surface-1);
+	border: 1px solid var(--line-1);
+	border-radius: var(--radius-md);
+}
+
+.nothing-surface-2 {
+	background: var(--surface-2);
+	border: 1px solid var(--line-1);
+	border-radius: var(--radius-md);
+}
+
+.mono-caps {
+	font-family: var(--font-mono);
+	font-size: 10px;
+	font-weight: 600;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--text-3);
+}
+
+.pressable {
+	transition:
+		transform 0.08s ease,
+		background 0.12s ease,
+		border-color 0.12s ease;
+}
+
+.pressable:active {
+	transform: scale(0.98);
+}
