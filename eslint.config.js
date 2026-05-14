@@ -40,5 +40,12 @@ export default defineConfig(
 		// Override or add rule settings here, such as:
 		// 'svelte/button-has-type': 'error'
 		rules: {}
+	},
+	{
+		files: ['src/lib/components/spec/SettingsRowLink.svelte'],
+		rules: {
+			// `href` comes from route data; `appResolve()` wraps SvelteKit `resolve()` for non-literal paths.
+			'svelte/no-navigation-without-resolve': 'off'
+		}
 	}
 );

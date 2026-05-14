@@ -4,12 +4,30 @@
 		value: string;
 		delta: string;
 		labels: string[];
+		/** Normalized 0–1 heights for sparkline (same length as labels). */
+		series?: number[];
 	}
-	let { title, value, delta, labels }: Props = $props();
+	let { title, value, delta, labels, series }: Props = $props();
+
 	const gridLines = $derived.by(() => {
 		const out: number[] = [];
 		for (let i = 0; i < labels.length; i++) out.push(i);
 		return out;
+	});
+
+	const pts = $derived.by(() => {
+		const n = Math.max(1, labels.length);
+		const base =
+			series && series.length === labels.length ? series : Array.from({ length: n }, () => 0.45);
+		return base.map((t) => 8 + (1 - Math.min(1, Math.max(0, t))) * 52);
+	});
+
+	const polyPoints = $derived.by(() => {
+		if (pts.length < 2) {
+			const y = pts[0] ?? 36;
+			return `10,${y} 310,${y}`;
+		}
+		return pts.map((y, i) => `${(i / (pts.length - 1)) * 300 + 10},${y}`).join(' ');
 	});
 </script>
 
@@ -29,15 +47,10 @@
 					stroke-width="1"
 				/>
 			{/each}
-			<polyline
-				fill="none"
-				stroke="var(--red)"
-				stroke-width="2"
-				points={pts.map((y, i) => `${(i / (pts.length - 1)) * 300 + 10},${72 - y}`).join(' ')}
-			/>
+			<polyline fill="none" stroke="var(--red)" stroke-width="2" points={polyPoints} />
 		</svg>
 		<div class="labs">
-			{#each labels as lb (lb)}
+			{#each labels as lb, li (`${lb}-${li}`)}
 				<span class="mono-caps">{lb}</span>
 			{/each}
 		</div>

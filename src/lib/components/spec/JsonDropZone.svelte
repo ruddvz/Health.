@@ -1,11 +1,51 @@
 <script lang="ts">
 	interface Props {
 		busy?: boolean;
+		onFiles?: (files: File[]) => void;
 	}
-	let { busy = false }: Props = $props();
+	let { busy = false, onFiles }: Props = $props();
+
+	let dragDepth = $state(0);
+	const dragOver = $derived(dragDepth > 0);
+
+	function onDragEnter(e: DragEvent) {
+		e.preventDefault();
+		dragDepth += 1;
+	}
+
+	function onDragOver(e: DragEvent) {
+		e.preventDefault();
+		if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+	}
+
+	function onDragLeave(e: DragEvent) {
+		e.preventDefault();
+		dragDepth = Math.max(0, dragDepth - 1);
+	}
+
+	function onDrop(e: DragEvent) {
+		e.preventDefault();
+		dragDepth = 0;
+		const list = e.dataTransfer?.files;
+		if (!list?.length) return;
+		const files = [...list].filter(
+			(f) => f.type === 'application/json' || f.name.toLowerCase().endsWith('.json')
+		);
+		if (files.length) onFiles?.(files);
+	}
 </script>
 
-<div class="zone nothing-surface" class:busy aria-busy={busy}>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	class="zone nothing-surface"
+	class:busy
+	class:drag={dragOver}
+	aria-busy={busy}
+	ondragenter={onDragEnter}
+	ondragover={onDragOver}
+	ondragleave={onDragLeave}
+	ondrop={onDrop}
+>
 	<div class="inner">
 		<span class="mono-caps brace" aria-hidden="true">{'{ }'}</span>
 		<p class="mono-caps lab">.JSON</p>
@@ -67,5 +107,10 @@
 
 	.busy {
 		opacity: 0.65;
+	}
+
+	.zone.drag {
+		outline: 2px solid var(--red-line);
+		outline-offset: -2px;
 	}
 </style>

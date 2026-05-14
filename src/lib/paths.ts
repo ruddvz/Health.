@@ -1,4 +1,9 @@
-import { base } from '$app/paths';
+import { base, resolve } from '$app/paths';
+
+/** Typed `resolve()` wrapper for dynamic string paths from data/props. */
+export function appResolve(path: string): string {
+	return (resolve as unknown as (route: string) => string)(path);
+}
 
 /** Normalize pathname for tab matching (respects `paths.base` in production). */
 export function normalizePathname(pathname: string): string {

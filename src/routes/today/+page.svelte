@@ -10,31 +10,38 @@
 	import SectionLabel from '$lib/components/spec/SectionLabel.svelte';
 	import StatusStrip from '$lib/components/spec/StatusStrip.svelte';
 	import TimelineCard from '$lib/components/spec/TimelineCard.svelte';
+	import { consumedTotalsForToday, waterLitersForDay } from '$lib/logic/dayTotals';
+	import { isoDateKey } from '$lib/logic/dateKey';
 	import {
 		getMealsForDay,
 		getPhaseLabel,
-		getPhaseTargets,
 		getTrainingDay,
 		getUserName,
-		greeting,
-		sumMealKcal
+		greeting
 	} from '$lib/logic/planDerive';
-	import { activeDayType, persistActiveDayType, plan } from '$lib/stores/healthApp';
+	import {
+		activeDayType,
+		persistActiveDayType,
+		persistProgress,
+		plan,
+		progress
+	} from '$lib/stores/healthApp';
 	import type { DayType } from '$lib/types/planV2';
+	import { get } from 'svelte/store';
 
 	let phaseIndex = $state(0);
 
-	const targets = $derived(getPhaseTargets($plan, phaseIndex));
+	const totals = $derived(
+		consumedTotalsForToday($plan, $activeDayType as DayType, phaseIndex, $progress)
+	);
 	const meals = $derived(getMealsForDay($plan, $activeDayType as DayType));
-	const kcalSum = $derived(sumMealKcal(meals));
 
-	const pVal = $derived(Math.min(targets.protein, Math.round(targets.protein * 0.88)));
-	const cVal = $derived(Math.min(targets.carbs, Math.round(targets.carbs * 0.82)));
-	const fVal = $derived(Math.min(targets.fat, Math.round(targets.fat * 0.9)));
-
-	const waterL = $derived(1.6);
 	const waterTarget = 3;
-	const calProg = $derived(targets.kcal > 0 ? Math.min(1, kcalSum / targets.kcal) : 0);
+	const waterL = $derived(waterLitersForDay($progress, totals.day));
+
+	const calProg = $derived(
+		totals.targets.kcal > 0 ? Math.min(1, totals.kcal / totals.targets.kcal) : 0
+	);
 
 	const timeline = $derived.by(() => {
 		const items: {
@@ -79,6 +86,17 @@
 		return 'Recovery day';
 	});
 
+	function bumpWater(delta: number) {
+		const cur = get(progress);
+		const key = isoDateKey();
+		const prev = waterLitersForDay(cur, key);
+		const next = Math.max(0, Math.round((prev + delta) * 100) / 100);
+		persistProgress({
+			...cur,
+			waterLitersByDay: { ...(cur.waterLitersByDay ?? {}), [key]: next }
+		});
+	}
+
 	$effect(() => {
 		if (!browser) return;
 		if (!$plan) goto(resolve('/import'));
@@ -111,22 +129,45 @@
 		<SectionLabel text="MACROS" />
 
 		<div class="rings">
-			<MetricRing value={pVal} max={Math.max(1, targets.protein)} unit="g" label="Protein" />
-			<MetricRing value={cVal} max={Math.max(1, targets.carbs)} unit="g" label="Carbs" />
-			<MetricRing value={fVal} max={Math.max(1, targets.fat)} unit="g" label="Fat" />
+			<MetricRing
+				value={Math.min(totals.protein, totals.targets.protein)}
+				max={Math.max(1, totals.targets.protein)}
+				unit="g"
+				label="Protein"
+			/>
+			<MetricRing
+				value={Math.min(totals.carbs, totals.targets.carbs)}
+				max={Math.max(1, totals.targets.carbs)}
+				unit="g"
+				label="Carbs"
+			/>
+			<MetricRing
+				value={Math.min(totals.fat, totals.targets.fat)}
+				max={Math.max(1, totals.targets.fat)}
+				unit="g"
+				label="Fat"
+			/>
 		</div>
 
 		<div class="tiles">
-			<MetricTile
-				label="WATER"
-				value={`${waterL.toFixed(1)} / ${waterTarget.toFixed(1)} L`}
-				subvalue={`${Math.round((waterL / waterTarget) * 100)}%`}
-				progress={waterL / waterTarget}
-			/>
+			<div class="tile-wrap">
+				<MetricTile
+					label="WATER"
+					value={`${waterL.toFixed(2)} / ${waterTarget.toFixed(1)} L`}
+					subvalue={`${Math.round((waterL / waterTarget) * 100)}%`}
+					progress={waterL / waterTarget}
+				/>
+				<div class="water-actions">
+					<button type="button" class="mini pressable" onclick={() => bumpWater(-0.25)}>−</button>
+					<button type="button" class="mini pressable" onclick={() => bumpWater(0.25)}>+</button>
+				</div>
+			</div>
 			<MetricTile
 				label="CALORIES"
-				value={kcalSum > 0 ? `${kcalSum.toLocaleString()}` : '—'}
-				subvalue={targets.kcal > 0 ? `/ ${targets.kcal.toLocaleString()} kcal` : ''}
+				value={totals.kcal > 0 ? `${Math.round(totals.kcal).toLocaleString()}` : '—'}
+				subvalue={totals.targets.kcal > 0
+					? `/ ${Math.round(totals.targets.kcal).toLocaleString()} kcal`
+					: ''}
 				progress={calProg}
 			/>
 		</div>
@@ -160,5 +201,28 @@
 		grid-template-columns: 1fr 1fr;
 		gap: 10px;
 		margin-bottom: var(--space-4);
+	}
+
+	.tile-wrap {
+		position: relative;
+	}
+
+	.water-actions {
+		position: absolute;
+		right: 8px;
+		bottom: 10px;
+		display: flex;
+		gap: 6px;
+	}
+
+	.mini {
+		width: 34px;
+		height: 30px;
+		border-radius: var(--radius-xs);
+		border: 1px solid var(--line-2);
+		background: rgba(0, 0, 0, 0.35);
+		color: var(--text-1);
+		font-weight: 800;
+		cursor: pointer;
 	}
 </style>

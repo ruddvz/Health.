@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { appResolve } from '$lib/paths';
 
 	interface Props {
 		icon?: string;
@@ -22,7 +22,7 @@
 </script>
 
 {#if href}
-	<a class="row nothing-surface pressable" class:danger={tone === 'danger'} href={resolve(href)}>
+	<a class="row nothing-surface pressable" class:danger={tone === 'danger'} href={appResolve(href)}>
 		<span class="mono-caps ico" aria-hidden="true">{icon}</span>
 		<div class="mid">
 			<p class="t">{title}</p>

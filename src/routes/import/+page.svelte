@@ -47,11 +47,7 @@
 		return true;
 	}
 
-	async function onFile(ev: Event) {
-		const t = ev.target as HTMLInputElement;
-		const f = t.files?.[0];
-		t.value = '';
-		if (!f) return;
+	async function readFile(f: File) {
 		if (f.size > MAX_PLAN_BYTES) {
 			error = `File exceeds ${MAX_PLAN_BYTES / (1024 * 1024)} MB limit.`;
 			return;
@@ -65,6 +61,20 @@
 		} finally {
 			busy = false;
 		}
+	}
+
+	async function onFile(ev: Event) {
+		const t = ev.target as HTMLInputElement;
+		const f = t.files?.[0];
+		t.value = '';
+		if (!f) return;
+		await readFile(f);
+	}
+
+	async function onDropFiles(files: File[]) {
+		const f = files[0];
+		if (!f) return;
+		await readFile(f);
 	}
 
 	function openPicker() {
@@ -102,7 +112,7 @@
 		subtitle="Use your JSON plan to power your dashboard."
 	/>
 
-	<JsonDropZone {busy} />
+	<JsonDropZone {busy} onFiles={onDropFiles} />
 
 	<ListRowButton label="Copy Prompt" chevron onclick={copyPrompt} />
 	<ListRowButton label="Paste JSON" chevron onclick={() => (pasteOpen = true)} />
