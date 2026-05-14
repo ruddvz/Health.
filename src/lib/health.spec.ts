@@ -1,7 +1,24 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { parsePlanJsonText } from '$lib/validation/planV2';
 
-describe('health shell', () => {
-	it('placeholder passes', () => {
-		expect(1 + 1).toBe(2);
+const here = dirname(fileURLToPath(import.meta.url));
+const samplePath = join(here, '../../samples/minimal-plan-v2.json');
+
+describe('plan validation', () => {
+	it('accepts minimal v2 sample', () => {
+		const raw = readFileSync(samplePath, 'utf8');
+		const r = parsePlanJsonText(raw);
+		expect(r.ok).toBe(true);
+		if (r.ok) {
+			expect(Array.isArray(r.plan.phases)).toBe(true);
+		}
+	});
+
+	it('rejects invalid JSON', () => {
+		const r = parsePlanJsonText('{');
+		expect(r.ok).toBe(false);
 	});
 });

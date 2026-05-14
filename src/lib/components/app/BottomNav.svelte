@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { base } from '$app/paths';
+	import { base, resolve } from '$app/paths';
 	import { page } from '$app/state';
 
 	const tabs = [
-		{ path: '/', href: `${base}/`, label: 'Today' },
-		{ path: '/meals', href: `${base}/meals`, label: 'Meals' },
-		{ path: '/train', href: `${base}/train`, label: 'Train' },
-		{ path: '/progress', href: `${base}/progress`, label: 'Progress' },
-		{ path: '/system', href: `${base}/system`, label: 'System' }
+		{ path: '/today', href: resolve('/today'), label: 'Today' },
+		{ path: '/meals', href: resolve('/meals'), label: 'Meals' },
+		{ path: '/train', href: resolve('/train'), label: 'Train' },
+		{ path: '/progress', href: resolve('/progress'), label: 'Progress' },
+		{ path: '/system', href: resolve('/system'), label: 'System' }
 	] as const;
 
 	function normalizePathname(pathname: string): string {
@@ -22,6 +22,7 @@
 	const currentPath = $derived(normalizePathname(page.url.pathname));
 
 	function active(path: string) {
+		if (path === '/system') return currentPath === '/system' || currentPath.startsWith('/system/');
 		return currentPath === path;
 	}
 </script>

@@ -4,15 +4,18 @@
 
 	interface Props {
 		children: Snippet;
+		showNav?: boolean;
 	}
-	let { children }: Props = $props();
+	let { children, showNav = true }: Props = $props();
 </script>
 
 <div class="shell">
-	<div class="content pb-nav">
+	<div class="content" class:pb-nav={showNav} class:pb-min={!showNav}>
 		{@render children()}
 	</div>
-	<BottomNav />
+	{#if showNav}
+		<BottomNav />
+	{/if}
 </div>
 
 <style>
@@ -26,5 +29,13 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.pb-nav {
+		padding-bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--space-6));
+	}
+
+	.pb-min {
+		padding-bottom: calc(var(--space-6) + var(--safe-bottom));
 	}
 </style>
