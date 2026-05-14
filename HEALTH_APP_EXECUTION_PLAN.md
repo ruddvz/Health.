@@ -150,6 +150,17 @@ Polished on phone/tablet/desktop; first screen understandable in ~5 seconds; sam
 | Item | Status |
 |------|--------|
 | This roadmap file | Added |
-| PR-1 baseline (size limit, parse UX, stricter validation, system fonts, CSP, privacy card, delete all data, safe chip rendering) | Landed on branch `cursor/health-plan-and-safety-8dc9` |
+| PR-1 baseline | Landed on `cursor/health-plan-and-safety-8dc9` (merged into subsequent work) |
+| PR-2 schema / migration / enrichment | `enrichPlanForApp`, warnings expanded, `plan_schema_version` 2 on save; sample `samples/minimal-plan-v2.json` |
+| PR-3 design system | Partial: new components (today hero, more hub, training/progress/macro cards, snackbar); full token remap still optional |
+| PR-4 intake / prompt | Optional schedule clocks, skip-to-JSON, paste JSON + apply, prompt tail for schema v2 |
+| PR-5 Today dashboard | Renamed Home → Today, “Up next” meal card, existing schedule + warnings retained |
+| PR-6 Meals 2.0 | Macro gap “Suggested add-ons” card |
+| PR-7 Training | Tab + `weekly_split` renderer + fallback copy |
+| PR-8 Progress | Weight log + local JSON export (More hub) |
+| PR-9 Grocery / prep / supps | Price disclaimer, prep food-safety card, supplement copy softening |
+| PR-10 PWA / docs / QA | `sw.js` v10 + update snackbar; `CHANGELOG.md`, `docs/QA_CHECKLIST.md`, README |
+
+Branch: `cursor/health-pr2-pr10-8dc9`
 
 _Update this table as PRs land._

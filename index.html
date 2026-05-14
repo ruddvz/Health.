@@ -1221,7 +1221,9 @@
 
       .sticky-json-strip {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 10px;
         margin-bottom: 18px;
         padding-top: 4px;
       }
@@ -1231,8 +1233,9 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        width: 100%;
-        max-width: 420px;
+        width: auto;
+        flex: 1 1 160px;
+        max-width: 320px;
         min-height: 46px;
         padding: 12px 20px;
         border-radius: 999px;
@@ -2321,6 +2324,13 @@
         margin-bottom: 8px;
       }
 
+      .grocery-price-note {
+        margin-top: 12px;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--lbl3);
+      }
+
       .grocery-store-split {
         margin-top: 20px;
       }
@@ -2706,6 +2716,238 @@
 
       .app-menu-item--danger {
         color: #ffb4b4;
+      }
+
+      .more-leaf-nav {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        padding: 8px 16px 4px;
+        background: linear-gradient(to bottom, rgba(10, 15, 13, 0.96), transparent);
+      }
+
+      .btn-more-back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        color: var(--lbl1);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .today-hero-card {
+        margin: 12px 0 14px;
+        padding: 18px 18px 16px;
+        border-radius: var(--r-card);
+        background: linear-gradient(135deg, rgba(61, 219, 122, 0.14), rgba(17, 26, 21, 0.92));
+        border: 1px solid var(--sep);
+        box-shadow: var(--shadow-md);
+      }
+
+      .today-primary-kicker {
+        margin: 0 0 6px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--lbl2);
+      }
+
+      .today-primary-title {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.2;
+        font-family: var(--ff-display);
+      }
+
+      .today-primary-meta {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+      }
+
+      .app-section-title {
+        margin: 4px 0 12px;
+        font-size: 22px;
+        font-weight: 800;
+        font-family: var(--ff-display);
+      }
+
+      .more-hub-lead {
+        margin: 0 0 16px;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .more-hub-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .more-hub-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 16px 14px;
+        min-height: 88px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        color: var(--lbl1);
+        text-align: left;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .more-hub-card-title {
+        font-size: 17px;
+        font-weight: 700;
+        font-family: var(--ff-display);
+      }
+
+      .more-hub-card-sub {
+        font-size: 13px;
+        color: var(--lbl2);
+        line-height: 1.35;
+      }
+
+      .more-hub-settings {
+        padding: 16px 18px;
+      }
+
+      .training-day-card,
+      .training-ex-card {
+        margin-bottom: 14px;
+        padding: 14px 16px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep2);
+        background: var(--card);
+      }
+
+      .training-ex-meta,
+      .training-warmup,
+      .training-deload,
+      .training-hint {
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .training-progression,
+      .training-subs {
+        margin: 8px 0 0;
+        font-size: 14px;
+        color: var(--lbl1);
+      }
+
+      .training-cues {
+        margin: 8px 0 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        color: var(--lbl2);
+      }
+
+      .progress-lead {
+        margin: 0 0 14px;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .progress-form {
+        padding: 16px 18px;
+        margin-bottom: 16px;
+      }
+
+      .progress-ul {
+        margin: 8px 0 0;
+        padding-left: 1.1rem;
+        font-size: 15px;
+        color: var(--lbl1);
+        line-height: 1.5;
+      }
+
+      .macro-repair-card {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-radius: var(--r-inner);
+        border: 1px solid rgba(232, 197, 71, 0.28);
+        background: var(--yellow-bg);
+      }
+
+      .macro-repair-intro {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: var(--lbl1);
+        line-height: 1.45;
+      }
+
+      .macro-repair-list {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      #sw-update-snack {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        z-index: 50;
+        padding: 12px 14px;
+        border-radius: var(--r-inner);
+        background: var(--card);
+        border: 1px solid var(--sep);
+        box-shadow: var(--shadow-md);
+        font-size: 14px;
+        color: var(--lbl1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      #sw-update-snack[hidden] {
+        display: none !important;
+      }
+
+      .btn-snack-dismiss {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--sep);
+        background: var(--green-bg);
+        color: var(--lbl1);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .schedule-mini-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      @media (min-width: 480px) {
+        .schedule-mini-grid {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+
+      .prompt-paste {
+        min-height: 120px;
+        resize: vertical;
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -3147,6 +3389,29 @@
                   </div>
                 </label>
               </div>
+              <div class="field" data-section="f">
+                <p class="row-label">Usual schedule <span class="row-hint">Optional — helps Claude line up meals</span></p>
+                <div class="schedule-mini-grid">
+                  <label class="row row-stack" for="inp-wake-clock">
+                    <span class="row-label">Wake</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-wake-clock" type="time" />
+                    </div>
+                  </label>
+                  <label class="row row-stack" for="inp-sleep-clock">
+                    <span class="row-label">Sleep</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-sleep-clock" type="time" />
+                    </div>
+                  </label>
+                  <label class="row row-stack" for="inp-train-clock">
+                    <span class="row-label">Train</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-train-clock" type="time" />
+                    </div>
+                  </label>
+                </div>
+              </div>
               <div class="field" id="field-act" data-section="f">
                 <div class="row row-stack" style="border-bottom: none">
                   <span class="row-label">Daily activity outside gym</span>
@@ -3230,6 +3495,9 @@
               <span class="btn-intake-json-ico" aria-hidden="true">⇪</span>
               Upload plan JSON
             </button>
+            <button type="button" class="btn-intake-json-pill" id="btn-skip-intake-json">
+              Skip to JSON
+            </button>
           </div>
           <div class="sticky-bar-row">
             <button type="button" id="btn-intake-back" class="btn-intake-back" hidden>Back</button>
@@ -3266,6 +3534,16 @@
             <p id="json-error-detail" class="error-detail"></p>
             <button type="button" class="btn-secondary-full" id="btn-retry-upload">Try again</button>
           </div>
+          <p class="divider-label">Or paste JSON text</p>
+          <label class="sr-only" for="prompt-json-paste">Paste health plan JSON</label>
+          <textarea
+            id="prompt-json-paste"
+            class="prompt-box prompt-paste"
+            spellcheck="false"
+            aria-label="Paste health plan JSON"
+            placeholder="{ paste full JSON plan here }"
+          ></textarea>
+          <button type="button" class="btn-secondary-full" id="btn-apply-paste-json">Apply pasted JSON</button>
           <ol class="steps-list">
             <li><strong>Step 1</strong> — Open claude.ai in your browser (or the Claude app).</li>
             <li><strong>Step 2</strong> — Paste the prompt into a new conversation.</li>
@@ -3298,10 +3576,19 @@
         </header>
 
         <div class="screen-scroll app-body-scroll app-panels-stack">
-          <div id="panel-home" class="app-panel is-active" aria-hidden="false">
+          <div id="more-leaf-nav" class="more-leaf-nav" hidden>
+            <button type="button" class="btn-more-back" id="btn-more-back">← More menu</button>
+          </div>
+          <div id="panel-today" class="app-panel is-active" aria-hidden="false">
             <div class="home-hero">
               <h2 class="home-greeting" id="home-greeting">Good morning</h2>
               <p class="home-sub" id="home-subline"></p>
+            </div>
+
+            <div id="today-hero-card" class="today-hero-card" hidden>
+              <p class="today-primary-kicker" id="today-primary-kicker">Up next</p>
+              <p class="today-primary-title" id="today-primary-title"></p>
+              <p class="today-primary-meta" id="today-primary-meta"></p>
             </div>
 
             <div id="home-plan-warnings" class="plan-warnings-card" hidden role="region" aria-label="Plan consistency notes">
@@ -3411,20 +3698,37 @@
           <div id="panel-supps" class="app-panel" aria-hidden="true" inert="">
             <div id="supps-mount"></div>
           </div>
+          <div id="panel-training" class="app-panel" aria-hidden="true" inert="">
+            <div id="training-mount"></div>
+          </div>
+          <div id="panel-progress" class="app-panel" aria-hidden="true" inert="">
+            <h2 class="app-section-title">Progress</h2>
+            <p class="progress-lead">Weight entries stay on this device only.</p>
+            <div class="progress-form card">
+              <label class="row row-stack" for="inp-progress-weight">
+                <span class="row-label">Weight (kg)</span>
+                <div class="input-sunk-wrap">
+                  <input class="input-plain" id="inp-progress-weight" type="number" inputmode="decimal" placeholder="e.g. 80.2" />
+                </div>
+              </label>
+              <button type="button" class="btn-primary-full" id="btn-progress-add-weight">Log weight</button>
+            </div>
+            <div id="progress-list-wrap" class="progress-list">
+              <h3 class="home-card-title">Recent entries</h3>
+              <ul id="progress-weight-list" class="progress-ul"></ul>
+            </div>
+          </div>
+          <div id="panel-more" class="app-panel" aria-hidden="true" inert="">
+            <div id="more-hub-mount"></div>
+          </div>
         </div>
 
         <nav class="tab-bar" aria-label="Main">
-          <button type="button" class="tab-btn on" data-tab="home" aria-current="page">
+          <button type="button" class="tab-btn on" data-tab="today" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" stroke-linejoin="round" />
             </svg>
-            Home
-          </button>
-          <button type="button" class="tab-btn" data-tab="phases">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19h16M6 15h4m4 0h4M8 11h8M10 7h4" />
-            </svg>
-            Phases
+            Today
           </button>
           <button type="button" class="tab-btn" data-tab="meals">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -3432,25 +3736,28 @@
             </svg>
             Meals
           </button>
-          <button type="button" class="tab-btn" data-tab="prep">
+          <button type="button" class="tab-btn" data-tab="training">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="13" r="7" />
-              <path d="M12 6V3M12 13l3-3" />
+              <path d="M6.5 6.5h5v5h-5zM12.5 12.5h5v5h-5zM6.5 12.5h5v5h-5z" />
             </svg>
-            Prep
+            Training
           </button>
-          <button type="button" class="tab-btn" data-tab="grocery">
+          <button type="button" class="tab-btn" data-tab="progress">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9h15l-1.5 9h-12z" />
-              <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+              <path d="M4 19V5M4 19h16M8 15v-4m4 6V9m4 8v-2m4 4v-6" />
             </svg>
-            Grocery
+            Progress
           </button>
-          <button type="button" class="tab-btn" data-tab="supps">
+          <button type="button" class="tab-btn" data-tab="more">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect x="8" y="6" width="8" height="12" rx="4" />
+              <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="6" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="12" r="1.5" fill="currentColor" />
             </svg>
-            Supps
+            More
           </button>
         </nav>
       </div>
@@ -3708,14 +4015,21 @@ The grocery object must always include a "store_split" field.
 
 
 
-        const TAB_IDS = ["home", "phases", "meals", "prep", "grocery", "supps"];
+        const TAB_PRIMARY = ["today", "meals", "training", "progress", "more"];
+        const MORE_LEAF_TABS = ["phases", "prep", "grocery", "supps"];
+        const ALL_PANEL_IDS = ["today", "phases", "meals", "training", "progress", "prep", "grocery", "supps", "more"];
         const LS_ACTIVE_TAB = "health_active_tab";
+        const LS_ACTIVE_LEAF = "health_active_leaf";
         const LS_PREP_DONE = "health_prep_done";
         const LS_GROCERY_CHECKED = "health_grocery_checked";
-        const PLAN_SCHEMA_VERSION = 1;
+        const LS_PROGRESS = "health_progress_v1";
+        const PLAN_SCHEMA_VERSION = 2;
         const MAX_PLAN_JSON_BYTES = 2 * 1024 * 1024;
         const LS_FLOW_ENGAGED = "health_flow_engaged";
         const SS_SEEN_PROMPT = "health_seen_prompt";
+
+        let appPrimaryTab = "today";
+        let appMoreLeaf = null;
 
         let pwaInstallDeferred = null;
 
@@ -3863,6 +4177,9 @@ The grocery object must always include a "store_split" field.
             sleepHours: 7,
             stressLevel: "",
             challenges: [],
+            wakeClock: "",
+            sleepClock: "",
+            trainClock: "",
           };
         }
 
@@ -4218,6 +4535,12 @@ The grocery object must always include a "store_split" field.
           $("#inp-osupp").value = state.otherSupplements;
           $("#sel-country").value = state.country || "";
           $("#inp-city").value = state.city;
+          const iwc = $("#inp-wake-clock");
+          const isc = $("#inp-sleep-clock");
+          const itc = $("#inp-train-clock");
+          if (iwc) iwc.value = state.wakeClock || "";
+          if (isc) isc.value = state.sleepClock || "";
+          if (itc) itc.value = state.trainClock || "";
           $$("[data-act].pick-card").forEach((b) =>
             b.setAttribute("aria-pressed", dataRead(b, "act") === state.activityLevel ? "true" : "false")
           );
@@ -4391,6 +4714,9 @@ The grocery object must always include a "store_split" field.
             sleepHours: state.sleepHours,
             stressLevel: state.stressLevel,
             challenges: [...state.challenges],
+            wakeClock: state.wakeClock || "",
+            sleepClock: state.sleepClock || "",
+            trainClock: state.trainClock || "",
           };
         }
 
@@ -4460,32 +4786,112 @@ The grocery object must always include a "store_split" field.
             const mp = json.meal_plan;
             if (!phases || !phases.length || !mp || typeof mp !== "object") return warnings;
             const dt = mp.daily_totals;
-            if (!dt || typeof dt !== "object") return warnings;
-            const wkT = Number(dt.workout_day_kcal);
-            const rdT = Number(dt.rest_day_kcal);
-            phases.forEach((ph, idx) => {
-              const pid = ph && ph.id != null ? ph.id : idx + 1;
-              const wk = Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily);
-              const rd = Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
-              if (Number.isFinite(wk) && Number.isFinite(wkT) && Math.abs(wk - wkT) > 100) {
-                warnings.push(
-                  `Phase ${pid}: logged workout-day meals total ${wkT} kcal vs phase target ~${wk} kcal (over 100 kcal apart).`
-                );
-              }
-              if (Number.isFinite(rd) && Number.isFinite(rdT) && Math.abs(rd - rdT) > 100) {
-                warnings.push(
-                  `Phase ${pid}: logged rest-day meals total ${rdT} kcal vs phase target ~${rd} kcal (over 100 kcal apart).`
-                );
-              }
-            });
+            if (dt && typeof dt === "object") {
+              const wkT = Number(dt.workout_day_kcal);
+              const rdT = Number(dt.rest_day_kcal);
+              const wkP = Number(dt.workout_day_protein_g);
+              const rdP = Number(dt.rest_day_protein_g);
+              phases.forEach((ph, idx) => {
+                const pid = ph && ph.id != null ? ph.id : idx + 1;
+                const wk = Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily);
+                const rd = Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
+                const tg = Number(ph.protein_g);
+                if (Number.isFinite(wk) && Number.isFinite(wkT) && Math.abs(wk - wkT) > 100) {
+                  warnings.push(
+                    `Phase ${pid}: logged workout-day meals total ${wkT} kcal vs phase target ~${wk} kcal (over 100 kcal apart).`
+                  );
+                }
+                if (Number.isFinite(rd) && Number.isFinite(rdT) && Math.abs(rd - rdT) > 100) {
+                  warnings.push(
+                    `Phase ${pid}: logged rest-day meals total ${rdT} kcal vs phase target ~${rd} kcal (over 100 kcal apart).`
+                  );
+                }
+                if (Number.isFinite(tg) && Number.isFinite(wkP) && tg - wkP > 15) {
+                  warnings.push(`Phase ${pid}: workout-day protein in meals (${wkP} g) is more than 15 g below phase target (${tg} g).`);
+                }
+                if (Number.isFinite(tg) && Number.isFinite(rdP) && tg - rdP > 15) {
+                  warnings.push(`Phase ${pid}: rest-day protein in meals (${rdP} g) is more than 15 g below phase target (${tg} g).`);
+                }
+              });
+            }
+            const tr = json.training || json.training_program;
+            const hasProgram = tr && Array.isArray(tr.weekly_split) && tr.weekly_split.length > 0;
+            if (!hasProgram && phases.some((p) => p && String(p.training_note || "").trim().length > 0)) {
+              warnings.push("This plan includes training notes but no structured weekly_split program in JSON.");
+            }
+            const wl = json.water_target_litres;
+            if (wl != null && Number(wl) > 4) {
+              warnings.push("Water target is above 4 L/day — confirm this fits your clinician’s advice and climate.");
+            }
+            const sup = json.supplements;
+            if (sup && typeof sup === "object" && !json.safety && !(sup.safety && typeof sup.safety === "object")) {
+              warnings.push("Supplement section has no explicit safety block — treat claims as general wellness, not medical facts.");
+            }
           } catch (_) {}
           return warnings;
+        }
+
+        function enrichPlanForApp(plan) {
+          if (!plan || typeof plan !== "object") return plan;
+          const mp = plan.meal_plan;
+          if (mp && typeof mp === "object") {
+            const dt = typeof mp.daily_totals === "object" && mp.daily_totals ? { ...mp.daily_totals } : {};
+            const sumK = (meals) => {
+              if (!meals || !meals.length) return null;
+              let t = 0;
+              let any = false;
+              for (let i = 0; i < meals.length; i++) {
+                const k = Number(meals[i].kcal);
+                if (!Number.isNaN(k)) {
+                  t += k;
+                  any = true;
+                }
+              }
+              return any ? t : null;
+            };
+            if (dt.workout_day_kcal == null && mp.workout_day) {
+              const s = sumK(mp.workout_day);
+              if (s != null) dt.workout_day_kcal = s;
+            }
+            if (dt.rest_day_kcal == null && mp.rest_day) {
+              const s = sumK(mp.rest_day);
+              if (s != null) dt.rest_day_kcal = s;
+            }
+            mp.daily_totals = dt;
+          }
+          if (!plan.schedule) {
+            plan.schedule = {
+              timezone: plan.meta && plan.meta.timezone ? String(plan.meta.timezone) : null,
+              wake_time: plan.user && plan.user.wake_time != null ? String(plan.user.wake_time) : null,
+              sleep_time: plan.user && plan.user.sleep_time != null ? String(plan.user.sleep_time) : null,
+              training_time: plan.user && plan.user.training_time != null ? String(plan.user.training_time) : null,
+              meal_times: [],
+              work_schedule_note: null,
+            };
+          }
+          if (!plan.safety) {
+            const wci = plan.weekly_check_in;
+            const rf = wci && Array.isArray(wci.red_flags) ? wci.red_flags.map((x) => (typeof x === "string" ? x : "")).filter(Boolean) : [];
+            plan.safety = {
+              not_medical_advice: true,
+              consult_professional_if: [
+                "You have a medical condition",
+                "You take prescription medication",
+                "You have a history of disordered eating",
+                "You are pregnant or trying to become pregnant",
+                "You feel severe fatigue, dizziness, chest pain, or faintness",
+              ],
+              red_flags: rf,
+            };
+          }
+          return plan;
         }
 
         function normalizePlanForStorage(json) {
           try {
             const out = JSON.parse(JSON.stringify(json));
-            out.meta = { ...(out.meta || {}), plan_schema_version: PLAN_SCHEMA_VERSION };
+            enrichPlanForApp(out);
+            out.meta = { ...(out.meta || {}), plan_schema_version: PLAN_SCHEMA_VERSION, app_schema_hint: "2.0" };
             return out;
           } catch (_) {
             return json;
@@ -4556,6 +4962,9 @@ The grocery object must always include a "store_split" field.
           }
           n.stressLevel = fd.stressLevel || "";
           n.challenges = Array.isArray(fd.challenges) ? [...fd.challenges] : [];
+          n.wakeClock = fd.wakeClock != null ? String(fd.wakeClock) : "";
+          n.sleepClock = fd.sleepClock != null ? String(fd.sleepClock) : "";
+          n.trainClock = fd.trainClock != null ? String(fd.trainClock) : "";
           state = n;
           saveState();
           return true;
@@ -4611,7 +5020,35 @@ The grocery object must always include a "store_split" field.
           if (!("serviceWorker" in navigator)) return;
           try {
             const url = new URL("sw.js", window.location.href);
-            navigator.serviceWorker.register(url).catch(() => {});
+            navigator.serviceWorker
+              .register(url)
+              .then((reg) => {
+                reg.addEventListener("updatefound", () => {
+                  const nw = reg.installing;
+                  if (!nw) return;
+                  nw.addEventListener("statechange", () => {
+                    if (nw.state === "installed" && navigator.serviceWorker.controller) {
+                      const snack = document.getElementById("sw-update-snack");
+                      if (snack) snack.hidden = false;
+                    }
+                  });
+                });
+              })
+              .catch(() => {});
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              if (refreshing) return;
+              refreshing = true;
+              window.location.reload();
+            });
+            const dismiss = document.getElementById("btn-sw-refresh");
+            if (dismiss) {
+              dismiss.addEventListener("click", () => {
+                const snack = document.getElementById("sw-update-snack");
+                if (snack) snack.hidden = true;
+                window.location.reload();
+              });
+            }
           } catch (_) {}
         }
 
@@ -4723,12 +5160,24 @@ The grocery object must always include a "store_split" field.
             sleep_hours: fd.sleepHours,
             stress_level: fd.stressLevel,
             biggest_challenges: fd.challenges,
+            wake_time_clock: fd.wakeClock || "not specified",
+            sleep_time_clock: fd.sleepClock || "not specified",
+            training_time_clock: fd.trainClock || "not specified",
           };
         }
 
         function buildPrompt(formData) {
           const profileJSON = JSON.stringify(profilePayload(formData), null, 2);
-          return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON);
+          const tail = `
+
+=== SCHEMA VERSION 2 (recommended) ===
+- Set meta.plan_schema_version to 2.
+- Include one consistent schedule (wake, sleep, training, meal_times).
+- Align meal_plan.daily_totals with phase calories within ±100 kcal and protein within ±10 g.
+- Include training.weekly_split with exercises (sets, reps, rest_seconds, substitutions, progression, form_cues).
+- Supplements: cautious wording only ("may help", "evidence mixed", "check label", "consult clinician if on medication").
+`;
+          return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON) + tail;
         }
 
         function getSavedFormPayload() {
@@ -4917,6 +5366,23 @@ The grocery object must always include a "store_split" field.
           const tipText = tips.length && tips[ti] != null && String(tips[ti]).trim() !== "" ? tips[ti] : null;
           $("#home-tip").textContent = tipText || "Stay consistent — small steps add up.";
 
+          const hero = $("#today-hero-card");
+          const heroTitle = $("#today-primary-title");
+          const heroMeta = $("#today-primary-meta");
+          const heroKick = $("#today-primary-kicker");
+          if (hero && heroTitle && heroMeta && meals && meals.length) {
+            hero.hidden = false;
+            if (heroKick) heroKick.textContent = "Up next";
+            const pick = meals[0];
+            heroTitle.textContent = pick.name || "Next meal";
+            const bits = [];
+            if (pick.time) bits.push(pick.time);
+            if (pick.kcal != null) bits.push(`${fmtRoundNum(pick.kcal) ?? pick.kcal} kcal`);
+            heroMeta.textContent = bits.join(" · ");
+          } else if (hero) {
+            hero.hidden = true;
+          }
+
           const wl = plan.water_target_litres;
           $("#home-water").textContent =
             wl != null && wl !== "" && !Number.isNaN(Number(wl)) ? `${wl}L of water today` : "3L of water today";
@@ -4962,6 +5428,20 @@ The grocery object must always include a "store_split" field.
             const k = Number(meals[i].kcal);
             if (!Number.isNaN(k)) {
               t += k;
+              any = true;
+            }
+          }
+          return any ? t : null;
+        }
+
+        function sumMealProtein(meals) {
+          if (!meals || !meals.length) return null;
+          let t = 0;
+          let any = false;
+          for (let i = 0; i < meals.length; i++) {
+            const p = Number(meals[i].protein_g);
+            if (!Number.isNaN(p)) {
+              t += p;
               any = true;
             }
           }
@@ -5309,6 +5789,47 @@ The grocery object must always include a "store_split" field.
           rowP.appendChild(pVal);
           summary.appendChild(rowP);
           sumMount.appendChild(summary);
+
+          const targetK = workout
+            ? Number(phase.kcal_workout_day != null ? phase.kcal_workout_day : phase.kcal_daily)
+            : Number(phase.kcal_rest_day != null ? phase.kcal_rest_day : phase.kcal_daily);
+          const targetP = Number(phase.protein_g);
+          const sumKNum = totalK != null ? Number(totalK) : sumMealKcal(mealList);
+          const sumPNum = totalP != null ? Number(totalP) : sumMealProtein(mealList);
+          if (Number.isFinite(targetK) && sumKNum != null && !Number.isNaN(sumKNum)) {
+            const kGap = targetK - sumKNum;
+            const pGap = Number.isFinite(targetP) && sumPNum != null && !Number.isNaN(sumPNum) ? targetP - sumPNum : 0;
+            if (kGap > 100 || pGap > 12) {
+              const repair = document.createElement("div");
+              repair.className = "macro-repair-card";
+              const rh = document.createElement("h3");
+              rh.textContent = "Suggested add-ons";
+              repair.appendChild(rh);
+              const intro = document.createElement("p");
+              intro.className = "macro-repair-intro";
+              intro.textContent =
+                kGap > 100 && pGap > 12
+                  ? `Rough gap vs this phase: about +${Math.round(kGap)} kcal and +${Math.round(pGap)} g protein (estimates).`
+                  : kGap > 100
+                    ? `Rough calorie gap vs this phase: about +${Math.round(kGap)} kcal (estimate).`
+                    : `Rough protein gap vs this phase: about +${Math.round(pGap)} g (estimate).`;
+              repair.appendChild(intro);
+              const ul = document.createElement("ul");
+              ul.className = "macro-repair-list";
+              [
+                "Add ~1 scoop whey in water or milk (~100–140 kcal, ~20–25g protein).",
+                "Add ~100g cooked rice or a medium banana.",
+                "Add ~150g Greek yogurt (extra protein).",
+                "Add a small handful of nuts if you mainly need calories.",
+              ].forEach((line) => {
+                const li = document.createElement("li");
+                li.textContent = line;
+                ul.appendChild(li);
+              });
+              repair.appendChild(ul);
+              sumMount.appendChild(repair);
+            }
+          }
         }
 
         function maybeTryVibrate() {
@@ -5473,6 +5994,22 @@ The grocery object must always include a "store_split" field.
             });
             mount.appendChild(box);
           }
+
+          const safe = document.createElement("div");
+          safe.className = "prep-safety-note card";
+          safe.style.marginTop = "14px";
+          const shn = document.createElement("h3");
+          shn.className = "home-card-title";
+          shn.textContent = "Food safety";
+          safe.appendChild(shn);
+          const sp = document.createElement("p");
+          sp.style.color = "var(--lbl2)";
+          sp.style.fontSize = "14px";
+          sp.style.lineHeight = "1.45";
+          sp.textContent =
+            "Cool cooked food quickly, store in clean containers, and reheat until steaming hot throughout. Follow local guidance for safe internal temperatures (e.g. poultry). When in doubt, throw it out.";
+          safe.appendChild(sp);
+          mount.appendChild(safe);
         }
 
         function renderGroceryStoreSplitIntoMount(g, mount) {
@@ -5703,6 +6240,11 @@ The grocery object must always include a "store_split" field.
             tip.appendChild(document.createTextNode(g.store_tip));
             tipMount.appendChild(tip);
           }
+          const priceNote = document.createElement("div");
+          priceNote.className = "grocery-price-note";
+          priceNote.textContent =
+            "Prices in plans are estimates only — check current flyers and in-store tags before you shop.";
+          tipMount.appendChild(priceNote);
         }
 
         function safeSuppHexColor(c) {
@@ -5769,7 +6311,7 @@ The grocery object must always include a "store_split" field.
               if (slot.note) {
                 const note = document.createElement("div");
                 note.className = "supps-slot-note";
-                note.textContent = slot.note;
+                note.textContent = softenWellnessCopy(slot.note);
                 row.appendChild(note);
               }
               card.appendChild(row);
@@ -5832,7 +6374,7 @@ The grocery object must always include a "store_split" field.
               if (item.why) {
                 const p = document.createElement("p");
                 p.className = "supp-why";
-                p.textContent = item.why;
+                p.textContent = softenWellnessCopy(item.why);
                 body.appendChild(p);
               }
               if (item.brand_recommendation) {
@@ -5900,7 +6442,7 @@ The grocery object must always include a "store_split" field.
               if (pw.why) {
                 const p = document.createElement("p");
                 p.className = "powder-why";
-                p.textContent = pw.why;
+                p.textContent = softenWellnessCopy(pw.why);
                 card.appendChild(p);
               }
               grid.appendChild(card);
@@ -5925,7 +6467,7 @@ The grocery object must always include a "store_split" field.
               if (sk.reason) {
                 const r = document.createElement("p");
                 r.className = "skip-reason";
-                r.textContent = sk.reason;
+                r.textContent = softenWellnessCopy(sk.reason);
                 c.appendChild(r);
               }
               wrap.appendChild(c);
@@ -5936,6 +6478,201 @@ The grocery object must always include a "store_split" field.
           if (!sched.length && !stack.length && !powders.length && !skips.length) {
             mount.appendChild(emptyTabMsg("No supplement details were included in this plan."));
           }
+        }
+
+        function softenWellnessCopy(s) {
+          if (s == null) return "";
+          let t = String(s);
+          [
+            [/non-negotiable/gi, "a strong default"],
+            [/no excuse/gi, "optional to simplify"],
+            [/dramatically/gi, "possibly"],
+            [/directly reduces cortisol/gi, "may affect stress for some people (evidence is mixed)"],
+            [/fixes low energy/gi, "may help energy for some people"],
+            [/there is no excuse/gi, "pick the simplest option you can repeat"],
+          ].forEach(([a, b]) => {
+            t = t.replace(a, b);
+          });
+          return t;
+        }
+
+        function renderTrainingTab() {
+          const mount = $("#training-mount");
+          if (!mount) return;
+          mount.textContent = "";
+          const plan = window.healthPlan;
+          if (!plan) {
+            mount.appendChild(emptyTabMsg("No plan loaded."));
+            return;
+          }
+          const tr = plan.training || plan.training_program;
+          const split = tr && Array.isArray(tr.weekly_split) ? tr.weekly_split : [];
+          if (split.length) {
+            if (tr.deload_rule) {
+              const d = document.createElement("p");
+              d.className = "training-deload";
+              d.textContent = String(tr.deload_rule);
+              mount.appendChild(d);
+            }
+            split.forEach((day) => {
+              const sec = document.createElement("section");
+              sec.className = "training-day-card";
+              const h = document.createElement("h3");
+              h.textContent = `${day.name || "Workout"}${day.day != null ? " · Day " + day.day : ""}`;
+              sec.appendChild(h);
+              if (day.warmup && day.warmup.length) {
+                const w = document.createElement("p");
+                w.className = "training-warmup";
+                w.textContent = "Warm-up: " + day.warmup.join(" · ");
+                sec.appendChild(w);
+              }
+              (day.exercises || []).forEach((ex) => {
+                const art = document.createElement("article");
+                art.className = "training-ex-card";
+                const nm = document.createElement("h4");
+                nm.textContent = ex.name || "Exercise";
+                art.appendChild(nm);
+                const meta = document.createElement("div");
+                meta.className = "training-ex-meta";
+                meta.textContent = [ex.sets != null ? `${ex.sets} sets` : "", ex.reps ? String(ex.reps) + " reps" : "", ex.rest_seconds != null ? `${ex.rest_seconds}s rest` : ""]
+                  .filter(Boolean)
+                  .join(" · ");
+                art.appendChild(meta);
+                if (ex.progression) {
+                  const p = document.createElement("p");
+                  p.className = "training-progression";
+                  p.textContent = String(ex.progression);
+                  art.appendChild(p);
+                }
+                if (ex.substitutions && ex.substitutions.length) {
+                  const p = document.createElement("p");
+                  p.className = "training-subs";
+                  p.textContent = "Swaps: " + ex.substitutions.join(", ");
+                  art.appendChild(p);
+                }
+                if (ex.form_cues && ex.form_cues.length) {
+                  const ul = document.createElement("ul");
+                  ul.className = "training-cues";
+                  ex.form_cues.forEach((c) => {
+                    const li = document.createElement("li");
+                    li.textContent = c;
+                    ul.appendChild(li);
+                  });
+                  art.appendChild(ul);
+                }
+                sec.appendChild(art);
+              });
+              mount.appendChild(sec);
+            });
+          } else {
+            const cw = currentPlanWeek(plan);
+            const ph = phaseForWeek(plan, cw);
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = ph && ph.training_note ? String(ph.training_note) : "No structured training block was included in this JSON.";
+            mount.appendChild(p);
+            const hint = document.createElement("p");
+            hint.className = "training-hint";
+            hint.textContent =
+              "Regenerate the plan with a training.weekly_split array (see samples/minimal-plan-v2.json in the repo for a minimal example).";
+            mount.appendChild(hint);
+          }
+        }
+
+        function loadProgressData() {
+          try {
+            const raw = localStorage.getItem(LS_PROGRESS);
+            if (!raw) return { weights: [], waist: [], checkins: [] };
+            const o = JSON.parse(raw);
+            return {
+              weights: Array.isArray(o.weights) ? o.weights : [],
+              waist: Array.isArray(o.waist) ? o.waist : [],
+              checkins: Array.isArray(o.checkins) ? o.checkins : [],
+            };
+          } catch (_) {
+            return { weights: [], waist: [], checkins: [] };
+          }
+        }
+
+        function saveProgressData(data) {
+          try {
+            localStorage.setItem(LS_PROGRESS, JSON.stringify(data));
+          } catch (_) {}
+        }
+
+        function renderProgressTab() {
+          const list = $("#progress-weight-list");
+          if (!list) return;
+          list.textContent = "";
+          if (!window.healthPlan) {
+            const li = document.createElement("li");
+            li.textContent = "No plan loaded.";
+            list.appendChild(li);
+            return;
+          }
+          const data = loadProgressData();
+          const recent = [...data.weights].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 14);
+          if (!recent.length) {
+            const li = document.createElement("li");
+            li.textContent = "No weights logged yet.";
+            list.appendChild(li);
+          } else {
+            recent.forEach((e) => {
+              const li = document.createElement("li");
+              li.textContent = `${e.date}: ${e.kg} kg`;
+              list.appendChild(li);
+            });
+          }
+        }
+
+        function renderMoreHub() {
+          const mount = $("#more-hub-mount");
+          if (!mount) return;
+          mount.textContent = "";
+          const h = document.createElement("h2");
+          h.className = "app-section-title";
+          h.textContent = "More";
+          mount.appendChild(h);
+          const p = document.createElement("p");
+          p.className = "more-hub-lead";
+          p.textContent = "Phases, prep, grocery, supplements, and data tools.";
+          mount.appendChild(p);
+          const grid = document.createElement("div");
+          grid.className = "more-hub-grid";
+          [
+            ["phases", "Phases", "Program structure and macros"],
+            ["prep", "Prep", "Batch cook checklist"],
+            ["grocery", "Grocery", "Shopping list"],
+            ["supps", "Supplements", "Stack and timing"],
+          ].forEach(([id, title, sub]) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "more-hub-card";
+            b.setAttribute("data-go-tab", id);
+            const t1 = document.createElement("span");
+            t1.className = "more-hub-card-title";
+            t1.textContent = title;
+            const t2 = document.createElement("span");
+            t2.className = "more-hub-card-sub";
+            t2.textContent = sub;
+            b.appendChild(t1);
+            b.appendChild(t2);
+            grid.appendChild(b);
+          });
+          mount.appendChild(grid);
+          const set = document.createElement("div");
+          set.className = "more-hub-settings card";
+          const sh = document.createElement("h3");
+          sh.className = "home-card-title";
+          sh.textContent = "Data";
+          set.appendChild(sh);
+          const ex = document.createElement("button");
+          ex.type = "button";
+          ex.className = "btn-secondary-full";
+          ex.id = "btn-export-progress-json";
+          ex.textContent = "Export progress JSON";
+          set.appendChild(ex);
+          mount.appendChild(set);
         }
 
         function wirePrepInteractions() {
@@ -6080,44 +6817,110 @@ The grocery object must always include a "store_split" field.
           });
         }
 
+        function readNavFromStorage() {
+          let primary = "today";
+          let leaf = null;
+          try {
+            primary = localStorage.getItem(LS_ACTIVE_TAB) || "today";
+            leaf = localStorage.getItem(LS_ACTIVE_LEAF);
+          } catch (_) {}
+          if (primary === "home") primary = "today";
+          if (MORE_LEAF_TABS.includes(primary)) {
+            leaf = primary;
+            primary = "more";
+          }
+          if (!TAB_PRIMARY.includes(primary)) primary = "today";
+          if (primary !== "more") leaf = null;
+          else if (leaf && !MORE_LEAF_TABS.includes(leaf)) leaf = null;
+          return { primary, leaf };
+        }
+
+        function persistNavToStorage() {
+          try {
+            localStorage.setItem(LS_ACTIVE_TAB, appPrimaryTab);
+            if (appPrimaryTab === "more" && appMoreLeaf) localStorage.setItem(LS_ACTIVE_LEAF, appMoreLeaf);
+            else localStorage.removeItem(LS_ACTIVE_LEAF);
+          } catch (_) {}
+        }
+
+        function updateMoreLeafNav() {
+          const bar = $("#more-leaf-nav");
+          if (!bar) return;
+          const on = appPrimaryTab === "more" && !!appMoreLeaf;
+          bar.hidden = !on;
+        }
+
         function switchTab(tabId, persist) {
-          TAB_IDS.forEach((id) => {
-            const panel = $("#panel-" + id);
+          const tid = String(tabId || "");
+          if (MORE_LEAF_TABS.includes(tid)) {
+            appPrimaryTab = "more";
+            appMoreLeaf = tid;
+          } else if (TAB_PRIMARY.includes(tid)) {
+            appPrimaryTab = tid;
+            appMoreLeaf = null;
+          } else {
+            return;
+          }
+
+          const showPanel = (pid, on) => {
+            const panel = $("#panel-" + pid);
+            if (!panel) return;
+            panel.classList.toggle("is-active", on);
+            panel.setAttribute("aria-hidden", on ? "false" : "true");
+            if (on) panel.removeAttribute("inert");
+            else panel.setAttribute("inert", "");
+          };
+
+          ALL_PANEL_IDS.forEach((pid) => showPanel(pid, false));
+
+          if (appPrimaryTab === "today") showPanel("today", true);
+          else if (appPrimaryTab === "meals") showPanel("meals", true);
+          else if (appPrimaryTab === "training") showPanel("training", true);
+          else if (appPrimaryTab === "progress") showPanel("progress", true);
+          else if (appPrimaryTab === "more") {
+            if (appMoreLeaf) showPanel(appMoreLeaf, true);
+            else showPanel("more", true);
+          }
+
+          TAB_PRIMARY.forEach((id) => {
             const btn = $(`#screen-app .tab-bar button[data-tab="${id}"]`);
-            const on = id === tabId;
-            if (panel) {
-              panel.classList.toggle("is-active", on);
-              panel.setAttribute("aria-hidden", on ? "false" : "true");
-              if (on) panel.removeAttribute("inert");
-              else panel.setAttribute("inert", "");
-            }
+            const active = id === appPrimaryTab;
             if (btn) {
-              btn.classList.toggle("on", on);
-              btn.setAttribute("aria-current", on ? "page" : "false");
+              btn.classList.toggle("on", active);
+              btn.setAttribute("aria-current", active ? "page" : "false");
             }
           });
+
           const appScroll = $("#screen-app .screen-scroll");
           if (appScroll) appScroll.scrollTop = 0;
-          if (tabId === "home") renderHomeTab();
-          if (tabId === "phases") renderPhasesTab();
-          if (tabId === "meals") renderMealsTab();
-          if (tabId === "prep") renderPrepTab();
-          if (tabId === "grocery") renderGroceryTab();
-          if (tabId === "supps") renderSuppsTab();
-          if (persist !== false) {
-            try {
-              localStorage.setItem(LS_ACTIVE_TAB, tabId);
-            } catch (_) {}
+
+          if (appPrimaryTab === "today") renderHomeTab();
+          else if (appPrimaryTab === "meals") renderMealsTab();
+          else if (appPrimaryTab === "training") renderTrainingTab();
+          else if (appPrimaryTab === "progress") renderProgressTab();
+          else if (appPrimaryTab === "more") {
+            if (appMoreLeaf === "phases") renderPhasesTab();
+            else if (appMoreLeaf === "prep") renderPrepTab();
+            else if (appMoreLeaf === "grocery") renderGroceryTab();
+            else if (appMoreLeaf === "supps") renderSuppsTab();
+            else renderMoreHub();
           }
+
+          updateMoreLeafNav();
+
+          if (persist !== false) persistNavToStorage();
         }
 
         function initAppView() {
-          let tab = "home";
-          try {
-            tab = localStorage.getItem(LS_ACTIVE_TAB) || "home";
-          } catch (_) {}
-          if (!TAB_IDS.includes(tab)) tab = "home";
-          switchTab(tab, false);
+          const { primary, leaf } = readNavFromStorage();
+          appPrimaryTab = primary;
+          appMoreLeaf = leaf;
+          if (appPrimaryTab === "more" && appMoreLeaf) {
+            switchTab(appMoreLeaf, false);
+          } else {
+            appMoreLeaf = null;
+            switchTab(appPrimaryTab, false);
+          }
         }
 
         function wireAppChrome() {
@@ -6127,9 +6930,58 @@ The grocery object must always include a "store_split" field.
           $$("#screen-app .tab-bar [data-tab]").forEach((btn) => {
             btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
           });
-          $$("#panel-home [data-go-tab]").forEach((el) => {
+          $$("#panel-today [data-go-tab]").forEach((el) => {
             el.addEventListener("click", () => switchTab(el.getAttribute("data-go-tab")));
           });
+          const pm = $("#panel-more");
+          if (pm && !pm.dataset.delegatedHub) {
+            pm.dataset.delegatedHub = "1";
+            pm.addEventListener("click", (e) => {
+              const go = e.target.closest("[data-go-tab]");
+              if (go) switchTab(go.getAttribute("data-go-tab"));
+              if (e.target.closest("#btn-export-progress-json")) {
+                const raw = localStorage.getItem(LS_PROGRESS) || "{}";
+                try {
+                  const blob = new Blob([raw], { type: "application/json" });
+                  const a = document.createElement("a");
+                  const url = URL.createObjectURL(blob);
+                  a.href = url;
+                  a.download = "health-progress.json";
+                  a.rel = "noopener";
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+                } catch (_) {
+                  announcePlanStatus("Could not export progress.");
+                }
+              }
+            });
+          }
+          const btnMoreBack = $("#btn-more-back");
+          if (btnMoreBack && !btnMoreBack.dataset.wired) {
+            btnMoreBack.dataset.wired = "1";
+            btnMoreBack.addEventListener("click", () => switchTab("more"));
+          }
+          const btnProg = $("#btn-progress-add-weight");
+          if (btnProg && !btnProg.dataset.wired) {
+            btnProg.dataset.wired = "1";
+            btnProg.addEventListener("click", () => {
+              const inp = $("#inp-progress-weight");
+              if (!inp) return;
+              const v = Number(inp.value);
+              if (!Number.isFinite(v) || v < 30 || v > 250) {
+                announcePlanStatus("Enter a realistic weight in kg.");
+                return;
+              }
+              const d = loadProgressData();
+              d.weights.push({ date: new Date().toISOString().slice(0, 10), kg: Math.round(v * 10) / 10 });
+              saveProgressData(d);
+              inp.value = "";
+              renderProgressTab();
+              announcePlanStatus("Weight entry saved.");
+            });
+          }
           const menuBtn = $("#btn-app-menu");
           const menuDd = $("#app-menu-dropdown");
           const reup = $("#menu-reupload");
@@ -6327,6 +7179,10 @@ The grocery object must always include a "store_split" field.
           });
 
           $("#btn-open-claude").addEventListener("click", () => {
+            if (typeof navigator !== "undefined" && navigator.onLine === false) {
+              announcePlanStatus("You appear offline — open Claude when you are back online.");
+              return;
+            }
             window.open("https://claude.ai", "_blank", "noopener,noreferrer");
           });
 
@@ -6423,6 +7279,22 @@ The grocery object must always include a "store_split" field.
               reader.readAsText(file);
             };
             requestAnimationFrame(() => requestAnimationFrame(runRead));
+          });
+
+          $("#btn-apply-paste-json").addEventListener("click", () => {
+            const ta = $("#prompt-json-paste");
+            const txt = ta && ta.value ? String(ta.value) : "";
+            if (!String(txt).trim()) {
+              announcePlanStatus("Paste JSON in the box first.");
+              return;
+            }
+            $("#json-error-card").hidden = true;
+            $("#json-error-detail").textContent = "";
+            const result = ingestPlanFromJsonText(txt);
+            if (!result.ok) {
+              $("#json-error-detail").textContent = result.error || "Invalid plan.";
+              $("#json-error-card").hidden = false;
+            }
           });
         }
 
@@ -6625,6 +7497,17 @@ The grocery object must always include a "store_split" field.
             state.city = e.target.value;
             saveState();
           });
+          const bindClock = (id, key) => {
+            const el = $(id);
+            if (el)
+              el.addEventListener("input", (e) => {
+                state[key] = e.target.value;
+                saveState();
+              });
+          };
+          bindClock("#inp-wake-clock", "wakeClock");
+          bindClock("#inp-sleep-clock", "sleepClock");
+          bindClock("#inp-train-clock", "trainClock");
           $$("[data-act].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
               state.activityLevel = dataRead(b, "act");
@@ -6677,6 +7560,14 @@ The grocery object must always include a "store_split" field.
                 return;
               }
 
+              if (btn.id === "btn-skip-intake-json") {
+                try {
+                  sessionStorage.setItem(SS_SEEN_PROMPT, "1");
+                } catch (_) {}
+                setStage("prompt");
+                return;
+              }
+
               if (btn.id === "btn-intake-back") {
                 const s = getIntakeStep();
                 if (s > 0) setIntakeStep(s - 1);
@@ -6717,5 +7608,9 @@ The grocery object must always include a "store_split" field.
         restoreStage();
       })();
     </script>
+    <div id="sw-update-snack" hidden role="status" aria-live="polite">
+      <span>A new version is ready — refresh to load it.</span>
+      <button type="button" class="btn-snack-dismiss" id="btn-sw-refresh">Refresh</button>
+    </div>
   </body>
 </html>
