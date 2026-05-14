@@ -150,6 +150,17 @@ Polished on phone/tablet/desktop; first screen understandable in ~5 seconds; sam
 | Item | Status |
 |------|--------|
 | This roadmap file | Added |
-| PR-1 baseline (size limit, parse UX, stricter validation, system fonts, CSP, privacy card, delete all data, safe chip rendering) | Landed on branch `cursor/health-plan-and-safety-8dc9` |
+| PR-1 baseline | Landed on `cursor/health-plan-and-safety-8dc9` (merged into subsequent work) |
+| PR-2 schema / migration / enrichment | `normalizePlanV1ToV2`, `enrichPlanForApp`, duplicate phase id errors, wake/sleep vs meal warnings, `schema_version` 2.0 on save; samples `samples/minimal-plan-v2.json`, `samples/rudra-plan-v2-normalized.json` |
+| PR-3 design system | Design tokens (`--ds-*`), light mode (`data-theme="light"`), new cook overlay + training timer styles |
+| PR-4 intake / prompt | Allergies + medication flag, schedule clocks, skip-to-JSON, paste JSON, prompt tail |
+| PR-5 Today dashboard | Schedule-sorted timeline, macro strip vs phase, Sunday prep + Monday check-in reminders, smarter “up next” meal |
+| PR-6 Meals 2.0 | Swaps (`details`), cook mode overlay, backup / emergency meal list when JSON provides it |
+| PR-7 Training | `weekly_split` + on-device rest countdown |
+| PR-8 Progress | Waist + check-in notes, soft “insights” from logs, weight export unchanged |
+| PR-9 Grocery / prep / supps | (unchanged this pass) price disclaimer, prep food-safety, supplement tone |
+| PR-10 PWA / docs / QA | Offline page uses system fonts only; SW snackbar retained |
+
+Branch: `cursor/health-pr2-pr10-8dc9`
 
 _Update this table as PRs land._

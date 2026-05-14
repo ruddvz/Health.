@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "version": "1.0",
+    "schema_version": "2.0",
+    "generated_for": "Rudra (normalized sample)",
+    "generated_date": "2026-05-14",
+    "goal_label": "Body recomposition (sample)",
+    "plan_schema_version": 2,
+    "app_schema_hint": "2.0",
+    "locale": "en-CA"
+  },
+  "user": {
+    "name": "Rudra",
+    "age": 24,
+    "sex": "male",
+    "weight_kg": 84,
+    "height_cm": 169,
+    "wake_time": "8:30 PM",
+    "sleep_time": "1:30 AM",
+    "training_time": "10:00 PM",
+    "goal": "recomp",
+    "timeline_weeks": 16,
+    "target_weight_kg": 74,
+    "urgency": "balanced",
+    "tdee": 2400,
+    "bmr": 1750
+  },
+  "schedule": {
+    "timezone": "America/Toronto",
+    "wake_time": "8:30 PM",
+    "sleep_time": "1:30 AM",
+    "training_time": "10:00 PM",
+    "meal_times": ["8:45 PM", "12:15 AM", "1:00 AM"],
+    "work_schedule_note": "Night-oriented day (example for QA)"
+  },
+  "phases": [
+    {
+      "id": 1,
+      "name": "Foundation",
+      "weeks": "1–4",
+      "week_start": 1,
+      "week_end": 4,
+      "kcal_daily": 2100,
+      "kcal_workout_day": 2100,
+      "kcal_rest_day": 1800,
+      "protein_g": 175,
+      "carbs_g": 180,
+      "fat_g": 55,
+      "description": "Example phase aligned with meal totals.",
+      "key_focus": "Consistency",
+      "flavour_rotation": "Herbs and citrus",
+      "training_note": "Structured split in training section"
+    }
+  ],
+  "meal_plan": {
+    "meals_per_day": 3,
+    "daily_totals": {
+      "workout_day_kcal": 2100,
+      "rest_day_kcal": 1800,
+      "workout_day_protein_g": 175,
+      "rest_day_protein_g": 170
+    },
+    "emergency_meals": ["Protein shake + banana", "Rotisserie chicken + salad kit", "Greek yogurt + oats"],
+    "workout_day": [
+      {
+        "slot": 1,
+        "time": "8:45 PM",
+        "name": "Pre-training meal",
+        "kcal": 550,
+        "protein_g": 45,
+        "description": "Rice and lean protein. Reheat until steaming hot.",
+        "ingredients": [
+          { "name": "Cooked rice", "grams": 200, "category": "carbs" },
+          { "name": "Chicken breast", "grams": 150, "category": "protein" }
+        ],
+        "prep_method": "Microwave",
+        "prep_minutes": 10,
+        "tags": ["night shift"],
+        "swaps": {
+          "budget": [{ "label": "Budget", "replace": "Fresh chicken", "with": "Frozen thighs", "note": "Cook thoroughly." }],
+          "vegetarian": [{ "label": "Vegetarian", "replace": "Chicken", "with": "Tofu or tempeh", "note": "May change macros slightly." }]
+        }
+      },
+      {
+        "slot": 2,
+        "time": "12:15 AM",
+        "name": "Post-training meal",
+        "kcal": 900,
+        "protein_g": 70,
+        "description": "Higher carb after training.",
+        "ingredients": [{ "name": "Whey", "grams": 40, "category": "protein" }],
+        "prep_method": "Shaker",
+        "prep_minutes": 5,
+        "tags": []
+      },
+      {
+        "slot": 3,
+        "time": "1:00 AM",
+        "name": "Light protein",
+        "kcal": 650,
+        "protein_g": 60,
+        "description": "Casein or yogurt option.",
+        "ingredients": [],
+        "prep_method": "No cook",
+        "prep_minutes": 5,
+        "tags": []
+      }
+    ],
+    "rest_day": [
+      {
+        "slot": 1,
+        "time": "8:45 PM",
+        "name": "Meal 1",
+        "kcal": 600,
+        "protein_g": 55,
+        "description": "Balanced plate.",
+        "ingredients": [],
+        "prep_method": "Mixed",
+        "prep_minutes": 15,
+        "tags": []
+      },
+      {
+        "slot": 2,
+        "time": "11:30 PM",
+        "name": "Meal 2",
+        "kcal": 600,
+        "protein_g": 55,
+        "description": "Protein + veg.",
+        "ingredients": [],
+        "prep_method": "Pan",
+        "prep_minutes": 20,
+        "tags": []
+      },
+      {
+        "slot": 3,
+        "time": "1:00 AM",
+        "name": "Meal 3",
+        "kcal": 600,
+        "protein_g": 60,
+        "description": "Light finish.",
+        "ingredients": [],
+        "prep_method": "No cook",
+        "prep_minutes": 5,
+        "tags": []
+      }
+    ]
+  },
+  "prep_guide": {
+    "sunday_steps": [{ "name": "Batch proteins", "detail": "Cook to safe temperatures; cool quickly before fridge.", "minutes": 45, "step": 1 }],
+    "wednesday_topup": [],
+    "total_minutes": 45,
+    "tips": ["Label and date containers."]
+  },
+  "grocery": {
+    "protein": [{ "name": "Chicken", "qty": "1.5 kg", "notes": "Prices are estimates." }],
+    "carbs": [{ "name": "Rice", "qty": "2 kg", "notes": "" }],
+    "veg": [],
+    "fat": [],
+    "pantry": []
+  },
+  "supplements": {
+    "safety": { "warnings": ["May interact with medications — check labels.", "Not medical advice."] },
+    "daily_schedule": [{ "label": "9:30 PM", "items": "Optional caffeine — half dose if sensitive", "note": "Evidence and tolerance vary." }],
+    "stack": [],
+    "protein_powder": [],
+    "skip_list": []
+  },
+  "safety": {
+    "not_medical_advice": true,
+    "consult_professional_if": ["You take prescription medication", "You have a medical condition"],
+    "red_flags": ["Chest pain", "Severe dizziness"]
+  },
+  "tips": ["Prioritize sleep where you can.", "Protein at each meal when possible.", "Hydrate for your climate."],
+  "weekly_check_in": {
+    "what_to_track": ["weight", "waist", "energy", "gym performance"],
+    "expected_progress_week4": "Habit and energy focus.",
+    "expected_progress_week8": "Trend-based progress.",
+    "expected_progress_week16": "Re-evaluate targets with a professional if needed.",
+    "red_flags": ["Unintended rapid weight loss", "Persistent fatigue"]
+  },
+  "training": {
+    "weekly_split": [
+      {
+        "day": 1,
+        "name": "Upper A",
+        "duration_minutes": 55,
+        "warmup": ["5 min easy cardio", "Band pull-aparts"],
+        "exercises": [
+          {
+            "name": "Bench press",
+            "sets": 3,
+            "reps": "6–8",
+            "rest_seconds": 150,
+            "progression": "Add a small load when all sets hit the top reps for two sessions.",
+            "substitutions": ["Dumbbell press", "Machine press"],
+            "form_cues": ["Shoulder blades set", "Controlled lowering"]
+          }
+        ]
+      }
+    ],
+    "deload_rule": "If performance and sleep slip for multiple sessions, reduce volume ~30% for one week."
+  }
+}

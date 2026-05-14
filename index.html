@@ -21,8 +21,21 @@
     <!-- CSS: design tokens, layout, intake, prompt, app shell, tabs, panels (no external fonts — local privacy). -->
     <style>
       :root {
-        --bg-deep: #0a0f0d;
-        --bg-surface: #111a15;
+        --ds-bg: #070b09;
+        --ds-surface-1: #0d1411;
+        --ds-surface-2: #111b16;
+        --ds-surface-3: #17231d;
+        --ds-text-1: #f4f7f5;
+        --ds-text-2: #aab7af;
+        --ds-accent: #36d87d;
+        --ds-accent-soft: #9cffb8;
+        --ds-warning: #f5b84b;
+        --ds-danger: #ff5d5d;
+        --ds-border: rgba(255, 255, 255, 0.08);
+        --shadow-card-ds: 0 18px 50px rgba(0, 0, 0, 0.35);
+
+        --bg-deep: var(--ds-bg);
+        --bg-surface: var(--ds-surface-2);
         --bg: var(--bg-deep);
         --bg-gradient:
           radial-gradient(ellipse 120% 70% at 50% -18%, rgba(61, 219, 122, 0.16) 0%, transparent 55%),
@@ -32,12 +45,12 @@
         --card: rgba(17, 26, 21, 0.88);
         --card-pressed: rgba(61, 219, 122, 0.09);
 
-        --lbl1: #f2f7f4;
-        --lbl2: #8fa897;
+        --lbl1: var(--ds-text-1);
+        --lbl2: var(--ds-text-2);
         --lbl3: rgba(143, 168, 151, 0.52);
         --lbl4: rgba(143, 168, 151, 0.26);
 
-        --blue: #3ddb7a;
+        --blue: var(--ds-accent);
         --green: #3ecf9a;
         --orange: #ff6030;
         --red: #ff5c5c;
@@ -73,6 +86,32 @@
         --ff: var(--ff-body);
         --mono: "SF Mono", ui-monospace, "Fira Code", monospace;
         --sticky-h: 72px;
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+
+      html[data-theme="light"] {
+        color-scheme: light;
+        --ds-bg: #f4f7f5;
+        --ds-surface-1: #eef2ef;
+        --ds-surface-2: #e4ebe6;
+        --ds-surface-3: #d8e3dc;
+        --ds-text-1: #0d1411;
+        --ds-text-2: #4a5a52;
+        --ds-accent: #1a9d5a;
+        --ds-accent-soft: #0d6e3f;
+        --ds-warning: #b37400;
+        --ds-danger: #c62828;
+        --ds-border: rgba(0, 0, 0, 0.1);
+        --shadow-card-ds: 0 12px 36px rgba(0, 0, 0, 0.12);
+        --bg-gradient:
+          radial-gradient(ellipse 120% 70% at 50% -18%, rgba(26, 157, 90, 0.12) 0%, transparent 55%),
+          radial-gradient(ellipse 85% 55% at 100% 108%, rgba(26, 157, 90, 0.06) 0%, transparent 52%);
+        --card: rgba(255, 255, 255, 0.92);
+        --card-pressed: rgba(26, 157, 90, 0.08);
+        --sep: rgba(26, 157, 90, 0.18);
+        --sep2: rgba(0, 0, 0, 0.06);
+        --shadow-sm: 0 2px 16px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.5);
       }
 
       *,
@@ -777,6 +816,12 @@
         padding: 12px 16px;
       }
 
+      .row-inline {
+        flex-direction: row;
+        align-items: center;
+        padding: 12px 16px;
+      }
+
       .row-label {
         font-size: 17px;
         font-weight: 600;
@@ -1221,7 +1266,9 @@
 
       .sticky-json-strip {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
+        gap: 10px;
         margin-bottom: 18px;
         padding-top: 4px;
       }
@@ -1231,8 +1278,9 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        width: 100%;
-        max-width: 420px;
+        width: auto;
+        flex: 1 1 160px;
+        max-width: 320px;
         min-height: 46px;
         padding: 12px 20px;
         border-radius: 999px;
@@ -2321,6 +2369,13 @@
         margin-bottom: 8px;
       }
 
+      .grocery-price-note {
+        margin-top: 12px;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--lbl3);
+      }
+
       .grocery-store-split {
         margin-top: 20px;
       }
@@ -2708,6 +2763,564 @@
         color: #ffb4b4;
       }
 
+      .more-leaf-nav {
+        position: sticky;
+        top: 0;
+        z-index: 4;
+        padding: 8px 16px 4px;
+        background: linear-gradient(to bottom, rgba(10, 15, 13, 0.96), transparent);
+      }
+
+      .btn-more-back {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        color: var(--lbl1);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .today-hero-card {
+        margin: 12px 0 14px;
+        padding: 18px 18px 16px;
+        border-radius: var(--r-card);
+        background: linear-gradient(135deg, rgba(61, 219, 122, 0.14), rgba(17, 26, 21, 0.92));
+        border: 1px solid var(--sep);
+        box-shadow: var(--shadow-md);
+      }
+
+      .today-primary-kicker {
+        margin: 0 0 6px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--lbl2);
+      }
+
+      .today-primary-title {
+        margin: 0 0 8px;
+        font-size: 22px;
+        font-weight: 800;
+        line-height: 1.2;
+        font-family: var(--ff-display);
+      }
+
+      .today-primary-meta {
+        margin: 0;
+        font-size: 15px;
+        color: var(--lbl2);
+      }
+
+      .today-hero-actions {
+        margin-top: 14px;
+      }
+
+      .btn-hero-go {
+        min-height: 48px;
+        width: 100%;
+        border-radius: var(--r-inner);
+        border: none;
+        background: var(--gradient-cta);
+        color: #061208;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .btn-hero-go:focus-visible {
+        outline: 2px solid var(--ds-accent-soft);
+        outline-offset: 2px;
+      }
+
+      .home-macro-card {
+        margin: 12px 0;
+        padding: 14px 16px;
+      }
+
+      .home-macro-summary {
+        margin: 0 0 12px;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .macro-bar-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 13px;
+        color: var(--lbl2);
+      }
+
+      .macro-bar-row span:first-child {
+        width: 72px;
+        flex-shrink: 0;
+      }
+
+      .macro-bar {
+        flex: 1;
+        height: 8px;
+        border-radius: 99px;
+        background: var(--sep2);
+        overflow: hidden;
+      }
+
+      .macro-bar > span {
+        display: block;
+        height: 100%;
+        width: 0%;
+        border-radius: 99px;
+        background: linear-gradient(90deg, var(--ds-accent), var(--ds-accent-soft));
+        transition: width 0.25s ease;
+      }
+
+      .macro-bar-pro > span {
+        background: linear-gradient(90deg, #68a8ff, #9b8cff);
+      }
+
+      .home-reminders-stack {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 12px 0 8px;
+      }
+
+      .home-reminder-card {
+        padding: 12px 14px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        font-size: 14px;
+        line-height: 1.45;
+        color: var(--lbl1);
+      }
+
+      .home-reminder-card button {
+        margin-top: 8px;
+      }
+
+      .schedule-timeline-note {
+        margin: 0 0 8px;
+        font-size: 13px;
+        color: var(--lbl2);
+      }
+
+      .meal-swaps-block {
+        margin-top: 12px;
+        border-top: 1px solid var(--sep2);
+        padding-top: 10px;
+      }
+
+      .meal-swaps-block summary {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--lbl2);
+        list-style: none;
+      }
+
+      .meal-swaps-block summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .meal-swap-row {
+        margin-top: 8px;
+        font-size: 14px;
+        color: var(--lbl1);
+        line-height: 1.45;
+      }
+
+      .meal-swap-label {
+        font-weight: 700;
+        color: var(--ds-accent);
+        margin-right: 6px;
+      }
+
+      .meal-card-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+        flex-wrap: wrap;
+      }
+
+      .btn-meal-cook {
+        flex: 1;
+        min-height: 48px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card-pressed);
+        color: var(--lbl1);
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+      }
+
+      .cook-mode-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        background: rgba(0, 0, 0, 0.55);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .cook-mode-overlay[hidden] {
+        display: none !important;
+      }
+
+      .cook-mode-sheet {
+        width: 100%;
+        max-height: 92dvh;
+        overflow: auto;
+        border-radius: var(--r-card) var(--r-card) 0 0;
+        background: var(--card);
+        border: 1px solid var(--sep);
+        padding: 18px 16px calc(22px + var(--safe-bottom));
+        box-shadow: var(--shadow-card-ds);
+      }
+
+      .cook-mode-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .cook-mode-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        font-family: var(--ff-display);
+        line-height: 1.2;
+      }
+
+      .btn-cook-close {
+        flex-shrink: 0;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: transparent;
+        color: var(--lbl1);
+        font-size: 22px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .cook-steps {
+        margin: 12px 0;
+      }
+
+      .cook-steps h4 {
+        margin: 0 0 8px;
+        font-size: 15px;
+      }
+
+      .cook-steps ol {
+        margin: 0;
+        padding-left: 1.2rem;
+        color: var(--lbl2);
+        font-size: 15px;
+        line-height: 1.5;
+      }
+
+      .cook-ing-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px;
+      }
+
+      .cook-ing-list li {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--sep2);
+        font-size: 15px;
+      }
+
+      .cook-ing-list input {
+        width: 22px;
+        height: 22px;
+      }
+
+      .cook-timer-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+        align-items: center;
+      }
+
+      .cook-timer-row button {
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--bg-surface);
+        color: var(--lbl1);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .cook-timer-display {
+        font-variant-numeric: tabular-nums;
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--ds-accent);
+        min-width: 72px;
+        text-align: center;
+      }
+
+      .training-timer-card {
+        margin-bottom: 16px;
+        padding: 14px 16px;
+        border-radius: var(--r-card);
+        border: 1px solid var(--sep);
+        background: var(--card);
+      }
+
+      .training-timer-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+        align-items: center;
+      }
+
+      .training-timer-row button {
+        min-height: 44px;
+        padding: 0 12px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--bg-surface);
+        color: var(--lbl1);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .theme-toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 12px;
+        font-size: 15px;
+      }
+
+      .theme-toggle-row label {
+        cursor: pointer;
+      }
+
+      .progress-insights {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: var(--r-card);
+        border: 1px solid var(--sep);
+        background: var(--card);
+      }
+
+      .progress-insights h3 {
+        margin: 0 0 8px;
+        font-size: 16px;
+      }
+
+      .progress-insights ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.5;
+      }
+
+      .app-section-title {
+        margin: 4px 0 12px;
+        font-size: 22px;
+        font-weight: 800;
+        font-family: var(--ff-display);
+      }
+
+      .more-hub-lead {
+        margin: 0 0 16px;
+        font-size: 15px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .more-hub-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .more-hub-card {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        padding: 16px 14px;
+        min-height: 88px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep);
+        background: var(--card);
+        color: var(--lbl1);
+        text-align: left;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .more-hub-card-title {
+        font-size: 17px;
+        font-weight: 700;
+        font-family: var(--ff-display);
+      }
+
+      .more-hub-card-sub {
+        font-size: 13px;
+        color: var(--lbl2);
+        line-height: 1.35;
+      }
+
+      .more-hub-settings {
+        padding: 16px 18px;
+      }
+
+      .training-day-card,
+      .training-ex-card {
+        margin-bottom: 14px;
+        padding: 14px 16px;
+        border-radius: var(--r-inner);
+        border: 1px solid var(--sep2);
+        background: var(--card);
+      }
+
+      .training-ex-meta,
+      .training-warmup,
+      .training-deload,
+      .training-hint {
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .training-progression,
+      .training-subs {
+        margin: 8px 0 0;
+        font-size: 14px;
+        color: var(--lbl1);
+      }
+
+      .training-cues {
+        margin: 8px 0 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        color: var(--lbl2);
+      }
+
+      .progress-lead {
+        margin: 0 0 14px;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.45;
+      }
+
+      .progress-form {
+        padding: 16px 18px;
+        margin-bottom: 16px;
+      }
+
+      .progress-ul {
+        margin: 8px 0 0;
+        padding-left: 1.1rem;
+        font-size: 15px;
+        color: var(--lbl1);
+        line-height: 1.5;
+      }
+
+      .macro-repair-card {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-radius: var(--r-inner);
+        border: 1px solid rgba(232, 197, 71, 0.28);
+        background: var(--yellow-bg);
+      }
+
+      .macro-repair-intro {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: var(--lbl1);
+        line-height: 1.45;
+      }
+
+      .macro-repair-list {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      #sw-update-snack {
+        position: fixed;
+        left: 12px;
+        right: 12px;
+        bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+        z-index: 50;
+        padding: 12px 14px;
+        border-radius: var(--r-inner);
+        background: var(--card);
+        border: 1px solid var(--sep);
+        box-shadow: var(--shadow-md);
+        font-size: 14px;
+        color: var(--lbl1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      #sw-update-snack[hidden] {
+        display: none !important;
+      }
+
+      .btn-snack-dismiss {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--sep);
+        background: var(--green-bg);
+        color: var(--lbl1);
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .schedule-mini-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      @media (min-width: 480px) {
+        .schedule-mini-grid {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+
+      .prompt-paste {
+        min-height: 120px;
+        resize: vertical;
+      }
+
       @media (prefers-reduced-motion: reduce) {
         html {
           scroll-behavior: auto !important;
@@ -3036,6 +3649,22 @@
                   </div>
                 </label>
               </div>
+              <div class="field" data-section="d">
+                <label class="row row-stack" for="inp-allergies">
+                  <span class="row-label">Allergies and intolerances</span>
+                  <div class="input-sunk-wrap">
+                    <textarea class="input-plain" id="inp-allergies" placeholder="E.g. peanuts (anaphylaxis), lactose"></textarea>
+                  </div>
+                </label>
+              </div>
+              <div class="field" data-section="d">
+                <label class="row row-inline" for="chk-med-warn" style="align-items: flex-start; gap: 12px">
+                  <input type="checkbox" id="chk-med-warn" style="width: 22px; height: 22px; margin-top: 2px; flex-shrink: 0" />
+                  <span class="row-label" style="font-weight: 500; line-height: 1.4">
+                    I take prescription medication or have a condition my clinician should review (especially for supplements).
+                  </span>
+                </label>
+              </div>
               <div class="field" id="field-mpd" data-section="d">
                 <div class="row row-stack">
                   <span class="row-label">Meals per day</span>
@@ -3147,6 +3776,29 @@
                   </div>
                 </label>
               </div>
+              <div class="field" data-section="f">
+                <p class="row-label">Usual schedule <span class="row-hint">Optional — helps Claude line up meals</span></p>
+                <div class="schedule-mini-grid">
+                  <label class="row row-stack" for="inp-wake-clock">
+                    <span class="row-label">Wake</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-wake-clock" type="time" />
+                    </div>
+                  </label>
+                  <label class="row row-stack" for="inp-sleep-clock">
+                    <span class="row-label">Sleep</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-sleep-clock" type="time" />
+                    </div>
+                  </label>
+                  <label class="row row-stack" for="inp-train-clock">
+                    <span class="row-label">Train</span>
+                    <div class="input-sunk-wrap">
+                      <input class="input-plain" id="inp-train-clock" type="time" />
+                    </div>
+                  </label>
+                </div>
+              </div>
               <div class="field" id="field-act" data-section="f">
                 <div class="row row-stack" style="border-bottom: none">
                   <span class="row-label">Daily activity outside gym</span>
@@ -3230,6 +3882,9 @@
               <span class="btn-intake-json-ico" aria-hidden="true">⇪</span>
               Upload plan JSON
             </button>
+            <button type="button" class="btn-intake-json-pill" id="btn-skip-intake-json">
+              Skip to JSON
+            </button>
           </div>
           <div class="sticky-bar-row">
             <button type="button" id="btn-intake-back" class="btn-intake-back" hidden>Back</button>
@@ -3266,6 +3921,16 @@
             <p id="json-error-detail" class="error-detail"></p>
             <button type="button" class="btn-secondary-full" id="btn-retry-upload">Try again</button>
           </div>
+          <p class="divider-label">Or paste JSON text</p>
+          <label class="sr-only" for="prompt-json-paste">Paste health plan JSON</label>
+          <textarea
+            id="prompt-json-paste"
+            class="prompt-box prompt-paste"
+            spellcheck="false"
+            aria-label="Paste health plan JSON"
+            placeholder="{ paste full JSON plan here }"
+          ></textarea>
+          <button type="button" class="btn-secondary-full" id="btn-apply-paste-json">Apply pasted JSON</button>
           <ol class="steps-list">
             <li><strong>Step 1</strong> — Open claude.ai in your browser (or the Claude app).</li>
             <li><strong>Step 2</strong> — Paste the prompt into a new conversation.</li>
@@ -3298,10 +3963,22 @@
         </header>
 
         <div class="screen-scroll app-body-scroll app-panels-stack">
-          <div id="panel-home" class="app-panel is-active" aria-hidden="false">
+          <div id="more-leaf-nav" class="more-leaf-nav" hidden>
+            <button type="button" class="btn-more-back" id="btn-more-back">← More menu</button>
+          </div>
+          <div id="panel-today" class="app-panel is-active" aria-hidden="false">
             <div class="home-hero">
               <h2 class="home-greeting" id="home-greeting">Good morning</h2>
               <p class="home-sub" id="home-subline"></p>
+            </div>
+
+            <div id="today-hero-card" class="today-hero-card" hidden>
+              <p class="today-primary-kicker" id="today-primary-kicker">Up next</p>
+              <p class="today-primary-title" id="today-primary-title"></p>
+              <p class="today-primary-meta" id="today-primary-meta"></p>
+              <div class="today-hero-actions">
+                <button type="button" class="btn-hero-go" id="today-hero-action" data-go-tab="meals">Open meals</button>
+              </div>
             </div>
 
             <div id="home-plan-warnings" class="plan-warnings-card" hidden role="region" aria-label="Plan consistency notes">
@@ -3344,8 +4021,24 @@
               </div>
             </div>
 
+            <div id="home-macro-card" class="home-macro-card card" hidden>
+              <h3 class="home-card-title">Today vs phase target</h3>
+              <p id="home-macro-summary" class="home-macro-summary"></p>
+              <div class="macro-bar-row">
+                <span>Calories</span>
+                <div class="macro-bar"><span id="home-macro-kbar"></span></div>
+              </div>
+              <div class="macro-bar-row">
+                <span>Protein</span>
+                <div class="macro-bar macro-bar-pro"><span id="home-macro-pbar"></span></div>
+              </div>
+            </div>
+
+            <div id="home-reminders-stack" class="home-reminders-stack" hidden></div>
+
             <div class="home-card">
               <h3 class="home-card-title">Today's schedule</h3>
+              <p id="home-schedule-note" class="schedule-timeline-note" hidden></p>
               <div id="home-schedule"></div>
             </div>
 
@@ -3411,20 +4104,59 @@
           <div id="panel-supps" class="app-panel" aria-hidden="true" inert="">
             <div id="supps-mount"></div>
           </div>
+          <div id="panel-training" class="app-panel" aria-hidden="true" inert="">
+            <div id="training-mount"></div>
+          </div>
+          <div id="panel-progress" class="app-panel" aria-hidden="true" inert="">
+            <h2 class="app-section-title">Progress</h2>
+            <p class="progress-lead">Weight entries stay on this device only.</p>
+            <div class="progress-form card">
+              <label class="row row-stack" for="inp-progress-weight">
+                <span class="row-label">Weight (kg)</span>
+                <div class="input-sunk-wrap">
+                  <input class="input-plain" id="inp-progress-weight" type="number" inputmode="decimal" placeholder="e.g. 80.2" />
+                </div>
+              </label>
+              <button type="button" class="btn-primary-full" id="btn-progress-add-weight">Log weight</button>
+              <label class="row row-stack" for="inp-progress-waist" style="margin-top: 12px">
+                <span class="row-label">Waist (cm) <span class="row-hint">Optional</span></span>
+                <div class="input-sunk-wrap">
+                  <input class="input-plain" id="inp-progress-waist" type="number" inputmode="decimal" placeholder="e.g. 86" />
+                </div>
+              </label>
+              <button type="button" class="btn-secondary-full" id="btn-progress-add-waist">Log waist</button>
+              <label class="row row-stack" for="inp-progress-checkin" style="margin-top: 12px">
+                <span class="row-label">Weekly check-in note</span>
+                <div class="input-sunk-wrap">
+                  <textarea class="input-plain" id="inp-progress-checkin" rows="3" placeholder="Energy, sleep, adherence…"></textarea>
+                </div>
+              </label>
+              <button type="button" class="btn-secondary-full" id="btn-progress-save-checkin">Save check-in</button>
+            </div>
+            <div id="progress-insights" class="progress-insights" hidden>
+              <h3 class="home-card-title">Insights</h3>
+              <ul id="progress-insights-list"></ul>
+            </div>
+            <div id="progress-list-wrap" class="progress-list">
+              <h3 class="home-card-title">Recent weights</h3>
+              <ul id="progress-weight-list" class="progress-ul"></ul>
+            </div>
+            <div class="progress-list">
+              <h3 class="home-card-title">Recent waist</h3>
+              <ul id="progress-waist-list" class="progress-ul"></ul>
+            </div>
+          </div>
+          <div id="panel-more" class="app-panel" aria-hidden="true" inert="">
+            <div id="more-hub-mount"></div>
+          </div>
         </div>
 
         <nav class="tab-bar" aria-label="Main">
-          <button type="button" class="tab-btn on" data-tab="home" aria-current="page">
+          <button type="button" class="tab-btn on" data-tab="today" aria-current="page">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <path d="M4 11 12 4l8 7v9a1 1 0 0 1-1 1h-5v-6H10v6H5a1 1 0 0 1-1-1z" stroke-linejoin="round" />
             </svg>
-            Home
-          </button>
-          <button type="button" class="tab-btn" data-tab="phases">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M4 19h16M6 15h4m4 0h4M8 11h8M10 7h4" />
-            </svg>
-            Phases
+            Today
           </button>
           <button type="button" class="tab-btn" data-tab="meals">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -3432,25 +4164,28 @@
             </svg>
             Meals
           </button>
-          <button type="button" class="tab-btn" data-tab="prep">
+          <button type="button" class="tab-btn" data-tab="training">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <circle cx="12" cy="13" r="7" />
-              <path d="M12 6V3M12 13l3-3" />
+              <path d="M6.5 6.5h5v5h-5zM12.5 12.5h5v5h-5zM6.5 12.5h5v5h-5z" />
             </svg>
-            Prep
+            Training
           </button>
-          <button type="button" class="tab-btn" data-tab="grocery">
+          <button type="button" class="tab-btn" data-tab="progress">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path d="M6 9h15l-1.5 9h-12z" />
-              <path d="M9 9V6a3 3 0 0 1 6 0v3" />
+              <path d="M4 19V5M4 19h16M8 15v-4m4 6V9m4 8v-2m4 4v-6" />
             </svg>
-            Grocery
+            Progress
           </button>
-          <button type="button" class="tab-btn" data-tab="supps">
+          <button type="button" class="tab-btn" data-tab="more">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <rect x="8" y="6" width="8" height="12" rx="4" />
+              <circle cx="6" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="6" r="1.5" fill="currentColor" />
+              <circle cx="6" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+              <circle cx="18" cy="12" r="1.5" fill="currentColor" />
             </svg>
-            Supps
+            More
           </button>
         </nav>
       </div>
@@ -3708,14 +4443,25 @@ The grocery object must always include a "store_split" field.
 
 
 
-        const TAB_IDS = ["home", "phases", "meals", "prep", "grocery", "supps"];
+        const TAB_PRIMARY = ["today", "meals", "training", "progress", "more"];
+        const MORE_LEAF_TABS = ["phases", "prep", "grocery", "supps"];
+        const ALL_PANEL_IDS = ["today", "phases", "meals", "training", "progress", "prep", "grocery", "supps", "more"];
         const LS_ACTIVE_TAB = "health_active_tab";
+        const LS_ACTIVE_LEAF = "health_active_leaf";
         const LS_PREP_DONE = "health_prep_done";
         const LS_GROCERY_CHECKED = "health_grocery_checked";
-        const PLAN_SCHEMA_VERSION = 1;
+        const LS_PROGRESS = "health_progress_v1";
+        const LS_THEME = "health_v2_theme";
+        let cookCountdownInterval = null;
+        let trainingRestInterval = null;
+        const PLAN_SCHEMA_VERSION = 2;
+        const SCHEMA_VERSION_STRING = "2.0";
         const MAX_PLAN_JSON_BYTES = 2 * 1024 * 1024;
         const LS_FLOW_ENGAGED = "health_flow_engaged";
         const SS_SEEN_PROMPT = "health_seen_prompt";
+
+        let appPrimaryTab = "today";
+        let appMoreLeaf = null;
 
         let pwaInstallDeferred = null;
 
@@ -3850,6 +4596,8 @@ The grocery object must always include a "store_split" field.
             injuries: "",
             dietaryPreference: "",
             foodDislikes: "",
+            allergies: "",
+            medicationWarning: false,
             mealsPerDay: "",
             cookingTime: "",
             mealPrep: null,
@@ -3863,6 +4611,9 @@ The grocery object must always include a "store_split" field.
             sleepHours: 7,
             stressLevel: "",
             challenges: [],
+            wakeClock: "",
+            sleepClock: "",
+            trainClock: "",
           };
         }
 
@@ -4171,6 +4922,10 @@ The grocery object must always include a "store_split" field.
             b.setAttribute("aria-pressed", dataRead(b, "diet") === state.dietaryPreference ? "true" : "false")
           );
           $("#inp-dislike").value = state.foodDislikes;
+          const iall = $("#inp-allergies");
+          if (iall) iall.value = state.allergies || "";
+          const cmw = $("#chk-med-warn");
+          if (cmw) cmw.checked = !!state.medicationWarning;
           setSegExclusive($("#field-mpd .seg"), "data-mpd", state.mealsPerDay);
           setSegExclusive($("#field-cookt .seg"), "data-ct", state.cookingTime);
           const mpSegVal = state.mealPrep === null ? "unset" : state.mealPrep ? "yes" : "no";
@@ -4218,6 +4973,12 @@ The grocery object must always include a "store_split" field.
           $("#inp-osupp").value = state.otherSupplements;
           $("#sel-country").value = state.country || "";
           $("#inp-city").value = state.city;
+          const iwc = $("#inp-wake-clock");
+          const isc = $("#inp-sleep-clock");
+          const itc = $("#inp-train-clock");
+          if (iwc) iwc.value = state.wakeClock || "";
+          if (isc) isc.value = state.sleepClock || "";
+          if (itc) itc.value = state.trainClock || "";
           $$("[data-act].pick-card").forEach((b) =>
             b.setAttribute("aria-pressed", dataRead(b, "act") === state.activityLevel ? "true" : "false")
           );
@@ -4378,6 +5139,8 @@ The grocery object must always include a "store_split" field.
             injuries: state.injuries.trim() || null,
             dietaryPreference: state.dietaryPreference,
             foodDislikes: state.foodDislikes.trim() || null,
+            allergies: state.allergies.trim() || null,
+            medicationWarning: !!state.medicationWarning,
             mealsPerDay: Number(state.mealsPerDay),
             cookingTime: state.cookingTime,
             mealPrep: state.mealPrep,
@@ -4391,6 +5154,9 @@ The grocery object must always include a "store_split" field.
             sleepHours: state.sleepHours,
             stressLevel: state.stressLevel,
             challenges: [...state.challenges],
+            wakeClock: state.wakeClock || "",
+            sleepClock: state.sleepClock || "",
+            trainClock: state.trainClock || "",
           };
         }
 
@@ -4449,7 +5215,44 @@ The grocery object must always include a "store_split" field.
               };
             }
           }
+          const seenPhase = new Map();
+          for (let i = 0; i < json.phases.length; i++) {
+            const ph = json.phases[i];
+            const pid = ph && ph.id != null ? String(ph.id) : `__idx${i}`;
+            if (seenPhase.has(pid)) {
+              return { valid: false, error: `Duplicate phase id "${ph && ph.id != null ? ph.id : "(missing)"}" — each phase must be unique.` };
+            }
+            seenPhase.set(pid, true);
+          }
           return { valid: true };
+        }
+
+        function parseTimeToMinutes(raw) {
+          const s = String(raw || "").trim();
+          if (!s) return null;
+          const m = s.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*)(a\.?m\.?|p\.?m\.?)?/i);
+          if (m) {
+            let h = Number(m[1]);
+            const min = Number(m[2]);
+            const ap = (m[4] || "").toLowerCase();
+            if (ap.startsWith("p") && h < 12) h += 12;
+            if (ap.startsWith("a") && h === 12) h = 0;
+            if (Number.isFinite(h) && Number.isFinite(min)) return h * 60 + min;
+          }
+          const m2 = s.match(/^(\d{1,2}):(\d{2})$/);
+          if (m2) {
+            const h = Number(m2[1]);
+            const min = Number(m2[2]);
+            if (Number.isFinite(h) && Number.isFinite(min)) return h * 60 + min;
+          }
+          return null;
+        }
+
+        function adjustMinutesForSort(tMin, wakeMin) {
+          if (tMin == null) return 99999;
+          if (wakeMin == null) return tMin;
+          if (tMin < wakeMin) return tMin + 1440;
+          return tMin;
         }
 
         function validatePlanWarnings(json) {
@@ -4460,32 +5263,221 @@ The grocery object must always include a "store_split" field.
             const mp = json.meal_plan;
             if (!phases || !phases.length || !mp || typeof mp !== "object") return warnings;
             const dt = mp.daily_totals;
-            if (!dt || typeof dt !== "object") return warnings;
-            const wkT = Number(dt.workout_day_kcal);
-            const rdT = Number(dt.rest_day_kcal);
-            phases.forEach((ph, idx) => {
-              const pid = ph && ph.id != null ? ph.id : idx + 1;
-              const wk = Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily);
-              const rd = Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
-              if (Number.isFinite(wk) && Number.isFinite(wkT) && Math.abs(wk - wkT) > 100) {
-                warnings.push(
-                  `Phase ${pid}: logged workout-day meals total ${wkT} kcal vs phase target ~${wk} kcal (over 100 kcal apart).`
-                );
+            if (dt && typeof dt === "object") {
+              const wkT = Number(dt.workout_day_kcal);
+              const rdT = Number(dt.rest_day_kcal);
+              const wkP = Number(dt.workout_day_protein_g);
+              const rdP = Number(dt.rest_day_protein_g);
+              phases.forEach((ph, idx) => {
+                const pid = ph && ph.id != null ? ph.id : idx + 1;
+                const wk = Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily);
+                const rd = Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
+                const tg = Number(ph.protein_g);
+                if (Number.isFinite(wk) && Number.isFinite(wkT) && Math.abs(wk - wkT) > 100) {
+                  warnings.push(
+                    `Phase ${pid}: logged workout-day meals total ${wkT} kcal vs phase target ~${wk} kcal (over 100 kcal apart).`
+                  );
+                }
+                if (Number.isFinite(rd) && Number.isFinite(rdT) && Math.abs(rd - rdT) > 100) {
+                  warnings.push(
+                    `Phase ${pid}: logged rest-day meals total ${rdT} kcal vs phase target ~${rd} kcal (over 100 kcal apart).`
+                  );
+                }
+                if (Number.isFinite(tg) && Number.isFinite(wkP) && tg - wkP > 15) {
+                  warnings.push(`Phase ${pid}: workout-day protein in meals (${wkP} g) is more than 15 g below phase target (${tg} g).`);
+                }
+                if (Number.isFinite(tg) && Number.isFinite(rdP) && tg - rdP > 15) {
+                  warnings.push(`Phase ${pid}: rest-day protein in meals (${rdP} g) is more than 15 g below phase target (${tg} g).`);
+                }
+              });
+            }
+            const tr = json.training || json.training_program;
+            const hasProgram = tr && Array.isArray(tr.weekly_split) && tr.weekly_split.length > 0;
+            if (!hasProgram && phases.some((p) => p && String(p.training_note || "").trim().length > 0)) {
+              warnings.push("This plan includes training notes but no structured weekly_split program in JSON.");
+            }
+            const wl = json.water_target_litres;
+            if (wl != null && Number(wl) > 4) {
+              warnings.push("Water target is above 4 L/day — confirm this fits your clinician’s advice and climate.");
+            }
+            const sup = json.supplements;
+            if (sup && typeof sup === "object" && !json.safety && !(sup.safety && typeof sup.safety === "object")) {
+              warnings.push("Supplement section has no explicit safety block — treat claims as general wellness, not medical facts.");
+            }
+            const sched = json.schedule || {};
+            const u = json.user || {};
+            const wakeM = parseTimeToMinutes(sched.wake_time || u.wake_time);
+            const sleepM = parseTimeToMinutes(sched.sleep_time || u.sleep_time);
+            const mt = Array.isArray(sched.meal_times) ? sched.meal_times : [];
+            const checkMealsAgainstSleep = (mealArr) => {
+              if (!mealArr || wakeM == null || sleepM == null) return;
+              const wakeA = wakeM;
+              const sleepA = sleepM < wakeM ? sleepM + 1440 : sleepM;
+              for (let i = 0; i < mealArr.length; i++) {
+                const m = mealArr[i];
+                const tStr = ((mt[i] && String(mt[i]).trim()) || (m && m.time) || "").trim();
+                const tm = parseTimeToMinutes(tStr);
+                if (tm == null) continue;
+                const mealA = adjustMinutesForSort(tm, wakeM);
+                if (mealA < wakeA || mealA > sleepA) {
+                  warnings.push(
+                    `Meal "${m && m.name ? m.name : "Meal"}" at ${tStr} may sit outside the plan wake/sleep window — check night-shift or schedule fields.`
+                  );
+                  break;
+                }
               }
-              if (Number.isFinite(rd) && Number.isFinite(rdT) && Math.abs(rd - rdT) > 100) {
-                warnings.push(
-                  `Phase ${pid}: logged rest-day meals total ${rdT} kcal vs phase target ~${rd} kcal (over 100 kcal apart).`
-                );
-              }
-            });
+            };
+            checkMealsAgainstSleep(mp.workout_day);
+            checkMealsAgainstSleep(mp.rest_day);
           } catch (_) {}
           return warnings;
+        }
+
+        function normalizePlanV1ToV2(plan) {
+          if (!plan || typeof plan !== "object") return plan;
+          const metaIn = plan.meta && typeof plan.meta === "object" ? plan.meta : {};
+          const meta = { ...metaIn };
+          const sv = Number(meta.plan_schema_version);
+          if (!Number.isFinite(sv) || sv < 2) meta.plan_schema_version = 2;
+          if (meta.schema_version == null) meta.schema_version = SCHEMA_VERSION_STRING;
+          plan.meta = meta;
+          const u = plan.user || {};
+          const sched = plan.schedule && typeof plan.schedule === "object" ? { ...plan.schedule } : {};
+          if (sched.wake_time == null && u.wake_time != null) sched.wake_time = String(u.wake_time);
+          if (sched.sleep_time == null && u.sleep_time != null) sched.sleep_time = String(u.sleep_time);
+          if (sched.training_time == null && u.training_time != null) sched.training_time = String(u.training_time);
+          if (!Array.isArray(sched.meal_times)) sched.meal_times = [];
+          const mp = plan.meal_plan;
+          if (sched.meal_times.length === 0 && mp && Array.isArray(mp.workout_day)) {
+            sched.meal_times = mp.workout_day.map((m) => (m && m.time != null ? String(m.time) : "")).filter(Boolean);
+          }
+          if (sched.timezone == null && metaIn.locale) sched.timezone = String(metaIn.locale);
+          plan.schedule = sched;
+          if (mp && typeof mp === "object") {
+            const dt = typeof mp.daily_totals === "object" && mp.daily_totals ? { ...mp.daily_totals } : {};
+            const sumP = (meals) => {
+              if (!meals || !meals.length) return null;
+              let t = 0;
+              let any = false;
+              for (let i = 0; i < meals.length; i++) {
+                const p = Number(meals[i].protein_g);
+                if (!Number.isNaN(p)) {
+                  t += p;
+                  any = true;
+                }
+              }
+              return any ? t : null;
+            };
+            if (dt.workout_day_protein_g == null && mp.workout_day) {
+              const s = sumP(mp.workout_day);
+              if (s != null) dt.workout_day_protein_g = s;
+            }
+            if (dt.rest_day_protein_g == null && mp.rest_day) {
+              const s = sumP(mp.rest_day);
+              if (s != null) dt.rest_day_protein_g = s;
+            }
+            plan.meal_plan = { ...mp, daily_totals: dt };
+          }
+          return plan;
+        }
+
+        function enrichPlanForApp(plan) {
+          if (!plan || typeof plan !== "object") return plan;
+          const mp = plan.meal_plan;
+          if (mp && typeof mp === "object") {
+            const dt = typeof mp.daily_totals === "object" && mp.daily_totals ? { ...mp.daily_totals } : {};
+            const sumK = (meals) => {
+              if (!meals || !meals.length) return null;
+              let t = 0;
+              let any = false;
+              for (let i = 0; i < meals.length; i++) {
+                const k = Number(meals[i].kcal);
+                if (!Number.isNaN(k)) {
+                  t += k;
+                  any = true;
+                }
+              }
+              return any ? t : null;
+            };
+            if (dt.workout_day_kcal == null && mp.workout_day) {
+              const s = sumK(mp.workout_day);
+              if (s != null) dt.workout_day_kcal = s;
+            }
+            if (dt.rest_day_kcal == null && mp.rest_day) {
+              const s = sumK(mp.rest_day);
+              if (s != null) dt.rest_day_kcal = s;
+            }
+            const sumP = (meals) => {
+              if (!meals || !meals.length) return null;
+              let t = 0;
+              let any = false;
+              for (let i = 0; i < meals.length; i++) {
+                const p = Number(meals[i].protein_g);
+                if (!Number.isNaN(p)) {
+                  t += p;
+                  any = true;
+                }
+              }
+              return any ? t : null;
+            };
+            if (dt.workout_day_protein_g == null && mp.workout_day) {
+              const s = sumP(mp.workout_day);
+              if (s != null) dt.workout_day_protein_g = s;
+            }
+            if (dt.rest_day_protein_g == null && mp.rest_day) {
+              const s = sumP(mp.rest_day);
+              if (s != null) dt.rest_day_protein_g = s;
+            }
+            mp.daily_totals = dt;
+          }
+          if (!plan.schedule) {
+            plan.schedule = {
+              timezone: plan.meta && plan.meta.timezone ? String(plan.meta.timezone) : null,
+              wake_time: plan.user && plan.user.wake_time != null ? String(plan.user.wake_time) : null,
+              sleep_time: plan.user && plan.user.sleep_time != null ? String(plan.user.sleep_time) : null,
+              training_time: plan.user && plan.user.training_time != null ? String(plan.user.training_time) : null,
+              meal_times: [],
+              work_schedule_note: null,
+            };
+          }
+          if (
+            plan.schedule &&
+            Array.isArray(plan.schedule.meal_times) &&
+            plan.schedule.meal_times.length === 0 &&
+            mp &&
+            Array.isArray(mp.workout_day)
+          ) {
+            plan.schedule.meal_times = mp.workout_day.map((m) => (m && m.time != null ? String(m.time) : "")).filter(Boolean);
+          }
+          if (!plan.safety) {
+            const wci = plan.weekly_check_in;
+            const rf = wci && Array.isArray(wci.red_flags) ? wci.red_flags.map((x) => (typeof x === "string" ? x : "")).filter(Boolean) : [];
+            plan.safety = {
+              not_medical_advice: true,
+              consult_professional_if: [
+                "You have a medical condition",
+                "You take prescription medication",
+                "You have a history of disordered eating",
+                "You are pregnant or trying to become pregnant",
+                "You feel severe fatigue, dizziness, chest pain, or faintness",
+              ],
+              red_flags: rf,
+            };
+          }
+          return plan;
         }
 
         function normalizePlanForStorage(json) {
           try {
             const out = JSON.parse(JSON.stringify(json));
-            out.meta = { ...(out.meta || {}), plan_schema_version: PLAN_SCHEMA_VERSION };
+            normalizePlanV1ToV2(out);
+            enrichPlanForApp(out);
+            out.meta = {
+              ...(out.meta || {}),
+              plan_schema_version: PLAN_SCHEMA_VERSION,
+              app_schema_hint: "2.0",
+              schema_version: SCHEMA_VERSION_STRING,
+            };
             return out;
           } catch (_) {
             return json;
@@ -4541,6 +5533,8 @@ The grocery object must always include a "store_split" field.
           n.injuries = fd.injuries != null ? String(fd.injuries) : "";
           n.dietaryPreference = fd.dietaryPreference || "";
           n.foodDislikes = fd.foodDislikes != null ? String(fd.foodDislikes) : "";
+          n.allergies = fd.allergies != null ? String(fd.allergies) : "";
+          n.medicationWarning = !!fd.medicationWarning;
           n.mealsPerDay = fd.mealsPerDay != null ? String(fd.mealsPerDay) : "";
           n.cookingTime = fd.cookingTime || "";
           n.mealPrep = fd.mealPrep === true ? true : fd.mealPrep === false ? false : null;
@@ -4556,6 +5550,9 @@ The grocery object must always include a "store_split" field.
           }
           n.stressLevel = fd.stressLevel || "";
           n.challenges = Array.isArray(fd.challenges) ? [...fd.challenges] : [];
+          n.wakeClock = fd.wakeClock != null ? String(fd.wakeClock) : "";
+          n.sleepClock = fd.sleepClock != null ? String(fd.sleepClock) : "";
+          n.trainClock = fd.trainClock != null ? String(fd.trainClock) : "";
           state = n;
           saveState();
           return true;
@@ -4611,7 +5608,35 @@ The grocery object must always include a "store_split" field.
           if (!("serviceWorker" in navigator)) return;
           try {
             const url = new URL("sw.js", window.location.href);
-            navigator.serviceWorker.register(url).catch(() => {});
+            navigator.serviceWorker
+              .register(url)
+              .then((reg) => {
+                reg.addEventListener("updatefound", () => {
+                  const nw = reg.installing;
+                  if (!nw) return;
+                  nw.addEventListener("statechange", () => {
+                    if (nw.state === "installed" && navigator.serviceWorker.controller) {
+                      const snack = document.getElementById("sw-update-snack");
+                      if (snack) snack.hidden = false;
+                    }
+                  });
+                });
+              })
+              .catch(() => {});
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener("controllerchange", () => {
+              if (refreshing) return;
+              refreshing = true;
+              window.location.reload();
+            });
+            const dismiss = document.getElementById("btn-sw-refresh");
+            if (dismiss) {
+              dismiss.addEventListener("click", () => {
+                const snack = document.getElementById("sw-update-snack");
+                if (snack) snack.hidden = true;
+                window.location.reload();
+              });
+            }
           } catch (_) {}
         }
 
@@ -4710,6 +5735,8 @@ The grocery object must always include a "store_split" field.
             injuries: fd.injuries == null || fd.injuries === "" ? "none" : fd.injuries,
             dietary_preference: fd.dietaryPreference,
             food_dislikes: fd.foodDislikes == null || fd.foodDislikes === "" ? "none" : fd.foodDislikes,
+            allergies_intolerances: fd.allergies == null || fd.allergies === "" ? "none" : fd.allergies,
+            medication_or_condition_flag: fd.medicationWarning ? "yes — review supplements with clinician" : "not indicated",
             meals_per_day: fd.mealsPerDay,
             cooking_time: fd.cookingTime,
             meal_prep: fd.mealPrep,
@@ -4723,12 +5750,25 @@ The grocery object must always include a "store_split" field.
             sleep_hours: fd.sleepHours,
             stress_level: fd.stressLevel,
             biggest_challenges: fd.challenges,
+            wake_time_clock: fd.wakeClock || "not specified",
+            sleep_time_clock: fd.sleepClock || "not specified",
+            training_time_clock: fd.trainClock || "not specified",
           };
         }
 
         function buildPrompt(formData) {
           const profileJSON = JSON.stringify(profilePayload(formData), null, 2);
-          return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON);
+          const tail = `
+
+=== SCHEMA VERSION 2 (recommended) ===
+- Set meta.plan_schema_version to 2.
+- Include one consistent schedule (wake, sleep, training, meal_times).
+- Align meal_plan.daily_totals with phase calories within ±100 kcal and protein within ±10 g.
+- Include training.weekly_split with exercises (sets, reps, rest_seconds, substitutions, progression, form_cues).
+- Supplements: cautious wording only ("may help", "evidence mixed", "check label", "consult clinician if on medication").
+- Respect allergies_intolerances and medication_or_condition_flag from the profile when choosing foods and supplements.
+`;
+          return PROMPT_TEMPLATE.replace("{FORM_DATA_JSON}", profileJSON) + tail;
         }
 
         function getSavedFormPayload() {
@@ -4818,6 +5858,124 @@ The grocery object must always include a "store_split" field.
           return Math.round(Number(n));
         }
 
+        function buildTodayTimelineRows(plan, meals, workout) {
+          const events = [];
+          const sched = plan.schedule || {};
+          const u = plan.user || {};
+          const wakeRaw = sched.wake_time || u.wake_time;
+          const sleepRaw = sched.sleep_time || u.sleep_time;
+          const trainRaw = sched.training_time || u.training_time;
+          const wakeM = parseTimeToMinutes(wakeRaw);
+          const mt = Array.isArray(sched.meal_times) ? sched.meal_times : [];
+
+          if (wakeRaw) {
+            events.push({
+              sort: adjustMinutesForSort(parseTimeToMinutes(wakeRaw), wakeM),
+              t: String(wakeRaw),
+              name: "Wake",
+              detail: "",
+            });
+          }
+
+          (meals || []).forEach((m, i) => {
+            const timeStr = ((mt[i] && String(mt[i]).trim()) || (m && m.time) || "").trim();
+            const tm = parseTimeToMinutes(timeStr);
+            events.push({
+              sort: adjustMinutesForSort(tm, wakeM),
+              t: timeStr || "—",
+              name: m.name || "Meal",
+              detail: m.kcal != null ? `${fmtRoundNum(m.kcal) ?? m.kcal} kcal` : "",
+            });
+          });
+
+          if (workout && trainRaw) {
+            events.push({
+              sort: adjustMinutesForSort(parseTimeToMinutes(trainRaw), wakeM),
+              t: String(trainRaw),
+              name: "Training",
+              detail: "",
+            });
+          }
+
+          if (sleepRaw) {
+            events.push({
+              sort: adjustMinutesForSort(parseTimeToMinutes(sleepRaw), wakeM),
+              t: String(sleepRaw),
+              name: "Sleep",
+              detail: "",
+            });
+          }
+
+          const supp = plan.supplements && plan.supplements.daily_schedule;
+          if (supp && supp.length) {
+            supp.forEach((s) => {
+              const slot = s.label || s.time_slot || "";
+              const tm = parseTimeToMinutes(slot);
+              if (tm == null) return;
+              events.push({
+                sort: adjustMinutesForSort(tm, wakeM),
+                t: slot,
+                name: "Supplements",
+                detail: s.items || "",
+              });
+            });
+          }
+
+          events.sort((a, b) => a.sort - b.sort);
+          return { events, wakeM };
+        }
+
+        function nextMealPick(plan, meals, wakeM) {
+          if (!meals || !meals.length) return null;
+          const sched = plan.schedule || {};
+          const mt = Array.isArray(sched.meal_times) ? sched.meal_times : [];
+          const nowM = new Date().getHours() * 60 + new Date().getMinutes();
+          const nowAdj = wakeM != null && nowM < wakeM ? nowM + 1440 : nowM;
+          let best = null;
+          meals.forEach((m, i) => {
+            const timeStr = ((mt[i] && String(mt[i]).trim()) || (m && m.time) || "").trim();
+            const tm = parseTimeToMinutes(timeStr);
+            if (tm == null) return;
+            const sortT = adjustMinutesForSort(tm, wakeM);
+            if (sortT > nowAdj && (best == null || sortT < best.sort)) best = { meal: m, sort: sortT, timeStr };
+          });
+          if (best) return best;
+          const m0 = meals[0];
+          const t0 = ((mt[0] && String(mt[0]).trim()) || (m0 && m0.time) || "").trim();
+          return { meal: m0, sort: null, timeStr: t0 };
+        }
+
+        function flattenMealSwaps(m) {
+          const out = [];
+          const sw = m && m.swaps;
+          if (!sw) return out;
+          if (Array.isArray(sw)) {
+            sw.forEach((x) => {
+              if (!x || typeof x !== "object") return;
+              const lab = x.label || x.name || "Swap";
+              const parts = [x.replace || x.from, x.with || x.to].filter(Boolean);
+              const line = parts.join(" → ") || x.note || "";
+              if (line) out.push({ label: lab, text: line });
+            });
+            return out;
+          }
+          if (typeof sw === "object") {
+            Object.keys(sw).forEach((k) => {
+              const arr = sw[k];
+              if (!Array.isArray(arr)) return;
+              arr.forEach((item) => {
+                if (typeof item === "string") out.push({ label: k, text: item });
+                else if (item && typeof item === "object") {
+                  const parts = [item.replace, item.with].filter(Boolean);
+                  const line = parts.join(" → ") || item.note || "";
+                  if (line) out.push({ label: item.label || k, text: line });
+                }
+              });
+            });
+          }
+          return out;
+        }
+
         function renderHomeTab() {
           const plan = window.healthPlan;
           if (!plan) return;
@@ -4859,13 +6017,44 @@ The grocery object must always include a "store_split" field.
           const mp = plan.meal_plan || {};
           const meals = workout ? mp.workout_day : mp.rest_day;
           const sched = $("#home-schedule");
+          const schedNote = $("#home-schedule-note");
           sched.textContent = "";
           const dayLabel = document.createElement("p");
           dayLabel.className = "schedule-day-badge";
           dayLabel.textContent = workout ? "Workout day" : "Rest day";
           sched.appendChild(dayLabel);
 
-          if (meals && meals.length) {
+          const tl = buildTodayTimelineRows(plan, meals, workout);
+          const hasOrder = tl.events.some((e) => e.sort < 90000);
+          if (schedNote) {
+            if (hasOrder) {
+              schedNote.hidden = false;
+              schedNote.textContent = "Order follows your plan schedule (wake, meals, training, sleep).";
+            } else {
+              schedNote.hidden = true;
+              schedNote.textContent = "";
+            }
+          }
+
+          if (tl.events.length) {
+            tl.events.forEach((ev) => {
+              const row = document.createElement("div");
+              row.className = "schedule-row";
+              const t = document.createElement("span");
+              t.className = "sch-time";
+              t.textContent = ev.t || "";
+              const nm = document.createElement("span");
+              nm.className = "sch-name";
+              nm.textContent = ev.name || "";
+              const k = document.createElement("span");
+              k.className = "sch-kcal";
+              k.textContent = ev.detail || "";
+              row.appendChild(t);
+              row.appendChild(nm);
+              row.appendChild(k);
+              sched.appendChild(row);
+            });
+          } else if (meals && meals.length) {
             meals.forEach((m) => {
               const row = document.createElement("div");
               row.className = "schedule-row";
@@ -4891,7 +6080,9 @@ The grocery object must always include a "store_split" field.
           }
 
           const supp = plan.supplements && plan.supplements.daily_schedule;
-          if (supp && supp.length) {
+          if (supp && supp.length && hasOrder) {
+            /* supplements merged into timeline when sortable */
+          } else if (supp && supp.length) {
             const sub = document.createElement("h4");
             sub.className = "schedule-subhead";
             sub.textContent = "Supplements";
@@ -4916,6 +6107,104 @@ The grocery object must always include a "store_split" field.
           const ti = dailyTipIndex(plan);
           const tipText = tips.length && tips[ti] != null && String(tips[ti]).trim() !== "" ? tips[ti] : null;
           $("#home-tip").textContent = tipText || "Stay consistent — small steps add up.";
+
+          const macroCard = $("#home-macro-card");
+          const macroSum = $("#home-macro-summary");
+          const kBar = $("#home-macro-kbar");
+          const pBar = $("#home-macro-pbar");
+          if (macroCard && ph && mp) {
+            const slice = getMealPlanSliceForPhase(plan, ph);
+            const list = workout ? slice && slice.workout_day : slice && slice.rest_day;
+            const targetK = workout
+              ? Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily)
+              : Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
+            const targetP = Number(ph.protein_g);
+            const dt = slice && slice.daily_totals;
+            let sumK = list ? sumMealKcal(list) : null;
+            let sumP = list ? sumMealProtein(list) : null;
+            if (dt) {
+              if (workout) {
+                if (sumK == null && dt.workout_day_kcal != null) sumK = Number(dt.workout_day_kcal);
+                if (sumP == null && dt.workout_day_protein_g != null) sumP = Number(dt.workout_day_protein_g);
+              } else {
+                if (sumK == null && dt.rest_day_kcal != null) sumK = Number(dt.rest_day_kcal);
+                if (sumP == null && dt.rest_day_protein_g != null) sumP = Number(dt.rest_day_protein_g);
+              }
+            }
+            if (Number.isFinite(targetK) && sumK != null && !Number.isNaN(sumK) && kBar && pBar && macroSum) {
+              macroCard.hidden = false;
+              const pctK = Math.min(130, Math.round((sumK / targetK) * 100));
+              const pctP =
+                Number.isFinite(targetP) && sumP != null && !Number.isNaN(sumP)
+                  ? Math.min(130, Math.round((sumP / targetP) * 100))
+                  : 0;
+              kBar.style.width = `${Math.min(100, pctK)}%`;
+              pBar.style.width = `${Math.min(100, pctP)}%`;
+              macroSum.textContent = `${workout ? "Workout" : "Rest"} day: about ${fmtRoundNum(sumK)} / ${fmtRoundNum(targetK)} kcal and ${sumP != null ? Math.round(sumP) : "—"} / ${Number.isFinite(targetP) ? Math.round(targetP) : "—"} g protein (from plan).`;
+            } else if (macroCard) {
+              macroCard.hidden = true;
+            }
+          }
+
+          const remStack = $("#home-reminders-stack");
+          if (remStack) {
+            remStack.textContent = "";
+            const wday = new Date().getDay();
+            const pg = plan.prep_guide;
+            if (wday === 0 && pg && (pg.sunday_steps || []).length) {
+              remStack.hidden = false;
+              const card = document.createElement("div");
+              card.className = "home-reminder-card";
+              card.textContent = "Sunday prep is in your plan — batch steps live under More → Prep.";
+              const b = document.createElement("button");
+              b.type = "button";
+              b.className = "btn-secondary-full";
+              b.setAttribute("data-go-tab", "prep");
+              b.textContent = "Open prep";
+              card.appendChild(b);
+              remStack.appendChild(card);
+            }
+            const wci = plan.weekly_check_in;
+            if (wci && wday === 1) {
+              remStack.hidden = false;
+              const card = document.createElement("div");
+              card.className = "home-reminder-card";
+              card.textContent = "Weekly check-in: note energy, adherence, and weight trend on the Progress tab.";
+              const b = document.createElement("button");
+              b.type = "button";
+              b.className = "btn-secondary-full";
+              b.setAttribute("data-go-tab", "progress");
+              b.textContent = "Open progress";
+              card.appendChild(b);
+              remStack.appendChild(card);
+            }
+            if (!remStack.children.length) remStack.hidden = true;
+          }
+
+          const hero = $("#today-hero-card");
+          const heroTitle = $("#today-primary-title");
+          const heroMeta = $("#today-primary-meta");
+          const heroKick = $("#today-primary-kicker");
+          const heroBtn = $("#today-hero-action");
+          if (hero && heroTitle && heroMeta && meals && meals.length) {
+            hero.hidden = false;
+            if (heroKick) heroKick.textContent = "Up next";
+            const pick = nextMealPick(plan, meals, tl.wakeM);
+            const m = pick && pick.meal ? pick.meal : meals[0];
+            heroTitle.textContent = m.name || "Next meal";
+            const bits = [];
+            if (pick && pick.timeStr) bits.push(pick.timeStr);
+            else if (m.time) bits.push(m.time);
+            if (m.kcal != null) bits.push(`${fmtRoundNum(m.kcal) ?? m.kcal} kcal`);
+            heroMeta.textContent = bits.join(" · ");
+            if (heroBtn) {
+              heroBtn.hidden = false;
+              heroBtn.textContent = "Open meals";
+            }
+          } else if (hero) {
+            hero.hidden = true;
+            if (heroBtn) heroBtn.hidden = true;
+          }
 
           const wl = plan.water_target_litres;
           $("#home-water").textContent =
@@ -4962,6 +6251,20 @@ The grocery object must always include a "store_split" field.
             const k = Number(meals[i].kcal);
             if (!Number.isNaN(k)) {
               t += k;
+              any = true;
+            }
+          }
+          return any ? t : null;
+        }
+
+        function sumMealProtein(meals) {
+          if (!meals || !meals.length) return null;
+          let t = 0;
+          let any = false;
+          for (let i = 0; i < meals.length; i++) {
+            const p = Number(meals[i].protein_g);
+            if (!Number.isNaN(p)) {
+              t += p;
               any = true;
             }
           }
@@ -5209,7 +6512,7 @@ The grocery object must always include a "store_split" field.
             p.textContent = workout ? "No workout-day meals in this plan section." : "No rest-day meals in this plan section.";
             listMount.appendChild(p);
           } else {
-            mealList.forEach((m) => {
+            mealList.forEach((m, mi) => {
               const card = document.createElement("article");
               card.className = "meal-card";
               const top = document.createElement("div");
@@ -5266,8 +6569,63 @@ The grocery object must always include a "store_split" field.
                 });
                 card.appendChild(tags);
               }
+              const swaps = flattenMealSwaps(m);
+              if (swaps.length) {
+                const det = document.createElement("details");
+                det.className = "meal-swaps-block";
+                const sum = document.createElement("summary");
+                sum.textContent = "Swaps and alternatives";
+                det.appendChild(sum);
+                swaps.forEach((sw) => {
+                  const row = document.createElement("div");
+                  row.className = "meal-swap-row";
+                  const lab = document.createElement("span");
+                  lab.className = "meal-swap-label";
+                  lab.textContent = sw.label + ":";
+                  row.appendChild(lab);
+                  row.appendChild(document.createTextNode(" " + sw.text));
+                  det.appendChild(row);
+                });
+                card.appendChild(det);
+              }
+              const actions = document.createElement("div");
+              actions.className = "meal-card-actions";
+              const cookBtn = document.createElement("button");
+              cookBtn.type = "button";
+              cookBtn.className = "btn-meal-cook";
+              cookBtn.textContent = "Cook mode";
+              cookBtn.dataset.cookOpen = "1";
+              cookBtn.dataset.cookPhase = String(mealsUiState.phaseIndex);
+              cookBtn.dataset.cookDay = workout ? "workout" : "rest";
+              cookBtn.dataset.cookMeal = String(mi);
+              actions.appendChild(cookBtn);
+              card.appendChild(actions);
               listMount.appendChild(card);
             });
+            const emerg =
+              (workout && mp.emergency_workout_meals) ||
+              (!workout && mp.emergency_rest_meals) ||
+              mp.emergency_meals ||
+              mp.bad_day_meals;
+            if (Array.isArray(emerg) && emerg.length) {
+              const box = document.createElement("div");
+              box.className = "macro-repair-card";
+              const eh = document.createElement("h3");
+              eh.textContent = "Backup / busy-day options";
+              box.appendChild(eh);
+              emerg.forEach((em) => {
+                const p = document.createElement("p");
+                p.className = "meal-swap-row";
+                p.style.marginTop = "8px";
+                if (typeof em === "string") {
+                  p.textContent = em;
+                } else if (em && typeof em === "object") {
+                  p.textContent = [em.name, em.description || em.detail].filter(Boolean).join(" — ");
+                }
+                box.appendChild(p);
+              });
+              listMount.appendChild(box);
+            }
           }
 
           sumMount.textContent = "";
@@ -5309,6 +6667,47 @@ The grocery object must always include a "store_split" field.
           rowP.appendChild(pVal);
           summary.appendChild(rowP);
           sumMount.appendChild(summary);
+
+          const targetK = workout
+            ? Number(phase.kcal_workout_day != null ? phase.kcal_workout_day : phase.kcal_daily)
+            : Number(phase.kcal_rest_day != null ? phase.kcal_rest_day : phase.kcal_daily);
+          const targetP = Number(phase.protein_g);
+          const sumKNum = totalK != null ? Number(totalK) : sumMealKcal(mealList);
+          const sumPNum = totalP != null ? Number(totalP) : sumMealProtein(mealList);
+          if (Number.isFinite(targetK) && sumKNum != null && !Number.isNaN(sumKNum)) {
+            const kGap = targetK - sumKNum;
+            const pGap = Number.isFinite(targetP) && sumPNum != null && !Number.isNaN(sumPNum) ? targetP - sumPNum : 0;
+            if (kGap > 100 || pGap > 12) {
+              const repair = document.createElement("div");
+              repair.className = "macro-repair-card";
+              const rh = document.createElement("h3");
+              rh.textContent = "Suggested add-ons";
+              repair.appendChild(rh);
+              const intro = document.createElement("p");
+              intro.className = "macro-repair-intro";
+              intro.textContent =
+                kGap > 100 && pGap > 12
+                  ? `Rough gap vs this phase: about +${Math.round(kGap)} kcal and +${Math.round(pGap)} g protein (estimates).`
+                  : kGap > 100
+                    ? `Rough calorie gap vs this phase: about +${Math.round(kGap)} kcal (estimate).`
+                    : `Rough protein gap vs this phase: about +${Math.round(pGap)} g (estimate).`;
+              repair.appendChild(intro);
+              const ul = document.createElement("ul");
+              ul.className = "macro-repair-list";
+              [
+                "Add ~1 scoop whey in water or milk (~100–140 kcal, ~20–25g protein).",
+                "Add ~100g cooked rice or a medium banana.",
+                "Add ~150g Greek yogurt (extra protein).",
+                "Add a small handful of nuts if you mainly need calories.",
+              ].forEach((line) => {
+                const li = document.createElement("li");
+                li.textContent = line;
+                ul.appendChild(li);
+              });
+              repair.appendChild(ul);
+              sumMount.appendChild(repair);
+            }
+          }
         }
 
         function maybeTryVibrate() {
@@ -5473,6 +6872,22 @@ The grocery object must always include a "store_split" field.
             });
             mount.appendChild(box);
           }
+
+          const safe = document.createElement("div");
+          safe.className = "prep-safety-note card";
+          safe.style.marginTop = "14px";
+          const shn = document.createElement("h3");
+          shn.className = "home-card-title";
+          shn.textContent = "Food safety";
+          safe.appendChild(shn);
+          const sp = document.createElement("p");
+          sp.style.color = "var(--lbl2)";
+          sp.style.fontSize = "14px";
+          sp.style.lineHeight = "1.45";
+          sp.textContent =
+            "Cool cooked food quickly, store in clean containers, and reheat until steaming hot throughout. Follow local guidance for safe internal temperatures (e.g. poultry). When in doubt, throw it out.";
+          safe.appendChild(sp);
+          mount.appendChild(safe);
         }
 
         function renderGroceryStoreSplitIntoMount(g, mount) {
@@ -5703,6 +7118,11 @@ The grocery object must always include a "store_split" field.
             tip.appendChild(document.createTextNode(g.store_tip));
             tipMount.appendChild(tip);
           }
+          const priceNote = document.createElement("div");
+          priceNote.className = "grocery-price-note";
+          priceNote.textContent =
+            "Prices in plans are estimates only — check current flyers and in-store tags before you shop.";
+          tipMount.appendChild(priceNote);
         }
 
         function safeSuppHexColor(c) {
@@ -5769,7 +7189,7 @@ The grocery object must always include a "store_split" field.
               if (slot.note) {
                 const note = document.createElement("div");
                 note.className = "supps-slot-note";
-                note.textContent = slot.note;
+                note.textContent = softenWellnessCopy(slot.note);
                 row.appendChild(note);
               }
               card.appendChild(row);
@@ -5832,7 +7252,7 @@ The grocery object must always include a "store_split" field.
               if (item.why) {
                 const p = document.createElement("p");
                 p.className = "supp-why";
-                p.textContent = item.why;
+                p.textContent = softenWellnessCopy(item.why);
                 body.appendChild(p);
               }
               if (item.brand_recommendation) {
@@ -5900,7 +7320,7 @@ The grocery object must always include a "store_split" field.
               if (pw.why) {
                 const p = document.createElement("p");
                 p.className = "powder-why";
-                p.textContent = pw.why;
+                p.textContent = softenWellnessCopy(pw.why);
                 card.appendChild(p);
               }
               grid.appendChild(card);
@@ -5925,7 +7345,7 @@ The grocery object must always include a "store_split" field.
               if (sk.reason) {
                 const r = document.createElement("p");
                 r.className = "skip-reason";
-                r.textContent = sk.reason;
+                r.textContent = softenWellnessCopy(sk.reason);
                 c.appendChild(r);
               }
               wrap.appendChild(c);
@@ -5936,6 +7356,342 @@ The grocery object must always include a "store_split" field.
           if (!sched.length && !stack.length && !powders.length && !skips.length) {
             mount.appendChild(emptyTabMsg("No supplement details were included in this plan."));
           }
+        }
+
+        function softenWellnessCopy(s) {
+          if (s == null) return "";
+          let t = String(s);
+          [
+            [/non-negotiable/gi, "a strong default"],
+            [/no excuse/gi, "optional to simplify"],
+            [/dramatically/gi, "possibly"],
+            [/directly reduces cortisol/gi, "may affect stress for some people (evidence is mixed)"],
+            [/fixes low energy/gi, "may help energy for some people"],
+            [/there is no excuse/gi, "pick the simplest option you can repeat"],
+          ].forEach(([a, b]) => {
+            t = t.replace(a, b);
+          });
+          return t;
+        }
+
+        function renderTrainingTab() {
+          const mount = $("#training-mount");
+          if (!mount) return;
+          mount.textContent = "";
+          const plan = window.healthPlan;
+          if (!plan) {
+            mount.appendChild(emptyTabMsg("No plan loaded."));
+            return;
+          }
+          const tr = plan.training || plan.training_program;
+          const split = tr && Array.isArray(tr.weekly_split) ? tr.weekly_split : [];
+          if (split.length) {
+            const timerCard = document.createElement("div");
+            timerCard.className = "training-timer-card";
+            const th = document.createElement("p");
+            th.style.margin = "0 0 8px";
+            th.style.fontSize = "14px";
+            th.style.color = "var(--lbl2)";
+            th.textContent = "Between sets — tap a duration for a local countdown.";
+            timerCard.appendChild(th);
+            const row = document.createElement("div");
+            row.className = "training-timer-row";
+            const disp = document.createElement("span");
+            disp.className = "cook-timer-display";
+            disp.id = "training-rest-display";
+            disp.textContent = "—";
+            row.appendChild(disp);
+            [60, 90, 120].forEach((sec) => {
+              const b = document.createElement("button");
+              b.type = "button";
+              b.textContent = `${sec}s`;
+              b.addEventListener("click", () => {
+                if (trainingRestInterval) clearInterval(trainingRestInterval);
+                let left = sec;
+                const tick = () => {
+                  disp.textContent = `${left}s`;
+                  if (left <= 0) {
+                    clearInterval(trainingRestInterval);
+                    trainingRestInterval = null;
+                    disp.textContent = "Go";
+                    maybeTryVibrate();
+                    return;
+                  }
+                  left -= 1;
+                };
+                tick();
+                trainingRestInterval = setInterval(tick, 1000);
+              });
+              row.appendChild(b);
+            });
+            const stop = document.createElement("button");
+            stop.type = "button";
+            stop.textContent = "Stop";
+            stop.addEventListener("click", () => {
+              if (trainingRestInterval) clearInterval(trainingRestInterval);
+              trainingRestInterval = null;
+              disp.textContent = "—";
+            });
+            row.appendChild(stop);
+            timerCard.appendChild(row);
+            mount.appendChild(timerCard);
+            if (tr.deload_rule) {
+              const d = document.createElement("p");
+              d.className = "training-deload";
+              d.textContent = String(tr.deload_rule);
+              mount.appendChild(d);
+            }
+            split.forEach((day) => {
+              const sec = document.createElement("section");
+              sec.className = "training-day-card";
+              const h = document.createElement("h3");
+              h.textContent = `${day.name || "Workout"}${day.day != null ? " · Day " + day.day : ""}`;
+              sec.appendChild(h);
+              if (day.warmup && day.warmup.length) {
+                const w = document.createElement("p");
+                w.className = "training-warmup";
+                w.textContent = "Warm-up: " + day.warmup.join(" · ");
+                sec.appendChild(w);
+              }
+              (day.exercises || []).forEach((ex) => {
+                const art = document.createElement("article");
+                art.className = "training-ex-card";
+                const nm = document.createElement("h4");
+                nm.textContent = ex.name || "Exercise";
+                art.appendChild(nm);
+                const meta = document.createElement("div");
+                meta.className = "training-ex-meta";
+                meta.textContent = [ex.sets != null ? `${ex.sets} sets` : "", ex.reps ? String(ex.reps) + " reps" : "", ex.rest_seconds != null ? `${ex.rest_seconds}s rest` : ""]
+                  .filter(Boolean)
+                  .join(" · ");
+                art.appendChild(meta);
+                if (ex.progression) {
+                  const p = document.createElement("p");
+                  p.className = "training-progression";
+                  p.textContent = String(ex.progression);
+                  art.appendChild(p);
+                }
+                if (ex.substitutions && ex.substitutions.length) {
+                  const p = document.createElement("p");
+                  p.className = "training-subs";
+                  p.textContent = "Swaps: " + ex.substitutions.join(", ");
+                  art.appendChild(p);
+                }
+                if (ex.form_cues && ex.form_cues.length) {
+                  const ul = document.createElement("ul");
+                  ul.className = "training-cues";
+                  ex.form_cues.forEach((c) => {
+                    const li = document.createElement("li");
+                    li.textContent = c;
+                    ul.appendChild(li);
+                  });
+                  art.appendChild(ul);
+                }
+                sec.appendChild(art);
+              });
+              mount.appendChild(sec);
+            });
+          } else {
+            const cw = currentPlanWeek(plan);
+            const ph = phaseForWeek(plan, cw);
+            const p = document.createElement("p");
+            p.className = "empty-tab-msg";
+            p.textContent = ph && ph.training_note ? String(ph.training_note) : "No structured training block was included in this JSON.";
+            mount.appendChild(p);
+            const hint = document.createElement("p");
+            hint.className = "training-hint";
+            hint.textContent =
+              "Regenerate the plan with a training.weekly_split array (see samples/minimal-plan-v2.json in the repo for a minimal example).";
+            mount.appendChild(hint);
+          }
+        }
+
+        function loadProgressData() {
+          try {
+            const raw = localStorage.getItem(LS_PROGRESS);
+            if (!raw) return { weights: [], waist: [], checkins: [] };
+            const o = JSON.parse(raw);
+            return {
+              weights: Array.isArray(o.weights) ? o.weights : [],
+              waist: Array.isArray(o.waist) ? o.waist : [],
+              checkins: Array.isArray(o.checkins) ? o.checkins : [],
+            };
+          } catch (_) {
+            return { weights: [], waist: [], checkins: [] };
+          }
+        }
+
+        function saveProgressData(data) {
+          try {
+            localStorage.setItem(LS_PROGRESS, JSON.stringify(data));
+          } catch (_) {}
+        }
+
+        function computeProgressInsights(plan, data) {
+          const lines = [];
+          const wts = [...(data.weights || [])].filter((x) => x && x.date && Number.isFinite(Number(x.kg)));
+          wts.sort((a, b) => String(b.date).localeCompare(String(a.date)));
+          if (wts.length >= 2) {
+            const last7 = wts.filter((x) => {
+              const d0 = new Date(String(x.date) + "T12:00:00");
+              return !Number.isNaN(d0.getTime()) && (Date.now() - d0.getTime()) / 86400000 <= 8;
+            });
+            if (last7.length >= 2) {
+              const avg = last7.reduce((s, x) => s + Number(x.kg), 0) / last7.length;
+              lines.push(`Rough 7-day average (logged days only): ${avg.toFixed(1)} kg.`);
+            }
+            const newest = Number(wts[0].kg);
+            const older = Number(wts[Math.min(6, wts.length - 1)].kg);
+            if (Number.isFinite(newest) && Number.isFinite(older) && older - newest > 1.2) {
+              lines.push(
+                "Recent entries show a fast drop — if that was not intended or you feel unwell, consider pausing aggressive targets and speaking with a clinician."
+              );
+            }
+          }
+          const tw = plan && plan.user && Number(plan.user.target_weight_kg);
+          if (Number.isFinite(tw) && wts[0] && Number.isFinite(Number(wts[0].kg)) && Number(wts[0].kg) <= tw + 0.3) {
+            lines.push("Latest weight is at or below your stated target in the plan — adjust goals in a regenerated plan if needed.");
+          }
+          const waist = [...(data.waist || [])].sort((a, b) => String(b.date).localeCompare(String(a.date)));
+          if (waist.length >= 2) {
+            const a = Number(waist[0].cm);
+            const b = Number(waist[Math.min(6, waist.length - 1)].cm);
+            if (Number.isFinite(a) && Number.isFinite(b) && b - a >= 1.5) {
+              lines.push("Waist trending down on recent logs — useful alongside weight for recomposition (informal self-tracking only).");
+            }
+          }
+          return lines;
+        }
+
+        function renderProgressTab() {
+          const list = $("#progress-weight-list");
+          const wlist = $("#progress-waist-list");
+          const ins = $("#progress-insights");
+          const insUl = $("#progress-insights-list");
+          if (!list || !wlist) return;
+          list.textContent = "";
+          wlist.textContent = "";
+          if (!window.healthPlan) {
+            const li = document.createElement("li");
+            li.textContent = "No plan loaded.";
+            list.appendChild(li);
+            if (ins) ins.hidden = true;
+            return;
+          }
+          const plan = window.healthPlan;
+          const data = loadProgressData();
+          const recent = [...data.weights].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 14);
+          if (!recent.length) {
+            const li = document.createElement("li");
+            li.textContent = "No weights logged yet.";
+            list.appendChild(li);
+          } else {
+            recent.forEach((e) => {
+              const li = document.createElement("li");
+              li.textContent = `${e.date}: ${e.kg} kg`;
+              list.appendChild(li);
+            });
+          }
+          const wrecent = [...data.waist].sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 14);
+          if (!wrecent.length) {
+            const li = document.createElement("li");
+            li.textContent = "No waist entries yet.";
+            wlist.appendChild(li);
+          } else {
+            wrecent.forEach((e) => {
+              const li = document.createElement("li");
+              li.textContent = `${e.date}: ${e.cm} cm`;
+              wlist.appendChild(li);
+            });
+          }
+          const lines = computeProgressInsights(plan, data);
+          if (ins && insUl) {
+            if (lines.length) {
+              ins.hidden = false;
+              insUl.textContent = "";
+              lines.forEach((t) => {
+                const li = document.createElement("li");
+                li.textContent = t;
+                insUl.appendChild(li);
+              });
+            } else {
+              ins.hidden = true;
+              insUl.textContent = "";
+            }
+          }
+        }
+
+        function renderMoreHub() {
+          const mount = $("#more-hub-mount");
+          if (!mount) return;
+          mount.textContent = "";
+          const h = document.createElement("h2");
+          h.className = "app-section-title";
+          h.textContent = "More";
+          mount.appendChild(h);
+          const p = document.createElement("p");
+          p.className = "more-hub-lead";
+          p.textContent = "Phases, prep, grocery, supplements, and data tools.";
+          mount.appendChild(p);
+          const grid = document.createElement("div");
+          grid.className = "more-hub-grid";
+          [
+            ["phases", "Phases", "Program structure and macros"],
+            ["prep", "Prep", "Batch cook checklist"],
+            ["grocery", "Grocery", "Shopping list"],
+            ["supps", "Supplements", "Stack and timing"],
+          ].forEach(([id, title, sub]) => {
+            const b = document.createElement("button");
+            b.type = "button";
+            b.className = "more-hub-card";
+            b.setAttribute("data-go-tab", id);
+            const t1 = document.createElement("span");
+            t1.className = "more-hub-card-title";
+            t1.textContent = title;
+            const t2 = document.createElement("span");
+            t2.className = "more-hub-card-sub";
+            t2.textContent = sub;
+            b.appendChild(t1);
+            b.appendChild(t2);
+            grid.appendChild(b);
+          });
+          mount.appendChild(grid);
+          const themeCard = document.createElement("div");
+          themeCard.className = "more-hub-settings card";
+          const th = document.createElement("h3");
+          th.className = "home-card-title";
+          th.textContent = "Appearance";
+          themeCard.appendChild(th);
+          const row = document.createElement("div");
+          row.className = "theme-toggle-row";
+          const lab = document.createElement("label");
+          lab.setAttribute("for", "chk-theme-light");
+          lab.textContent = "Light mode";
+          const chk = document.createElement("input");
+          chk.type = "checkbox";
+          chk.id = "chk-theme-light";
+          try {
+            chk.checked = localStorage.getItem(LS_THEME) === "light";
+          } catch (_) {
+            chk.checked = false;
+          }
+          row.appendChild(lab);
+          row.appendChild(chk);
+          themeCard.appendChild(row);
+          mount.appendChild(themeCard);
+          const set = document.createElement("div");
+          set.className = "more-hub-settings card";
+          const sh = document.createElement("h3");
+          sh.className = "home-card-title";
+          sh.textContent = "Data";
+          set.appendChild(sh);
+          const ex = document.createElement("button");
+          ex.type = "button";
+          ex.className = "btn-secondary-full";
+          ex.id = "btn-export-progress-json";
+          ex.textContent = "Export progress JSON";
+          set.appendChild(ex);
+          mount.appendChild(set);
         }
 
         function wirePrepInteractions() {
@@ -6058,11 +7814,149 @@ The grocery object must always include a "store_split" field.
           }
         }
 
+        function applyThemeFromStorage() {
+          let mode = "dark";
+          try {
+            mode = localStorage.getItem(LS_THEME) || "dark";
+          } catch (_) {}
+          document.documentElement.setAttribute("data-theme", mode === "light" ? "light" : "dark");
+        }
+
+        function setTheme(mode) {
+          const m = mode === "light" ? "light" : "dark";
+          try {
+            localStorage.setItem(LS_THEME, m);
+          } catch (_) {}
+          applyThemeFromStorage();
+        }
+
+        function resolveMealForCook(phaseIndex, day, mealIndex) {
+          const plan = window.healthPlan;
+          if (!plan) return null;
+          const phases = plan.phases || [];
+          const ph = phases[phaseIndex];
+          if (!ph) return null;
+          const mp = getMealPlanSliceForPhase(plan, ph) || plan.meal_plan;
+          const list = day === "rest" ? mp && mp.rest_day : mp && mp.workout_day;
+          if (!list || !list[mealIndex]) return null;
+          return { meal: list[mealIndex] };
+        }
+
+        function closeCookMode() {
+          const root = $("#cook-mode-root");
+          if (root) root.hidden = true;
+          document.body.style.overflow = "";
+          if (cookCountdownInterval) {
+            clearInterval(cookCountdownInterval);
+            cookCountdownInterval = null;
+          }
+          const disp = $("#cook-timer-display");
+          if (disp) disp.textContent = "—";
+        }
+
+        function startCookCountdown(seconds) {
+          if (cookCountdownInterval) clearInterval(cookCountdownInterval);
+          let left = seconds;
+          const disp = $("#cook-timer-display");
+          const tick = () => {
+            if (disp) disp.textContent = `${left}s`;
+            if (left <= 0) {
+              clearInterval(cookCountdownInterval);
+              cookCountdownInterval = null;
+              if (disp) disp.textContent = "Done";
+              maybeTryVibrate();
+              return;
+            }
+            left -= 1;
+          };
+          tick();
+          cookCountdownInterval = setInterval(tick, 1000);
+        }
+
+        function openCookMode(phaseIndex, day, mealIndex) {
+          const r = resolveMealForCook(phaseIndex, day, mealIndex);
+          const root = $("#cook-mode-root");
+          const titleEl = $("#cook-mode-title");
+          const ingHost = $("#cook-mode-ing-list");
+          const stepHost = $("#cook-mode-steps");
+          if (!r || !r.meal || !root || !titleEl || !ingHost || !stepHost) return;
+          titleEl.textContent = r.meal.name || "Meal";
+          ingHost.textContent = "";
+          const meal = r.meal;
+          if (meal.ingredients && meal.ingredients.length) {
+            meal.ingredients.forEach((ing) => {
+              const li = document.createElement("li");
+              const cb = document.createElement("input");
+              cb.type = "checkbox";
+              cb.setAttribute("aria-label", ing.name || "Ingredient");
+              const span = document.createElement("span");
+              const grams = ing.grams != null ? `${fmtRoundNum(ing.grams) ?? ing.grams}g ` : "";
+              span.textContent = `${grams}${ing.name || ""}`;
+              li.appendChild(cb);
+              li.appendChild(span);
+              ingHost.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.textContent = "No ingredient list in JSON — follow the description.";
+            ingHost.appendChild(li);
+          }
+          stepHost.textContent = "";
+          const desc = meal.description ? String(meal.description) : "";
+          const chunks = desc
+            .split(/\n+|\.(?:\s+|$)/)
+            .map((s) => s.trim())
+            .filter((s) => s.length > 3);
+          const ol = document.createElement("ol");
+          if (chunks.length) {
+            chunks.slice(0, 14).forEach((c) => {
+              const li = document.createElement("li");
+              li.textContent = c.endsWith(".") ? c : `${c}.`;
+              ol.appendChild(li);
+            });
+          } else {
+            const li = document.createElement("li");
+            li.textContent =
+              desc || "Follow your meal card. Add numbered steps to JSON if you want a full checklist here.";
+            ol.appendChild(li);
+          }
+          stepHost.appendChild(ol);
+          root.hidden = false;
+          document.body.style.overflow = "hidden";
+          const disp = $("#cook-timer-display");
+          if (disp) disp.textContent = "—";
+        }
+
+        function wireCookModeOnce() {
+          const root = $("#cook-mode-root");
+          if (!root || root.dataset.wiredCook === "1") return;
+          root.dataset.wiredCook = "1";
+          root.addEventListener("click", (e) => {
+            if (e.target === root) closeCookMode();
+          });
+          const closeBtn = $("#btn-cook-close");
+          if (closeBtn) closeBtn.addEventListener("click", closeCookMode);
+          const t5 = $("#btn-cook-t5");
+          const t10 = $("#btn-cook-t10");
+          const t15 = $("#btn-cook-t15");
+          if (t5) t5.addEventListener("click", () => startCookCountdown(300));
+          if (t10) t10.addEventListener("click", () => startCookCountdown(600));
+          if (t15) t15.addEventListener("click", () => startCookCountdown(900));
+        }
+
         function wireMealsInteractions() {
           const panel = $("#panel-meals");
           if (!panel || panel.dataset.wiredMeals === "1") return;
           panel.dataset.wiredMeals = "1";
           panel.addEventListener("click", (e) => {
+            const cookBtn = e.target.closest("[data-cook-open]");
+            if (cookBtn) {
+              const pi = Number(cookBtn.dataset.cookPhase);
+              const day = cookBtn.dataset.cookDay === "rest" ? "rest" : "workout";
+              const mi = Number(cookBtn.dataset.cookMeal);
+              if (!Number.isNaN(pi) && !Number.isNaN(mi)) openCookMode(pi, day, mi);
+              return;
+            }
             const pill = e.target.closest("[data-phase-pill]");
             if (pill) {
               const idx = Number(pill.dataset.phasePill);
@@ -6080,56 +7974,215 @@ The grocery object must always include a "store_split" field.
           });
         }
 
+        function readNavFromStorage() {
+          let primary = "today";
+          let leaf = null;
+          try {
+            primary = localStorage.getItem(LS_ACTIVE_TAB) || "today";
+            leaf = localStorage.getItem(LS_ACTIVE_LEAF);
+          } catch (_) {}
+          if (primary === "home") primary = "today";
+          if (MORE_LEAF_TABS.includes(primary)) {
+            leaf = primary;
+            primary = "more";
+          }
+          if (!TAB_PRIMARY.includes(primary)) primary = "today";
+          if (primary !== "more") leaf = null;
+          else if (leaf && !MORE_LEAF_TABS.includes(leaf)) leaf = null;
+          return { primary, leaf };
+        }
+
+        function persistNavToStorage() {
+          try {
+            localStorage.setItem(LS_ACTIVE_TAB, appPrimaryTab);
+            if (appPrimaryTab === "more" && appMoreLeaf) localStorage.setItem(LS_ACTIVE_LEAF, appMoreLeaf);
+            else localStorage.removeItem(LS_ACTIVE_LEAF);
+          } catch (_) {}
+        }
+
+        function updateMoreLeafNav() {
+          const bar = $("#more-leaf-nav");
+          if (!bar) return;
+          const on = appPrimaryTab === "more" && !!appMoreLeaf;
+          bar.hidden = !on;
+        }
+
         function switchTab(tabId, persist) {
-          TAB_IDS.forEach((id) => {
-            const panel = $("#panel-" + id);
+          const tid = String(tabId || "");
+          if (MORE_LEAF_TABS.includes(tid)) {
+            appPrimaryTab = "more";
+            appMoreLeaf = tid;
+          } else if (TAB_PRIMARY.includes(tid)) {
+            appPrimaryTab = tid;
+            appMoreLeaf = null;
+          } else {
+            return;
+          }
+
+          const showPanel = (pid, on) => {
+            const panel = $("#panel-" + pid);
+            if (!panel) return;
+            panel.classList.toggle("is-active", on);
+            panel.setAttribute("aria-hidden", on ? "false" : "true");
+            if (on) panel.removeAttribute("inert");
+            else panel.setAttribute("inert", "");
+          };
+
+          ALL_PANEL_IDS.forEach((pid) => showPanel(pid, false));
+
+          if (appPrimaryTab === "today") showPanel("today", true);
+          else if (appPrimaryTab === "meals") showPanel("meals", true);
+          else if (appPrimaryTab === "training") showPanel("training", true);
+          else if (appPrimaryTab === "progress") showPanel("progress", true);
+          else if (appPrimaryTab === "more") {
+            if (appMoreLeaf) showPanel(appMoreLeaf, true);
+            else showPanel("more", true);
+          }
+
+          TAB_PRIMARY.forEach((id) => {
             const btn = $(`#screen-app .tab-bar button[data-tab="${id}"]`);
-            const on = id === tabId;
-            if (panel) {
-              panel.classList.toggle("is-active", on);
-              panel.setAttribute("aria-hidden", on ? "false" : "true");
-              if (on) panel.removeAttribute("inert");
-              else panel.setAttribute("inert", "");
-            }
+            const active = id === appPrimaryTab;
             if (btn) {
-              btn.classList.toggle("on", on);
-              btn.setAttribute("aria-current", on ? "page" : "false");
+              btn.classList.toggle("on", active);
+              btn.setAttribute("aria-current", active ? "page" : "false");
             }
           });
+
           const appScroll = $("#screen-app .screen-scroll");
           if (appScroll) appScroll.scrollTop = 0;
-          if (tabId === "home") renderHomeTab();
-          if (tabId === "phases") renderPhasesTab();
-          if (tabId === "meals") renderMealsTab();
-          if (tabId === "prep") renderPrepTab();
-          if (tabId === "grocery") renderGroceryTab();
-          if (tabId === "supps") renderSuppsTab();
-          if (persist !== false) {
-            try {
-              localStorage.setItem(LS_ACTIVE_TAB, tabId);
-            } catch (_) {}
+
+          if (appPrimaryTab === "today") renderHomeTab();
+          else if (appPrimaryTab === "meals") renderMealsTab();
+          else if (appPrimaryTab === "training") renderTrainingTab();
+          else if (appPrimaryTab === "progress") renderProgressTab();
+          else if (appPrimaryTab === "more") {
+            if (appMoreLeaf === "phases") renderPhasesTab();
+            else if (appMoreLeaf === "prep") renderPrepTab();
+            else if (appMoreLeaf === "grocery") renderGroceryTab();
+            else if (appMoreLeaf === "supps") renderSuppsTab();
+            else renderMoreHub();
           }
+
+          updateMoreLeafNav();
+
+          if (persist !== false) persistNavToStorage();
         }
 
         function initAppView() {
-          let tab = "home";
-          try {
-            tab = localStorage.getItem(LS_ACTIVE_TAB) || "home";
-          } catch (_) {}
-          if (!TAB_IDS.includes(tab)) tab = "home";
-          switchTab(tab, false);
+          const { primary, leaf } = readNavFromStorage();
+          appPrimaryTab = primary;
+          appMoreLeaf = leaf;
+          if (appPrimaryTab === "more" && appMoreLeaf) {
+            switchTab(appMoreLeaf, false);
+          } else {
+            appMoreLeaf = null;
+            switchTab(appPrimaryTab, false);
+          }
         }
 
         function wireAppChrome() {
+          wireCookModeOnce();
           wireMealsInteractions();
           wirePrepInteractions();
           wireGroceryInteractions();
           $$("#screen-app .tab-bar [data-tab]").forEach((btn) => {
             btn.addEventListener("click", () => switchTab(btn.getAttribute("data-tab")));
           });
-          $$("#panel-home [data-go-tab]").forEach((el) => {
+          $$("#panel-today [data-go-tab]").forEach((el) => {
             el.addEventListener("click", () => switchTab(el.getAttribute("data-go-tab")));
           });
+          const pm = $("#panel-more");
+          if (pm && !pm.dataset.delegatedHub) {
+            pm.dataset.delegatedHub = "1";
+            pm.addEventListener("change", (e) => {
+              const t = e.target;
+              if (t && t.id === "chk-theme-light") {
+                setTheme(t.checked ? "light" : "dark");
+              }
+            });
+            pm.addEventListener("click", (e) => {
+              const go = e.target.closest("[data-go-tab]");
+              if (go) switchTab(go.getAttribute("data-go-tab"));
+              if (e.target.closest("#btn-export-progress-json")) {
+                const raw = localStorage.getItem(LS_PROGRESS) || "{}";
+                try {
+                  const blob = new Blob([raw], { type: "application/json" });
+                  const a = document.createElement("a");
+                  const url = URL.createObjectURL(blob);
+                  a.href = url;
+                  a.download = "health-progress.json";
+                  a.rel = "noopener";
+                  document.body.appendChild(a);
+                  a.click();
+                  a.remove();
+                  URL.revokeObjectURL(url);
+                } catch (_) {
+                  announcePlanStatus("Could not export progress.");
+                }
+              }
+            });
+          }
+          const btnMoreBack = $("#btn-more-back");
+          if (btnMoreBack && !btnMoreBack.dataset.wired) {
+            btnMoreBack.dataset.wired = "1";
+            btnMoreBack.addEventListener("click", () => switchTab("more"));
+          }
+          const btnProg = $("#btn-progress-add-weight");
+          if (btnProg && !btnProg.dataset.wired) {
+            btnProg.dataset.wired = "1";
+            btnProg.addEventListener("click", () => {
+              const inp = $("#inp-progress-weight");
+              if (!inp) return;
+              const v = Number(inp.value);
+              if (!Number.isFinite(v) || v < 30 || v > 250) {
+                announcePlanStatus("Enter a realistic weight in kg.");
+                return;
+              }
+              const d = loadProgressData();
+              d.weights.push({ date: new Date().toISOString().slice(0, 10), kg: Math.round(v * 10) / 10 });
+              saveProgressData(d);
+              inp.value = "";
+              renderProgressTab();
+              announcePlanStatus("Weight entry saved.");
+            });
+          }
+          const btnWaist = $("#btn-progress-add-waist");
+          if (btnWaist && !btnWaist.dataset.wired) {
+            btnWaist.dataset.wired = "1";
+            btnWaist.addEventListener("click", () => {
+              const inp = $("#inp-progress-waist");
+              if (!inp) return;
+              const v = Number(inp.value);
+              if (!Number.isFinite(v) || v < 40 || v > 200) {
+                announcePlanStatus("Enter a realistic waist in cm.");
+                return;
+              }
+              const d = loadProgressData();
+              d.waist.push({ date: new Date().toISOString().slice(0, 10), cm: Math.round(v * 10) / 10 });
+              saveProgressData(d);
+              inp.value = "";
+              renderProgressTab();
+              announcePlanStatus("Waist entry saved.");
+            });
+          }
+          const btnChk = $("#btn-progress-save-checkin");
+          if (btnChk && !btnChk.dataset.wired) {
+            btnChk.dataset.wired = "1";
+            btnChk.addEventListener("click", () => {
+              const ta = $("#inp-progress-checkin");
+              const txt = ta && ta.value ? String(ta.value).trim() : "";
+              if (!txt) {
+                announcePlanStatus("Write a short note first.");
+                return;
+              }
+              const d = loadProgressData();
+              d.checkins.push({ date: new Date().toISOString().slice(0, 10), note: txt });
+              saveProgressData(d);
+              ta.value = "";
+              renderProgressTab();
+              announcePlanStatus("Check-in saved.");
+            });
+          }
           const menuBtn = $("#btn-app-menu");
           const menuDd = $("#app-menu-dropdown");
           const reup = $("#menu-reupload");
@@ -6327,6 +8380,10 @@ The grocery object must always include a "store_split" field.
           });
 
           $("#btn-open-claude").addEventListener("click", () => {
+            if (typeof navigator !== "undefined" && navigator.onLine === false) {
+              announcePlanStatus("You appear offline — open Claude when you are back online.");
+              return;
+            }
             window.open("https://claude.ai", "_blank", "noopener,noreferrer");
           });
 
@@ -6423,6 +8480,22 @@ The grocery object must always include a "store_split" field.
               reader.readAsText(file);
             };
             requestAnimationFrame(() => requestAnimationFrame(runRead));
+          });
+
+          $("#btn-apply-paste-json").addEventListener("click", () => {
+            const ta = $("#prompt-json-paste");
+            const txt = ta && ta.value ? String(ta.value) : "";
+            if (!String(txt).trim()) {
+              announcePlanStatus("Paste JSON in the box first.");
+              return;
+            }
+            $("#json-error-card").hidden = true;
+            $("#json-error-detail").textContent = "";
+            const result = ingestPlanFromJsonText(txt);
+            if (!result.ok) {
+              $("#json-error-detail").textContent = result.error || "Invalid plan.";
+              $("#json-error-card").hidden = false;
+            }
           });
         }
 
@@ -6581,6 +8654,20 @@ The grocery object must always include a "store_split" field.
             state.foodDislikes = e.target.value;
             saveState();
           });
+          const iall = $("#inp-allergies");
+          if (iall) {
+            iall.addEventListener("input", (e) => {
+              state.allergies = e.target.value;
+              saveState();
+            });
+          }
+          const cmw = $("#chk-med-warn");
+          if (cmw) {
+            cmw.addEventListener("change", () => {
+              state.medicationWarning = cmw.checked;
+              saveState();
+            });
+          }
           $$("#field-mpd [data-mpd]").forEach((b) =>
             b.addEventListener("click", () => {
               state.mealsPerDay = dataRead(b, "mpd");
@@ -6625,6 +8712,17 @@ The grocery object must always include a "store_split" field.
             state.city = e.target.value;
             saveState();
           });
+          const bindClock = (id, key) => {
+            const el = $(id);
+            if (el)
+              el.addEventListener("input", (e) => {
+                state[key] = e.target.value;
+                saveState();
+              });
+          };
+          bindClock("#inp-wake-clock", "wakeClock");
+          bindClock("#inp-sleep-clock", "sleepClock");
+          bindClock("#inp-train-clock", "trainClock");
           $$("[data-act].pick-card").forEach((b) =>
             b.addEventListener("click", () => {
               state.activityLevel = dataRead(b, "act");
@@ -6677,6 +8775,14 @@ The grocery object must always include a "store_split" field.
                 return;
               }
 
+              if (btn.id === "btn-skip-intake-json") {
+                try {
+                  sessionStorage.setItem(SS_SEEN_PROMPT, "1");
+                } catch (_) {}
+                setStage("prompt");
+                return;
+              }
+
               if (btn.id === "btn-intake-back") {
                 const s = getIntakeStep();
                 if (s > 0) setIntakeStep(s - 1);
@@ -6711,11 +8817,45 @@ The grocery object must always include a "store_split" field.
 
         registerServiceWorker();
         loadState();
+        applyThemeFromStorage();
         loadIntakeStep();
         wire();
         syncDomFromState();
         restoreStage();
       })();
     </script>
+    <div
+      id="cook-mode-root"
+      class="cook-mode-overlay"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cook-mode-title"
+    >
+      <div class="cook-mode-sheet" id="cook-mode-sheet" role="document">
+        <div class="cook-mode-head">
+          <h2 class="cook-mode-title" id="cook-mode-title">Meal</h2>
+          <button type="button" class="btn-cook-close" id="btn-cook-close" aria-label="Close cook mode">
+            ×
+          </button>
+        </div>
+        <h4>Ingredients</h4>
+        <ul class="cook-ing-list" id="cook-mode-ing-list"></ul>
+        <div class="cook-steps">
+          <h4>Steps</h4>
+          <div id="cook-mode-steps"></div>
+        </div>
+        <div class="cook-timer-row">
+          <span class="cook-timer-display" id="cook-timer-display">—</span>
+          <button type="button" id="btn-cook-t5">5 min</button>
+          <button type="button" id="btn-cook-t10">10 min</button>
+          <button type="button" id="btn-cook-t15">15 min</button>
+        </div>
+      </div>
+    </div>
+    <div id="sw-update-snack" hidden role="status" aria-live="polite">
+      <span>A new version is ready — refresh to load it.</span>
+      <button type="button" class="btn-snack-dismiss" id="btn-sw-refresh">Refresh</button>
+    </div>
   </body>
 </html>

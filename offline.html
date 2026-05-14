@@ -6,14 +6,8 @@
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#0a0f0d" />
+    <meta name="theme-color" content="#070B09" />
     <title>Offline — Health</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Outfit:wght@700;800&display=swap"
-      rel="stylesheet"
-    />
     <style>
       *,
       *::before,
@@ -29,45 +23,50 @@
         padding: 24px;
         padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
         padding-top: calc(24px + env(safe-area-inset-top, 0px));
-        font-family: "DM Sans", system-ui, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
         background:
-          radial-gradient(ellipse 120% 70% at 50% -18%, rgba(61, 219, 122, 0.14) 0%, transparent 55%),
+          radial-gradient(ellipse 120% 70% at 50% -18%, rgba(54, 216, 125, 0.14) 0%, transparent 55%),
           radial-gradient(ellipse 85% 55% at 100% 108%, rgba(42, 184, 98, 0.09) 0%, transparent 52%),
-          #0a0f0d;
-        color: #f2f7f4;
+          #070b09;
+        color: #f4f7f5;
         text-align: center;
       }
       .card {
-        max-width: 320px;
+        max-width: 340px;
         padding: 28px 22px;
         border-radius: 20px;
-        background: rgba(17, 26, 21, 0.88);
-        border: 1px solid rgba(61, 219, 122, 0.12);
+        background: rgba(17, 27, 22, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         box-shadow: 0 8px 36px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(22px);
-        -webkit-backdrop-filter: blur(22px);
       }
       h1 {
-        font-family: "Outfit", system-ui, sans-serif;
         font-size: 1.35rem;
         font-weight: 800;
         margin: 0 0 14px;
         letter-spacing: -0.02em;
-        color: #3ddb7a;
-        text-shadow: 0 0 28px rgba(61, 219, 122, 0.35);
+        color: #36d87d;
       }
       p {
         margin: 0;
         line-height: 1.55;
         font-size: 15px;
-        color: #8fa897;
+        color: #aab7af;
+      }
+      p.note {
+        margin-top: 14px;
+        font-size: 14px;
+        color: #728078;
       }
     </style>
   </head>
   <body>
     <div class="card">
       <h1>You are offline</h1>
-      <p>Health keeps your plan on this device. Open the app once while online so it caches — then your checklist and meals stay here.</p>
+      <p>
+        Health keeps your plan in this browser. Open the app once while online so it caches — then checklists, meals, and
+        progress notes stay available without a connection.
+      </p>
+      <p class="note">When you are back online, pull to refresh or reopen the tab to pick up the latest app shell.</p>
     </div>
   </body>
 </html>
