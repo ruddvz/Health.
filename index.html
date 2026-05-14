@@ -1,24 +1,24 @@
 <!DOCTYPE html>
+<!-- Health PWA — single-file app. Section map: HEAD (meta, CSP) → CSS tokens & components → HTML screens → JS (constants, storage, validation, render, init). See HEALTH_APP_EXECUTION_PLAN.md. -->
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'"
+    />
+    <meta
       name="viewport"
       content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
     />
-    <meta name="theme-color" content="#0a0f0d" />
+    <meta name="theme-color" content="#070B09" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <title>Health — Personalised Plan</title>
     <meta name="description" content="Build your personalised health plan with Claude." />
     <link rel="manifest" href="manifest.json" />
     <link rel="apple-touch-icon" href="assets/icon-192.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Outfit:wght@500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
+    <!-- CSS: design tokens, layout, intake, prompt, app shell, tabs, panels (no external fonts — local privacy). -->
     <style>
       :root {
         --bg-deep: #0a0f0d;
@@ -68,8 +68,8 @@
         --gradient-cta: linear-gradient(135deg, #3ddb7a 0%, #2ab862 100%);
 
         --glass-blur: blur(26px) saturate(165%);
-        --ff-display: "Outfit", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-        --ff-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+        --ff-display: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+        --ff-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
         --ff: var(--ff-body);
         --mono: "SF Mono", ui-monospace, "Fira Code", monospace;
         --sticky-h: 72px;
@@ -2656,7 +2656,62 @@
         }
       }
 
+      .privacy-local-card {
+        margin: 14px 0 6px;
+        padding: 16px 18px;
+        border-radius: var(--r-card);
+        background: var(--card);
+        border: 1px solid var(--sep2);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .privacy-local-note {
+        margin: 10px 0 0;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--lbl3);
+      }
+
+      .privacy-local-list {
+        margin: 8px 0 0;
+        padding-left: 1.15rem;
+        font-size: 14px;
+        color: var(--lbl2);
+        line-height: 1.5;
+      }
+
+      .privacy-local-list li {
+        margin-bottom: 6px;
+      }
+
+      .plan-warnings-card {
+        margin: 14px 0 6px;
+        padding: 14px 16px;
+        border-radius: var(--r-card);
+        background: var(--yellow-bg);
+        border: 1px solid rgba(232, 197, 71, 0.28);
+      }
+
+      .plan-warnings-list {
+        margin: 6px 0 0;
+        padding-left: 1.1rem;
+        font-size: 14px;
+        color: var(--lbl1);
+        line-height: 1.45;
+      }
+
+      .plan-warnings-list li {
+        margin-bottom: 6px;
+      }
+
+      .app-menu-item--danger {
+        color: #ffb4b4;
+      }
+
       @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto !important;
+        }
         .screen,
         .app-panel,
         .intake-progress-fill,
@@ -2687,6 +2742,7 @@
     </style>
   </head>
   <body>
+    <div id="plan-upload-announcer" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
     <div id="screen-root" data-stage="form">
       <!-- Hidden file input at root: must NOT use the hidden attribute — iOS/WebKit often ignores programmatic .click() on display:none file inputs. -->
       <input
@@ -3235,6 +3291,9 @@
             <button type="button" class="app-menu-item" role="menuitem" id="menu-edit-intake">Edit intake form</button>
             <button type="button" class="app-menu-item" role="menuitem" id="menu-export-plan">Export plan JSON</button>
             <button type="button" class="app-menu-item" role="menuitem" id="menu-reupload">Re-upload plan</button>
+            <button type="button" class="app-menu-item app-menu-item--danger" role="menuitem" id="menu-delete-local">
+              Delete all local data…
+            </button>
           </div>
         </header>
 
@@ -3243,6 +3302,24 @@
             <div class="home-hero">
               <h2 class="home-greeting" id="home-greeting">Good morning</h2>
               <p class="home-sub" id="home-subline"></p>
+            </div>
+
+            <div id="home-plan-warnings" class="plan-warnings-card" hidden role="region" aria-label="Plan consistency notes">
+              <h3 class="home-card-title">Plan checks</h3>
+              <ul id="home-plan-warnings-list" class="plan-warnings-list"></ul>
+            </div>
+
+            <div class="privacy-local-card" role="note">
+              <h3 class="home-card-title">Privacy &amp; safety</h3>
+              <ul class="privacy-local-list">
+                <li>Your plan JSON is stored only in this browser’s local storage. Clearing site data removes it.</li>
+                <li>No account, backend, analytics, or cloud sync is built into this app.</li>
+                <li>Fonts load from your device only — no Google Fonts or other third-party requests for typography.</li>
+              </ul>
+              <p class="privacy-local-note">
+                This app shows general wellness information, not medical advice. Check with a qualified professional before
+                making health changes, especially if you take medication, are pregnant, or have a medical condition.
+              </p>
             </div>
 
             <div id="home-photo-card" class="photo-reminder-card" hidden>
@@ -3379,6 +3456,7 @@
       </div>
     </div>
 
+    <!-- ========== JS: storage, validation, DOM renderers, intake/prompt/app flows, init ========== -->
     <script>
       (function () {
         const STORAGE_KEY = "health_form_session";
@@ -3635,6 +3713,7 @@ The grocery object must always include a "store_split" field.
         const LS_PREP_DONE = "health_prep_done";
         const LS_GROCERY_CHECKED = "health_grocery_checked";
         const PLAN_SCHEMA_VERSION = 1;
+        const MAX_PLAN_JSON_BYTES = 2 * 1024 * 1024;
         const LS_FLOW_ENGAGED = "health_flow_engaged";
         const SS_SEEN_PROMPT = "health_seen_prompt";
 
@@ -3831,6 +3910,29 @@ The grocery object must always include a "store_split" field.
           return Array.from((root || document).querySelectorAll(sel));
         }
 
+        function announcePlanStatus(message) {
+          const el = document.getElementById("plan-upload-announcer");
+          if (!el || message == null) return;
+          const m = String(message);
+          el.textContent = "";
+          setTimeout(() => {
+            el.textContent = m;
+          }, 30);
+        }
+
+        /**
+         * Escape for HTML string context. Untrusted plan fields should use `textContent`;
+         * use `escapeHtml` only if you must assign parsed strings to `innerHTML` (avoid when possible).
+         */
+        function escapeHtml(s) {
+          return String(s == null ? "" : s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+        }
+
         function setSegExclusive(container, attr, value) {
           if (!container) return;
           $$(`button[${attr}]`, container).forEach((b) => {
@@ -3840,7 +3942,9 @@ The grocery object must always include a "store_split" field.
 
         function renderChips(container, items, selected, onToggle, keyFn, labelFn) {
           if (!container) return;
-          container.innerHTML = "";
+          while (container.firstChild) {
+            container.removeChild(container.firstChild);
+          }
           items.forEach((item) => {
             const key = keyFn(item);
             const btn = document.createElement("button");
@@ -3923,6 +4027,37 @@ The grocery object must always include a "store_split" field.
           "Supplements",
           "Location & lifestyle",
         ];
+
+        function clearAllLocalHealthData() {
+          try {
+            const toRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+              const k = localStorage.key(i);
+              if (k && k.indexOf("health") === 0) toRemove.push(k);
+            }
+            toRemove.forEach((k) => localStorage.removeItem(k));
+          } catch (_) {}
+          try {
+            sessionStorage.removeItem(STORAGE_KEY);
+            sessionStorage.removeItem(INTAKE_STEP_KEY);
+            sessionStorage.removeItem("health_last_prompt");
+            sessionStorage.removeItem(SS_SEEN_PROMPT);
+          } catch (_) {}
+          window.healthPlan = null;
+          try {
+            const ta = $("#prompt-text");
+            if (ta) ta.value = "";
+          } catch (_) {}
+          state = defaultState();
+          saveState();
+          try {
+            setIntakeStep(0, false);
+          } catch (_) {}
+          syncDomFromState();
+          clearValidation();
+          setStage("form");
+          announcePlanStatus("All local Health data was removed from this browser.");
+        }
 
         function getIntakeStep() {
           const raw = $("#screen-form").getAttribute("data-intake-step");
@@ -4281,10 +4416,70 @@ The grocery object must always include a "store_split" field.
           if (!Array.isArray(json.phases) || json.phases.length === 0) {
             return { valid: false, error: "Phases array is empty or missing" };
           }
-          if (!json.meal_plan || !json.meal_plan.workout_day || !json.meal_plan.rest_day) {
-            return { valid: false, error: "Meal plan must have workout_day and rest_day" };
+          const mp = json.meal_plan;
+          if (!mp || typeof mp !== "object") {
+            return { valid: false, error: "Meal plan is missing" };
+          }
+          if (!Array.isArray(mp.workout_day) || mp.workout_day.length === 0) {
+            return { valid: false, error: "Meal plan must include at least one workout-day meal" };
+          }
+          if (!Array.isArray(mp.rest_day) || mp.rest_day.length === 0) {
+            return { valid: false, error: "Meal plan must include at least one rest-day meal" };
+          }
+          const u = json.user;
+          if (!u || typeof u !== "object") {
+            return { valid: false, error: "Missing user section" };
+          }
+          const h = Number(u.height_cm);
+          const wkg = Number(u.weight_kg);
+          if (!Number.isFinite(h) || h < 100 || h > 250) {
+            return { valid: false, error: "User height_cm is missing or outside a realistic range (100–250 cm)" };
+          }
+          if (!Number.isFinite(wkg) || wkg < 30 || wkg > 250) {
+            return { valid: false, error: "User weight_kg is missing or outside a realistic range (30–250 kg)" };
+          }
+          for (let i = 0; i < json.phases.length; i++) {
+            const ph = json.phases[i];
+            const kc = ph && ph.kcal_daily != null ? Number(ph.kcal_daily) : NaN;
+            if (Number.isFinite(kc) && (kc < 600 || kc > 8000)) {
+              return {
+                valid: false,
+                error:
+                  "This plan has a daily calorie target outside a safe viewing range for this app. Regenerate the plan or consult a clinician before following it.",
+              };
+            }
           }
           return { valid: true };
+        }
+
+        function validatePlanWarnings(json) {
+          const warnings = [];
+          if (!json || typeof json !== "object") return warnings;
+          try {
+            const phases = json.phases;
+            const mp = json.meal_plan;
+            if (!phases || !phases.length || !mp || typeof mp !== "object") return warnings;
+            const dt = mp.daily_totals;
+            if (!dt || typeof dt !== "object") return warnings;
+            const wkT = Number(dt.workout_day_kcal);
+            const rdT = Number(dt.rest_day_kcal);
+            phases.forEach((ph, idx) => {
+              const pid = ph && ph.id != null ? ph.id : idx + 1;
+              const wk = Number(ph.kcal_workout_day != null ? ph.kcal_workout_day : ph.kcal_daily);
+              const rd = Number(ph.kcal_rest_day != null ? ph.kcal_rest_day : ph.kcal_daily);
+              if (Number.isFinite(wk) && Number.isFinite(wkT) && Math.abs(wk - wkT) > 100) {
+                warnings.push(
+                  `Phase ${pid}: logged workout-day meals total ${wkT} kcal vs phase target ~${wk} kcal (over 100 kcal apart).`
+                );
+              }
+              if (Number.isFinite(rd) && Number.isFinite(rdT) && Math.abs(rd - rdT) > 100) {
+                warnings.push(
+                  `Phase ${pid}: logged rest-day meals total ${rdT} kcal vs phase target ~${rd} kcal (over 100 kcal apart).`
+                );
+              }
+            });
+          } catch (_) {}
+          return warnings;
         }
 
         function normalizePlanForStorage(json) {
@@ -4302,6 +4497,7 @@ The grocery object must always include a "store_split" field.
             const json = parsePlanText(String(rawText || ""));
             const v = validatePlan(json);
             if (!v.valid) {
+              announcePlanStatus(v.error || "Plan validation failed.");
               return { ok: false, error: v.error || "Invalid plan." };
             }
             const normalized = normalizePlanForStorage(json);
@@ -4310,9 +4506,12 @@ The grocery object must always include a "store_split" field.
             } catch (_) {}
             window.healthPlan = normalized;
             setStage("app");
+            announcePlanStatus("Plan loaded and saved on this device.");
             return { ok: true };
           } catch (err) {
-            return { ok: false, error: err && err.message ? err.message : "Could not parse JSON." };
+            const msg = friendlyParseError(err);
+            announcePlanStatus(msg);
+            return { ok: false, error: msg };
           }
         }
 
@@ -4462,6 +4661,15 @@ The grocery object must always include a "store_split" field.
           throw new Error("Incomplete JSON — copy through the final closing }.");
         }
 
+        function friendlyParseError(err) {
+          if (!err) return "Could not parse JSON.";
+          const msg = String(err.message || err);
+          if (err instanceof SyntaxError || /JSON|Unexpected token|Bad control character/i.test(msg)) {
+            return "Invalid JSON — check for missing brackets, a trailing comma, or incomplete copy. The plan should start with { and end with }.";
+          }
+          return msg;
+        }
+
         function parsePlanText(raw) {
           const cleaned = String(raw || "").trim();
           const attempts = [
@@ -4477,7 +4685,7 @@ The grocery object must always include a "store_split" field.
               last = e;
             }
           }
-          throw last || new Error("Could not parse JSON.");
+          throw new Error(friendlyParseError(last));
         }
 
         function profilePayload(fd) {
@@ -4621,6 +4829,22 @@ The grocery object must always include a "store_split" field.
           const cw = currentPlanWeek(plan);
           const gl = meta.goal_label || "Your plan";
           $("#home-subline").textContent = `Week ${cw} of ${totalW} · ${gl}`;
+          const warnEl = $("#home-plan-warnings");
+          const warnList = $("#home-plan-warnings-list");
+          if (warnEl && warnList) {
+            const ws = validatePlanWarnings(plan);
+            warnList.textContent = "";
+            if (ws.length) {
+              warnEl.hidden = false;
+              ws.forEach((txt) => {
+                const li = document.createElement("li");
+                li.textContent = txt;
+                warnList.appendChild(li);
+              });
+            } else {
+              warnEl.hidden = true;
+            }
+          }
           $("#home-photo-card").hidden = cw !== 1;
           const wkg = fmtRoundNum(user.weight_kg);
           $("#stat-weight").textContent = wkg != null ? `${wkg} kg` : "—";
@@ -5952,6 +6176,18 @@ The grocery object must always include a "store_split" field.
                 setStage("prompt");
               });
             }
+            const delLocal = $("#menu-delete-local");
+            if (delLocal) {
+              delLocal.addEventListener("click", () => {
+                menuDd.hidden = true;
+                menuBtn.setAttribute("aria-expanded", "false");
+                const ok = window.confirm(
+                  "Delete all locally stored Health app data?\n\nThis removes your plan, intake progress, grocery and prep checkmarks, and other saved settings in this browser. This cannot be undone."
+                );
+                if (!ok) return;
+                clearAllLocalHealthData();
+              });
+            }
           }
         }
 
@@ -6121,6 +6357,13 @@ The grocery object must always include a "store_split" field.
             const file = input.files && input.files[0];
             input.value = "";
             if (!file) return;
+
+            if (file.size > MAX_PLAN_JSON_BYTES) {
+              const mb = Math.round((file.size / (1024 * 1024)) * 10) / 10;
+              showPlanError(`This file is too large (${mb} MB). Maximum size is 2 MB. Try trimming the JSON or exporting a smaller plan.`);
+              announcePlanStatus("Upload rejected: file too large.");
+              return;
+            }
 
             const root = $("#screen-root");
             const stage = root ? root.getAttribute("data-stage") : "form";

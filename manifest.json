@@ -1,12 +1,14 @@
 {
   "name": "Health — Personalised Plan",
   "short_name": "Health",
-  "description": "Your personalised nutrition and fitness plan",
+  "description": "Private offline health plan companion for your personalised nutrition and training JSON.",
   "start_url": "/Health/",
+  "scope": "/Health/",
   "display": "standalone",
-  "background_color": "#0a0f0d",
-  "theme_color": "#0a0f0d",
+  "background_color": "#070B09",
+  "theme_color": "#070B09",
   "orientation": "portrait",
+  "categories": ["health", "fitness", "lifestyle"],
   "icons": [
     {
       "src": "assets/icon-192.png",
