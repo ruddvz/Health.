@@ -1,34 +1,83 @@
-# Health — Personalised Plan
+# Health — Personal Plan
 
-A mobile web app that turns a personalised Claude-generated health plan into a **daily companion**: Today dashboard, meals with macro gap hints, optional structured **training** block, local **progress** logging, and grocery / prep / supplements under **More**.
+Health is a **local-first PWA** that turns a structured JSON health plan into an interactive daily dashboard.
 
-## How it works
+This repo now ships a **SvelteKit + TypeScript** build to GitHub Pages (Nothing OS–inspired shell; see `docs/HEALTH_APP_REBUILD_PLAN.md`). The **full-featured single-file app** from earlier iterations is preserved under **`legacy/`** (`legacy/index.html`, etc.) for reference and porting work.
 
-1. Fill in the intake form (or tap **Skip to JSON** if you already have a plan file).
-2. The app builds a Claude prompt (includes **schema v2** guidance for safer, more consistent JSON).
-3. Paste the prompt into [Claude](https://claude.ai) and copy the JSON reply.
-4. **Upload** the `.json` file or **paste** JSON on the prompt screen and tap **Apply pasted JSON**.
-5. Use **Today** for the next meal and schedule, **Meals** for day-type and phase views, **Training** if `training.weekly_split` exists, **Progress** to log weight locally, and **More** for phases, prep, grocery, and supplements.
+## What the legacy app included
 
-## Features
+The snapshot in `legacy/` reflects the pre-SvelteKit feature set:
 
-- **Today** — greeting, optional “up next” meal card, stats, schedule, tips, water, privacy/safety card, plan consistency warnings.
-- **Meals** — phase selector, workout/rest toggle, **suggested add-ons** when totals lag phase targets.
-- **Training** — renders `training.weekly_split` (exercises, sets, reps, rest, progression, substitutions, cues) when present.
-- **Progress** — weight log stored in the browser; export JSON from **More → Data**.
-- **More** hub — Phases, Prep, Grocery, Supplements; grocery price disclaimer; prep food-safety note; cautious wording pass on some supplement copy.
-- Intake optional **wake / sleep / train** clock fields for better meal timing in generated plans.
-- PWA with **versioned** service worker, offline shell, and **“refresh to update”** snackbar when a new SW is installed.
-- Six-step intake, grocery checklist persistence, prep step checkmarks, supplement timing.
+1. Intake form (or **Skip to JSON**) with a Claude prompt that includes **schema v2** guidance.
+2. **Upload** or **paste** JSON and apply it.
+3. **Today** — schedule timeline, macro strip vs phase, reminders, plan warnings, water, safety card.
+4. **Meals** — phase selector, workout/rest toggle, **Cook mode**, **Swaps**, macro gap hints, optional backup meals.
+5. **Training** — `training.weekly_split` rendering, on-device **rest countdown** when present.
+6. **Progress** — weight and waist logs, check-ins, insights; export from **More → Data**.
+7. **More** hub — Phases, Prep, Grocery, Supplements; appearance (light mode); grocery price disclaimer; prep food-safety note.
 
 ## Sample JSON
 
-See `samples/minimal-plan-v2.json` for a small valid plan that includes `training.weekly_split` (for UI smoke tests). For a richer **schema v2** example with night-shift `schedule`, swaps, and safety fields, use `samples/rudra-plan-v2-normalized.json`.
+- `samples/minimal-plan-v2.json` — small valid plan with `training.weekly_split` for smoke tests.
+- `samples/rudra-plan-v2-normalized.json` — richer schema v2 example (night-shift `schedule`, swaps, safety).
+- `static/samples/rudra-plan-v2.json` — placeholder used by the SvelteKit shell until import lands in Phase 2.
 
 ## Tech & privacy
 
-Single `index.html` (no bundler), system fonts only, strict CSP meta tag, no analytics. Plan JSON, checkmarks, tab state, and progress logs stay in **localStorage** / **sessionStorage** on the device. See `CHANGELOG.md` and `docs/QA_CHECKLIST.md`.
+- **Production site:** SvelteKit static build (`npm run build` → `build/`), base path **`/Health`** on GitHub Pages.
+- **Legacy:** single `legacy/index.html`, system fonts, strict CSP meta, no analytics; data in **localStorage** / **sessionStorage**.
+- Roadmaps: `HEALTH_APP_EXECUTION_PLAN.md`, `docs/HEALTH_APP_REBUILD_PLAN.md`, `docs/QA_CHECKLIST.md`.
 
-Roadmap: `HEALTH_APP_EXECUTION_PLAN.md`.
+## Requirements
 
-Hosted on GitHub Pages: [https://ruddvz.github.io/Health/](https://ruddvz.github.io/Health/)
+- Node.js 22+ (matches GitHub Actions)
+
+## Run locally (SvelteKit)
+
+```bash
+npm install
+npm run dev
+```
+
+Open the URL Vite prints (dev uses an empty base path: `/`, `/meals`, `/system`, …).
+
+## Build
+
+```bash
+npm run build
+```
+
+Output is written to **`build/`** for GitHub Pages.
+
+## Preview the production build
+
+```bash
+npm run preview
+```
+
+Asset URLs use the `/Health` base in production builds.
+
+## Deploy
+
+Pushes to `main` run `.github/workflows/pages.yml`: `npm ci`, `npm run build`, publish **`build/`**.
+
+## Tests and checks
+
+```bash
+npm test
+npm run check
+npm run lint
+```
+
+## SvelteKit roadmap
+
+Import/paste JSON, Zod validation, persistence, and full Today/Meals/Train/Progress behavior are tracked in **`docs/HEALTH_APP_REBUILD_PLAN.md`** (Phases 2–8). Until then, tab screens beyond basic layout are mostly placeholders.
+
+## Reset data
+
+Clear site data for this origin in the browser, or use **More → Data** flows described in the legacy app when running `legacy/index.html` locally.
+
+## Known limitations
+
+- The live **GitHub Pages** app follows the **SvelteKit** shell until feature parity is implemented.
+- **`legacy/`** is a static snapshot; opening `legacy/index.html` directly may break asset paths (`assets/` icons) unless served with correct base URL.

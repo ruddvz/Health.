@@ -1,8 +1,16 @@
 # Changelog
 
-## [Unreleased]
+## Unreleased
 
-### Added
+### SvelteKit rebuild (Phase 1)
+
+- Scaffold SvelteKit (TypeScript), `@sveltejs/adapter-static` with `build/` output and GitHub Pages base `/Health`, `vite-plugin-pwa` with Workbox precache, Nothing OS–inspired design tokens and shell (bottom nav, status strip, offline banner, install/update prompts).
+- Move the previous root single-file app into `legacy/` for archival reference; GitHub Actions now deploy the Vite build output instead of the repo root.
+- Add `docs/HEALTH_APP_REBUILD_PLAN.md` as the authoritative rebuild specification.
+
+### Legacy single-file app (merged snapshot in `legacy/`)
+
+#### Added
 
 - **normalizePlanV1ToV2** on ingest/save: bumps `plan_schema_version`, fills `schedule.meal_times` and protein `daily_totals` when derivable.
 - **Today**: schedule-sorted timeline, macro strip vs phase, Sunday prep / Monday check-in reminders, smarter “up next” meal from clock order.
@@ -12,7 +20,6 @@
 - **Intake**: allergies field + medication/condition checkbox; prompt profile includes them.
 - **More → Appearance**: **Light mode** toggle (`localStorage`).
 - Sample `samples/rudra-plan-v2-normalized.json`; **validatePlan** rejects duplicate phase ids.
-
 - Five-tab navigation: **Today**, **Meals**, **Training**, **Progress**, and **More** (phases, prep, grocery, supplements live under More).
 - **Training** tab rendering `training.weekly_split` when present; helpful fallback when only `training_note` exists.
 - **Progress** tab with local weight log and JSON export from the More hub.
@@ -24,13 +31,13 @@
 - Sample plan: `samples/minimal-plan-v2.json`.
 - Docs: `docs/QA_CHECKLIST.md` for manual regression checks.
 
-### Changed
+#### Changed
 
 - Claude **buildPrompt** appends explicit schema v2 / safety instructions.
 - **Supplement** copy passes through cautious wording helper for several harsh phrases.
 - **Grocery** tab shows a standing disclaimer that prices are estimates.
 - **Prep** tab includes a short **food safety** reminder card.
 
-### Fixed
+#### Fixed
 
 - Progress log button wiring uses a static form (no duplicate listeners on tab revisit).
