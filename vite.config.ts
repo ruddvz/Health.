@@ -1,6 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vitest/config';
-import { VitePWA } from 'vite-plugin-pwa';
 
 const dev = process.argv.includes('dev');
 const basePath = dev ? '' : '/Health';
@@ -8,7 +8,7 @@ const basePath = dev ? '' : '/Health';
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-		VitePWA({
+		SvelteKitPWA({
 			registerType: 'prompt',
 			strategies: 'generateSW',
 			includeAssets: ['icons/icon-192.png', 'icons/icon-512.png', 'offline.html'],
@@ -38,9 +38,12 @@ export default defineConfig({
 					}
 				]
 			},
+			kit: {
+				adapterFallback: '404.html',
+				spa: true,
+				includeVersionFile: true
+			},
 			workbox: {
-				globPatterns: ['**/*.{js,css,html,png,svg,webp,json,webmanifest}'],
-				navigateFallback: `${basePath}/offline.html`,
 				navigateFallbackDenylist: [/^\/api\//]
 			},
 			devOptions: {

@@ -7,7 +7,7 @@
 			content="width=device-width, initial-scale=1, viewport-fit=cover"
 		/>
 		<meta name="theme-color" content="#0b0b0b" />
-		<title>Can’t load — Health</title>
+		<title>Offline — Health</title>
 		<style>
 			*,
 			*::before,
@@ -35,90 +35,35 @@
 				background-size: 18px 18px;
 				color: #f4f4f0;
 				text-align: center;
-				-webkit-font-smoothing: antialiased;
 			}
 			.card {
-				max-width: 340px;
-				width: 100%;
-				border: 1px solid rgba(255, 255, 255, 0.12);
-				border-radius: 20px;
-				padding: 32px 26px 28px;
-				background: linear-gradient(180deg, #181818 0%, #121212 100%);
-				box-shadow: 0 24px 48px rgba(0, 0, 0, 0.45);
-			}
-			.eyebrow {
-				margin: 0 0 14px;
-				font-size: 11px;
-				font-weight: 600;
-				letter-spacing: 0.2em;
-				text-transform: uppercase;
-				font-family: ui-monospace, 'SF Mono', monospace;
-				color: #e8a54b;
+				max-width: 320px;
+				border: 1px solid rgba(255, 255, 255, 0.1);
+				border-radius: 18px;
+				padding: 28px 22px;
+				background: #121212;
 			}
 			h1 {
-				margin: 0 0 14px;
-				font-size: 20px;
+				margin: 0 0 10px;
+				font-size: 12px;
 				font-weight: 600;
-				line-height: 1.25;
-				letter-spacing: -0.02em;
-				color: #f4f4f0;
+				letter-spacing: 0.28em;
+				text-transform: uppercase;
+				font-family: ui-monospace, 'SF Mono', monospace;
+				color: #ff2a2a;
 			}
 			p {
-				margin: 0 0 26px;
-				font-size: 15px;
-				line-height: 1.55;
-				color: #b9b9b2;
-			}
-			button {
-				appearance: none;
-				width: 100%;
 				margin: 0;
-				padding: 14px 18px;
-				border-radius: 14px;
-				border: 1px solid rgba(255, 255, 255, 0.14);
-				background: #f4f4f0;
-				color: #0b0b0b;
 				font-size: 15px;
-				font-weight: 600;
-				font-family: inherit;
-				cursor: pointer;
-				transition:
-					transform 0.12s ease,
-					background 0.15s ease;
-			}
-			button:hover {
-				background: #ffffff;
-			}
-			button:active {
-				transform: scale(0.985);
-			}
-			button:focus-visible {
-				outline: 2px solid #e8a54b;
-				outline-offset: 3px;
-			}
-			.hint {
-				margin: 16px 0 0;
-				font-size: 12px;
-				line-height: 1.45;
-				color: rgba(185, 185, 178, 0.75);
+				line-height: 1.5;
+				color: #b9b9b2;
 			}
 		</style>
 	</head>
 	<body>
 		<div class="card">
-			<p class="eyebrow">Load failed</p>
-			<h1>Couldn’t load the app shell</h1>
-			<p>
-				Your device can show Wi‑Fi or cellular even when this site is unreachable, blocked, or
-				timing out. Your saved plan stays on this device.
-			</p>
-			<button type="button" id="retry">Try again</button>
-			<p class="hint">If this keeps happening, check VPN, DNS filters, or try a different network.</p>
+			<h1>Offline</h1>
+			<p>No network. Your plan stays on this device — reconnect to refresh the app shell.</p>
 		</div>
-		<script>
-			document.getElementById('retry').addEventListener('click', function () {
-				location.reload();
-			});
-		</script>
 	</body>
 </html>
