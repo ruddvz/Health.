@@ -17,6 +17,19 @@ describe('plan validation', () => {
 		}
 	});
 
+	it('accepts JSON wrapped in a markdown fence', () => {
+		const raw = readFileSync(samplePath, 'utf8');
+		const wrapped = '```json\n' + raw + '\n```';
+		const r = parsePlanJsonText(wrapped);
+		expect(r.ok).toBe(true);
+	});
+
+	it('accepts JSON with UTF-8 BOM', () => {
+		const raw = readFileSync(samplePath, 'utf8');
+		const r = parsePlanJsonText('\ufeff' + raw);
+		expect(r.ok).toBe(true);
+	});
+
 	it('rejects invalid JSON', () => {
 		const r = parsePlanJsonText('{');
 		expect(r.ok).toBe(false);

@@ -14,10 +14,24 @@ export type ParsePlanResult =
 	| { ok: true; plan: PlanV2; warnings: string[] }
 	| { ok: false; error: string; warnings: string[] };
 
+/** Trim BOM, optional ```json fences, and outer whitespace from pasted / exported text. */
+export function normalizeImportedPlanJsonText(text: string): string {
+	let s = text.trim();
+	if (s.charCodeAt(0) === 0xfeff) s = s.slice(1).trim();
+	const open = s.match(/^```(?:json)?\s*\r?\n?/i);
+	if (open) {
+		s = s.slice(open[0].length);
+		const close = s.lastIndexOf('```');
+		if (close !== -1) s = s.slice(0, close);
+		s = s.trim();
+	}
+	return s;
+}
+
 export function parsePlanJsonText(text: string): ParsePlanResult {
 	let data: unknown;
 	try {
-		data = JSON.parse(text);
+		data = JSON.parse(normalizeImportedPlanJsonText(text));
 	} catch (e) {
 		const msg = e instanceof Error ? e.message : 'Invalid JSON';
 		return { ok: false, error: `JSON parse error: ${msg}`, warnings: [] };

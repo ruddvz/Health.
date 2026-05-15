@@ -6,34 +6,14 @@
 	let { weekLabel = 'WEEK —', dayMode = 'workout' }: Props = $props();
 
 	const modeLabel = $derived(dayMode === 'workout' ? 'WORKOUT DAY' : 'REST DAY');
-
-	let clock = $state('');
-	$effect(() => {
-		const tick = () => {
-			clock = new Intl.DateTimeFormat(undefined, {
-				hour: 'numeric',
-				minute: '2-digit',
-				hour12: false
-			}).format(new Date());
-		};
-		tick();
-		const id = setInterval(tick, 30000);
-		return () => clearInterval(id);
-	});
 </script>
 
 <div class="bar" role="status" aria-live="off">
 	<div class="l mono-caps">
-		<span class="clock">{clock}</span>
-		<span class="dot" aria-hidden="true">·</span>
-		<span>Local</span>
-		<span class="dot" aria-hidden="true">·</span>
 		<span class="brand">HEALTH</span>
 	</div>
 	<div class="r mono-caps">
 		<span class="tag">Private</span>
-		<span class="dot" aria-hidden="true">·</span>
-		<span class="tag">Offline</span>
 		<span class="dot" aria-hidden="true">·</span>
 		<span class="tag">Personal</span>
 		<span class="dot" aria-hidden="true">·</span>
@@ -77,11 +57,6 @@
 	.r {
 		justify-content: flex-end;
 		text-align: right;
-	}
-
-	.clock {
-		color: var(--text-2);
-		letter-spacing: 0.06em;
 	}
 
 	.brand {

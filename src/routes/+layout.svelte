@@ -8,7 +8,6 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import AppShell from '$lib/components/app/AppShell.svelte';
 	import TopStatusBar from '$lib/components/app/TopStatusBar.svelte';
-	import OfflineBanner from '$lib/components/app/OfflineBanner.svelte';
 	import InstallPrompt from '$lib/components/app/InstallPrompt.svelte';
 	import { normalizePathname } from '$lib/paths';
 	import { activeDayType, hydrateFromLocalStorage, plan } from '$lib/stores/healthApp';
@@ -42,7 +41,7 @@
 	<meta name="theme-color" content="#0b0b0b" />
 	<meta
 		name="description"
-		content="PRIVATE. OFFLINE. PERSONAL. Local-only health plan on your device."
+		content="Personal health plan from your JSON — training, meals, grocery, and progress on your device."
 	/>
 	<title>HEALTH — Personal Plan</title>
 </svelte:head>
@@ -50,7 +49,6 @@
 {#if showNav}
 	<TopStatusBar {weekLabel} dayMode={$activeDayType} />
 {/if}
-<OfflineBanner />
 <AppShell {showNav}>
 	{@render children()}
 </AppShell>

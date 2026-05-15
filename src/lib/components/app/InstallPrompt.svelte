@@ -7,8 +7,6 @@
 		userChoice: Promise<{ outcome: string }>;
 	};
 
-	let needRefresh = $state(false);
-	let offlineReady = $state(false);
 	let closeInstallHint = $state(false);
 
 	let deferred: InstallableEvent | null = null;
@@ -16,9 +14,7 @@
 	let userEngaged = $state(false);
 	let delayElapsed = $state(false);
 
-	const showInstallUi = $derived(
-		canInstall && !closeInstallHint && (userEngaged || delayElapsed) && !needRefresh
-	);
+	const showInstallUi = $derived(canInstall && !closeInstallHint && (userEngaged || delayElapsed));
 
 	onMount(() => {
 		if (!browser) return;
@@ -47,10 +43,10 @@
 				registerSW({
 					immediate: true,
 					onNeedRefresh() {
-						needRefresh = true;
+						// No in-app toast; reload the tab to pick up a new deploy.
 					},
 					onOfflineReady() {
-						offlineReady = true;
+						// No hint toast.
 					},
 					onRegisteredSW(_url, registration) {
 						if (!registration) return;
@@ -81,23 +77,7 @@
 		deferred = null;
 		canInstall = false;
 	}
-
-	function reloadClick() {
-		window.location.reload();
-	}
 </script>
-
-{#if needRefresh}
-	<div class="toast nothing-surface-2" role="status">
-		<p class="mono-caps title">Update ready</p>
-		<p class="subtle">Reload to pick up the latest app shell from the server.</p>
-		<button type="button" class="link pressable" onclick={reloadClick}>Reload app</button>
-	</div>
-{/if}
-
-{#if offlineReady && !needRefresh}
-	<p class="hint mono-caps">Offline cache ready</p>
-{/if}
 
 {#if showInstallUi}
 	<div class="toast install nothing-surface-2">
@@ -127,43 +107,6 @@
 	.title {
 		margin: 0 0 var(--space-2);
 		color: var(--red);
-	}
-
-	.subtle {
-		margin: 0 0 var(--space-3);
-		font-size: 12px;
-		line-height: 1.4;
-		color: var(--text-2);
-	}
-
-	.link {
-		margin: 0;
-		padding: 0;
-		border: none;
-		background: none;
-		color: var(--text-1);
-		font-family: var(--font-mono);
-		font-size: 11px;
-		font-weight: 600;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 3px;
-	}
-
-	.hint {
-		position: fixed;
-		right: var(--space-4);
-		bottom: calc(var(--nav-h) + var(--safe-bottom) + var(--space-3));
-		z-index: 40;
-		margin: 0;
-		padding: var(--space-2) var(--space-3);
-		background: var(--surface-2);
-		border: 1px solid var(--line-1);
-		border-radius: var(--radius-xs);
-		color: var(--text-3);
-		font-size: 9px;
 	}
 
 	.install .sub {
