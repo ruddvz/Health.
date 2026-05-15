@@ -1,26 +1,26 @@
 {
-  "name": "Health — Personalised Plan",
-  "short_name": "Health",
-  "description": "Private offline health plan companion for your personalised nutrition and training JSON.",
-  "start_url": "/Health/",
-  "scope": "/Health/",
-  "display": "standalone",
-  "background_color": "#070B09",
-  "theme_color": "#070B09",
-  "orientation": "portrait",
-  "categories": ["health", "fitness", "lifestyle"],
-  "icons": [
-    {
-      "src": "assets/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+	"name": "Health — Personalised Plan",
+	"short_name": "Health",
+	"description": "Private offline health plan companion for your personalised nutrition and training JSON.",
+	"start_url": "/Health/",
+	"scope": "/Health/",
+	"display": "standalone",
+	"background_color": "#070B09",
+	"theme_color": "#070B09",
+	"orientation": "portrait",
+	"categories": ["health", "fitness", "lifestyle"],
+	"icons": [
+		{
+			"src": "assets/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "assets/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
 }

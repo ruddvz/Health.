@@ -9,9 +9,11 @@
 </script>
 
 <div class="strip mono-caps" role="status">
-	<span>Local only</span>
+	<span>Private</span>
 	<span class="sep" aria-hidden="true">·</span>
-	<span>Offline ready</span>
+	<span>Offline</span>
+	<span class="sep" aria-hidden="true">·</span>
+	<span>Personal</span>
 	<span class="sep" aria-hidden="true">·</span>
 	<span>{weekLabel}</span>
 	<span class="sep" aria-hidden="true">·</span>

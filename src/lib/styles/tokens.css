@@ -1,7 +1,9 @@
 :root {
 	color-scheme: dark;
 
+	/* Tokens aligned with assets/health_pwa_nothing_os_visual_spec.json */
 	--bg: #0b0b0b;
+	--bg-elevated: #101010;
 	--bg-grid: #101010;
 
 	--surface-1: #121212;
@@ -14,9 +16,16 @@
 
 	--line-1: rgba(255, 255, 255, 0.08);
 	--line-2: rgba(255, 255, 255, 0.16);
+	--line-3: rgba(255, 255, 255, 0.24);
 
 	--red: #ff2a2a;
+	--red-hover: #ff4040;
+	--red-pressed: #d91f1f;
 	--red-soft: rgba(255, 42, 42, 0.14);
+	--red-line: rgba(255, 42, 42, 0.42);
+
+	--shadow-card: 0 14px 40px rgba(0, 0, 0, 0.32);
+	--shadow-red-glow: 0 0 22px rgba(255, 42, 42, 0.28);
 
 	--white-soft: rgba(255, 255, 255, 0.92);
 	--black-soft: rgba(0, 0, 0, 0.55);
@@ -45,7 +54,7 @@
 		sans-serif;
 	--font-mono: 'SF Mono', 'Roboto Mono', 'IBM Plex Mono', ui-monospace, monospace;
 
-	--nav-h: 56px;
+	--nav-h: 76px;
 	--safe-bottom: env(safe-area-inset-bottom, 0px);
 	--safe-top: env(safe-area-inset-top, 0px);
 }

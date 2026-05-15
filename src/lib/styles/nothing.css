@@ -1,15 +1,17 @@
 /* Nothing OS–inspired utility layer: borders, mono labels, press states */
 
 .nothing-surface {
-	background: var(--surface-1);
-	border: 1px solid var(--line-1);
+	background: linear-gradient(180deg, #181818 0%, #111111 100%);
+	border: 1px solid rgba(255, 255, 255, 0.12);
 	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-card);
 }
 
 .nothing-surface-2 {
-	background: var(--surface-2);
+	background: linear-gradient(180deg, var(--surface-2) 0%, var(--surface-1) 100%);
 	border: 1px solid var(--line-1);
 	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-card);
 }
 
 .mono-caps {

@@ -1,171 +1,188 @@
 {
-  "meta": {
-    "version": "1.0",
-    "generated_for": "Sample",
-    "generated_date": "2026-05-14",
-    "goal_label": "Sample plan",
-    "plan_schema_version": 2,
-    "app_schema_hint": "2.0"
-  },
-  "user": {
-    "name": "Sample",
-    "age": 30,
-    "sex": "male",
-    "weight_kg": 80,
-    "height_cm": 175,
-    "body_fat_pct": null,
-    "goal": "recomp",
-    "timeline_weeks": 8,
-    "target_weight_kg": 78,
-    "urgency": "balanced",
-    "tdee": 2400,
-    "bmr": 1750
-  },
-  "phases": [
-    {
-      "id": 1,
-      "name": "Foundation",
-      "weeks": "1–8",
-      "week_start": 1,
-      "week_end": 8,
-      "kcal_daily": 2200,
-      "kcal_workout_day": 2200,
-      "kcal_rest_day": 1900,
-      "protein_g": 160,
-      "carbs_g": 200,
-      "fat_g": 60,
-      "description": "Sample phase for app smoke tests.",
-      "key_focus": "Consistency",
-      "flavour_rotation": "Salt, pepper, paprika",
-      "training_note": "Full-body 3×/week"
-    }
-  ],
-  "meal_plan": {
-    "meals_per_day": 3,
-    "daily_totals": {
-      "workout_day_kcal": 2200,
-      "rest_day_kcal": 1900,
-      "workout_day_protein_g": 160,
-      "rest_day_protein_g": 155
-    },
-    "workout_day": [
-      {
-        "slot": 1,
-        "time": "8:00 AM",
-        "name": "Breakfast bowl",
-        "kcal": 600,
-        "description": "Oats, whey, berries.",
-        "ingredients": [{ "name": "Oats", "grams": 60, "category": "carbs" }],
-        "prep_method": "Microwave",
-        "prep_minutes": 8,
-        "tags": ["quick"]
-      },
-      {
-        "slot": 2,
-        "time": "1:00 PM",
-        "name": "Chicken rice",
-        "kcal": 800,
-        "description": "Grilled chicken, rice, veg.",
-        "ingredients": [{ "name": "Chicken", "grams": 200, "category": "protein" }],
-        "prep_method": "Pan",
-        "prep_minutes": 20,
-        "tags": []
-      },
-      {
-        "slot": 3,
-        "time": "7:00 PM",
-        "name": "Salmon plate",
-        "kcal": 800,
-        "description": "Salmon, potatoes, greens.",
-        "ingredients": [{ "name": "Salmon", "grams": 180, "category": "protein" }],
-        "prep_method": "Oven",
-        "prep_minutes": 25,
-        "tags": []
-      }
-    ],
-    "rest_day": [
-      {
-        "slot": 1,
-        "time": "8:00 AM",
-        "name": "Yogurt bowl",
-        "kcal": 500,
-        "description": "Greek yogurt, granola, fruit.",
-        "ingredients": [],
-        "prep_method": "No cook",
-        "prep_minutes": 5,
-        "tags": []
-      },
-      {
-        "slot": 2,
-        "time": "1:00 PM",
-        "name": "Turkey wrap",
-        "kcal": 700,
-        "description": "Whole wrap with veg.",
-        "ingredients": [],
-        "prep_method": "No cook",
-        "prep_minutes": 10,
-        "tags": []
-      },
-      {
-        "slot": 3,
-        "time": "7:00 PM",
-        "name": "Stir fry",
-        "kcal": 700,
-        "description": "Lean beef and veg.",
-        "ingredients": [],
-        "prep_method": "Stovetop",
-        "prep_minutes": 20,
-        "tags": []
-      }
-    ]
-  },
-  "prep_guide": {
-    "sunday_steps": [{ "name": "Cook rice", "detail": "Batch rice", "minutes": 20, "step": 1 }],
-    "wednesday_topup": [],
-    "total_minutes": 20,
-    "tips": ["Label containers."]
-  },
-  "grocery": {
-    "protein": [{ "name": "Chicken breast", "qty": "1 kg", "notes": "" }],
-    "carbs": [{ "name": "Rice", "qty": "2 kg", "notes": "" }],
-    "veg": [],
-    "fat": [],
-    "pantry": []
-  },
-  "supplements": {
-    "daily_schedule": [{ "label": "Morning", "items": "Multivitamin", "note": "May support general nutrition; evidence varies." }],
-    "stack": [],
-    "protein_powder": [],
-    "skip_list": []
-  },
-  "tips": ["Drink water.", "Walk daily.", "Sleep 7–8h.", "Track protein.", "Be patient.", "Train consistently.", "Warm up.", "Stretch.", "Plan meals.", "Review weekly."],
-  "weekly_check_in": {
-    "what_to_track": ["weight", "waist", "energy"],
-    "expected_progress_week4": "Steady habit building.",
-    "expected_progress_week8": "Visible changes for many people.",
-    "expected_progress_week16": "N/A",
-    "red_flags": ["Dizziness", "Chest pain"]
-  },
-  "training": {
-    "weekly_split": [
-      {
-        "day": 1,
-        "name": "Full body A",
-        "duration_minutes": 45,
-        "warmup": ["5 min bike", "Arm circles"],
-        "exercises": [
-          {
-            "name": "Goblet squat",
-            "sets": 3,
-            "reps": "8–10",
-            "rest_seconds": 90,
-            "progression": "Add load when you can complete all sets at the top of the range.",
-            "substitutions": ["Leg press", "Bodyweight squat"],
-            "form_cues": ["Heels down", "Chest tall"]
-          }
-        ]
-      }
-    ],
-    "deload_rule": "If fatigue is high for a week, reduce sets by ~30%."
-  }
+	"meta": {
+		"version": "1.0",
+		"generated_for": "Sample",
+		"generated_date": "2026-05-14",
+		"goal_label": "Sample plan",
+		"plan_schema_version": 2,
+		"app_schema_hint": "2.0"
+	},
+	"user": {
+		"name": "Sample",
+		"age": 30,
+		"sex": "male",
+		"weight_kg": 80,
+		"height_cm": 175,
+		"body_fat_pct": null,
+		"goal": "recomp",
+		"timeline_weeks": 8,
+		"target_weight_kg": 78,
+		"urgency": "balanced",
+		"tdee": 2400,
+		"bmr": 1750
+	},
+	"phases": [
+		{
+			"id": 1,
+			"name": "Foundation",
+			"weeks": "1–8",
+			"week_start": 1,
+			"week_end": 8,
+			"kcal_daily": 2200,
+			"kcal_workout_day": 2200,
+			"kcal_rest_day": 1900,
+			"protein_g": 160,
+			"carbs_g": 200,
+			"fat_g": 60,
+			"description": "Sample phase for app smoke tests.",
+			"key_focus": "Consistency",
+			"flavour_rotation": "Salt, pepper, paprika",
+			"training_note": "Full-body 3×/week"
+		}
+	],
+	"meal_plan": {
+		"meals_per_day": 3,
+		"daily_totals": {
+			"workout_day_kcal": 2200,
+			"rest_day_kcal": 1900,
+			"workout_day_protein_g": 160,
+			"rest_day_protein_g": 155
+		},
+		"workout_day": [
+			{
+				"slot": 1,
+				"time": "8:00 AM",
+				"name": "Breakfast bowl",
+				"kcal": 600,
+				"description": "Oats, whey, berries.",
+				"ingredients": [{ "name": "Oats", "grams": 60, "category": "carbs" }],
+				"prep_method": "Microwave",
+				"prep_minutes": 8,
+				"tags": ["quick"]
+			},
+			{
+				"slot": 2,
+				"time": "1:00 PM",
+				"name": "Chicken rice",
+				"kcal": 800,
+				"description": "Grilled chicken, rice, veg.",
+				"ingredients": [{ "name": "Chicken", "grams": 200, "category": "protein" }],
+				"prep_method": "Pan",
+				"prep_minutes": 20,
+				"tags": []
+			},
+			{
+				"slot": 3,
+				"time": "7:00 PM",
+				"name": "Salmon plate",
+				"kcal": 800,
+				"description": "Salmon, potatoes, greens.",
+				"ingredients": [{ "name": "Salmon", "grams": 180, "category": "protein" }],
+				"prep_method": "Oven",
+				"prep_minutes": 25,
+				"tags": []
+			}
+		],
+		"rest_day": [
+			{
+				"slot": 1,
+				"time": "8:00 AM",
+				"name": "Yogurt bowl",
+				"kcal": 500,
+				"description": "Greek yogurt, granola, fruit.",
+				"ingredients": [],
+				"prep_method": "No cook",
+				"prep_minutes": 5,
+				"tags": []
+			},
+			{
+				"slot": 2,
+				"time": "1:00 PM",
+				"name": "Turkey wrap",
+				"kcal": 700,
+				"description": "Whole wrap with veg.",
+				"ingredients": [],
+				"prep_method": "No cook",
+				"prep_minutes": 10,
+				"tags": []
+			},
+			{
+				"slot": 3,
+				"time": "7:00 PM",
+				"name": "Stir fry",
+				"kcal": 700,
+				"description": "Lean beef and veg.",
+				"ingredients": [],
+				"prep_method": "Stovetop",
+				"prep_minutes": 20,
+				"tags": []
+			}
+		]
+	},
+	"prep_guide": {
+		"sunday_steps": [{ "name": "Cook rice", "detail": "Batch rice", "minutes": 20, "step": 1 }],
+		"wednesday_topup": [],
+		"total_minutes": 20,
+		"tips": ["Label containers."]
+	},
+	"grocery": {
+		"protein": [{ "name": "Chicken breast", "qty": "1 kg", "notes": "" }],
+		"carbs": [{ "name": "Rice", "qty": "2 kg", "notes": "" }],
+		"veg": [],
+		"fat": [],
+		"pantry": []
+	},
+	"supplements": {
+		"daily_schedule": [
+			{
+				"label": "Morning",
+				"items": "Multivitamin",
+				"note": "May support general nutrition; evidence varies."
+			}
+		],
+		"stack": [],
+		"protein_powder": [],
+		"skip_list": []
+	},
+	"tips": [
+		"Drink water.",
+		"Walk daily.",
+		"Sleep 7–8h.",
+		"Track protein.",
+		"Be patient.",
+		"Train consistently.",
+		"Warm up.",
+		"Stretch.",
+		"Plan meals.",
+		"Review weekly."
+	],
+	"weekly_check_in": {
+		"what_to_track": ["weight", "waist", "energy"],
+		"expected_progress_week4": "Steady habit building.",
+		"expected_progress_week8": "Visible changes for many people.",
+		"expected_progress_week16": "N/A",
+		"red_flags": ["Dizziness", "Chest pain"]
+	},
+	"training": {
+		"weekly_split": [
+			{
+				"day": 1,
+				"name": "Full body A",
+				"duration_minutes": 45,
+				"warmup": ["5 min bike", "Arm circles"],
+				"exercises": [
+					{
+						"name": "Goblet squat",
+						"sets": 3,
+						"reps": "8–10",
+						"rest_seconds": 90,
+						"progression": "Add load when you can complete all sets at the top of the range.",
+						"substitutions": ["Leg press", "Bodyweight squat"],
+						"form_cues": ["Heels down", "Chest tall"]
+					}
+				]
+			}
+		],
+		"deload_rule": "If fatigue is high for a week, reduce sets by ~30%."
+	}
 }

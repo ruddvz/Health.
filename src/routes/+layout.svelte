@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { base } from '$app/paths';
+	import { page } from '$app/state';
+	import { onMount } from 'svelte';
 	import '$lib/styles/global.css';
 	import '$lib/styles/nothing.css';
 	import '$lib/styles/utilities.css';
@@ -8,8 +10,28 @@
 	import TopStatusBar from '$lib/components/app/TopStatusBar.svelte';
 	import OfflineBanner from '$lib/components/app/OfflineBanner.svelte';
 	import InstallPrompt from '$lib/components/app/InstallPrompt.svelte';
+	import { normalizePathname } from '$lib/paths';
+	import { activeDayType, hydrateFromLocalStorage, plan } from '$lib/stores/healthApp';
 
 	let { children } = $props();
+
+	onMount(() => {
+		hydrateFromLocalStorage();
+	});
+
+	const path = $derived(normalizePathname(page.url.pathname));
+	const showNav = $derived(path !== '/' && path !== '/import');
+
+	const weekLabel = $derived.by(() => {
+		const p = $plan;
+		const phases = p?.phases;
+		if (Array.isArray(phases) && phases[0]) {
+			const ph = phases[0] as Record<string, unknown>;
+			const w = ph.weeks;
+			return typeof w === 'string' ? `WEEK ${w}` : 'WEEK 01';
+		}
+		return 'WEEK —';
+	});
 </script>
 
 <svelte:head>
@@ -20,14 +42,16 @@
 	<meta name="theme-color" content="#0b0b0b" />
 	<meta
 		name="description"
-		content="Private offline health plan companion. Local only — no server."
+		content="PRIVATE. OFFLINE. PERSONAL. Local-only health plan on your device."
 	/>
-	<title>Health — Personal Plan</title>
+	<title>HEALTH — Personal Plan</title>
 </svelte:head>
 
-<TopStatusBar weekLabel="WEEK 01" dayMode="workout" />
+{#if showNav}
+	<TopStatusBar {weekLabel} dayMode={$activeDayType} />
+{/if}
 <OfflineBanner />
-<AppShell>
+<AppShell {showNav}>
 	{@render children()}
 </AppShell>
 <InstallPrompt />

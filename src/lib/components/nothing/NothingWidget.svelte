@@ -93,7 +93,7 @@
 
 	.bar-fill {
 		height: 100%;
-		background: var(--text-2);
+		background: var(--red);
 		border-radius: 2px;
 	}
 

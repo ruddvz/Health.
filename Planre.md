@@ -3,7 +3,7 @@
 > Version 4.0 — Complete pivot to intake → Claude prompt → JSON upload architecture.
 > Written May 2026. This supersedes all previous PLAN.md, PLAN_V3.md, and UI_REDESIGN_PLAN.md files.
 
------
+---
 
 ## 0. The Big Picture
 
@@ -22,32 +22,32 @@ This shift means:
 
 **The flow in one sentence:** Fill form → copy pre-built prompt → paste into Claude → download JSON → upload JSON → beautiful personalised app.
 
------
+---
 
 ## 1. Repository State Today
 
 ### What exists and works
 
-|File/Folder              |Status                                               |Keep?                             |
-|-------------------------|-----------------------------------------------------|----------------------------------|
-|`.nojekyll`              |Correct                                              |Yes                               |
-|`.github/workflows/`     |Pages deploy action works                            |Yes                               |
-|`manifest.json`          |Valid PWA manifest                                   |Update                            |
-|`sw.js`                  |Correct strategy, minor bug (crashes on missing PNGs)|Fix                               |
-|`css/tokens.css`         |Perfect design tokens                                |No — replace with Apple tokens    |
-|`css/components.css`     |Glass component system                               |No — replace                      |
-|`js/i18n.js`             |3 languages, working                                 |Defer to Phase 2                  |
-|`js/store.js`            |localStorage contract, clean                         |Reuse concept                     |
-|`js/plangen.js`          |TDEE + macro logic, correct                          |Discard — Claude does this now    |
-|`js/onboarding.js`       |16-step flow, BUG on line 69                         |Replace with new intake form      |
-|`js/app.js`              |BUG: never calls render()                            |Replace                           |
-|`js/pages/`              |6 page renderers                                     |Replace with JSON-driven renderers|
-|All .md plan files       |Superseded                                           |Delete                            |
-|`claude-company-os 2.zip`|Unrelated                                            |Delete                            |
-|`screenshots/`           |Old screenshots                                      |Delete                            |
-|`scripts/`               |Build scripts                                        |Delete                            |
-|`app.html`               |Duplicate of index.html                              |Delete                            |
-|`offline.html`           |Keep as PWA offline fallback                         |Keep                              |
+| File/Folder               | Status                                                | Keep?                              |
+| ------------------------- | ----------------------------------------------------- | ---------------------------------- |
+| `.nojekyll`               | Correct                                               | Yes                                |
+| `.github/workflows/`      | Pages deploy action works                             | Yes                                |
+| `manifest.json`           | Valid PWA manifest                                    | Update                             |
+| `sw.js`                   | Correct strategy, minor bug (crashes on missing PNGs) | Fix                                |
+| `css/tokens.css`          | Perfect design tokens                                 | No — replace with Apple tokens     |
+| `css/components.css`      | Glass component system                                | No — replace                       |
+| `js/i18n.js`              | 3 languages, working                                  | Defer to Phase 2                   |
+| `js/store.js`             | localStorage contract, clean                          | Reuse concept                      |
+| `js/plangen.js`           | TDEE + macro logic, correct                           | Discard — Claude does this now     |
+| `js/onboarding.js`        | 16-step flow, BUG on line 69                          | Replace with new intake form       |
+| `js/app.js`               | BUG: never calls render()                             | Replace                            |
+| `js/pages/`               | 6 page renderers                                      | Replace with JSON-driven renderers |
+| All .md plan files        | Superseded                                            | Delete                             |
+| `claude-company-os 2.zip` | Unrelated                                             | Delete                             |
+| `screenshots/`            | Old screenshots                                       | Delete                             |
+| `scripts/`                | Build scripts                                         | Delete                             |
+| `app.html`                | Duplicate of index.html                               | Delete                             |
+| `offline.html`            | Keep as PWA offline fallback                          | Keep                               |
 
 ### The two critical bugs preventing any load today
 
@@ -56,7 +56,7 @@ This shift means:
 
 These bugs explain why `ruddvz.github.io/Health/` shows nothing.
 
------
+---
 
 ## 2. Architecture Decision
 
@@ -85,7 +85,7 @@ Single file. No routing between pages. Three screens shown/hidden with CSS. Zero
 - All CSS and JS inline means zero 404 risk from missing asset files.
 - The existing repo’s load failure is partly because `app.html` references external JS files that may have path issues.
 
------
+---
 
 ## 3. Screen 1 — Intake Form
 
@@ -97,62 +97,62 @@ Looks and feels like an Apple Settings screen or the Calm/Headspace onboarding. 
 
 #### Section A — About You
 
-|Field                |Type                |Options/Notes                                      |
-|---------------------|--------------------|---------------------------------------------------|
-|First name           |Text input          |Placeholder: “Your name”                           |
-|Age                  |Number input        |Min 16, max 80                                     |
-|Biological sex       |Segmented control   |Male / Female                                      |
-|Current weight       |Number + unit toggle|kg or lbs                                          |
-|Height               |Number + unit toggle|cm or ft/in                                        |
-|Body fat % (optional)|Number input        |If they know it. Label: “Optional — skip if unsure”|
+| Field                 | Type                 | Options/Notes                                       |
+| --------------------- | -------------------- | --------------------------------------------------- |
+| First name            | Text input           | Placeholder: “Your name”                            |
+| Age                   | Number input         | Min 16, max 80                                      |
+| Biological sex        | Segmented control    | Male / Female                                       |
+| Current weight        | Number + unit toggle | kg or lbs                                           |
+| Height                | Number + unit toggle | cm or ft/in                                         |
+| Body fat % (optional) | Number input         | If they know it. Label: “Optional — skip if unsure” |
 
 #### Section B — Your Goal
 
-|Field                   |Type             |Options                                           |
-|------------------------|-----------------|--------------------------------------------------|
-|Primary goal            |Large tap cards  |Fat Loss / Muscle Gain / Body Recomp / Maintenance|
-|Timeline                |Segmented control|8 Weeks / 12 Weeks / 16 Weeks / 20 Weeks          |
-|Target weight (optional)|Number input     |What they want to reach                           |
-|How urgent              |Segmented control|Sustainable (slow) / Balanced / Aggressive        |
+| Field                    | Type              | Options                                            |
+| ------------------------ | ----------------- | -------------------------------------------------- |
+| Primary goal             | Large tap cards   | Fat Loss / Muscle Gain / Body Recomp / Maintenance |
+| Timeline                 | Segmented control | 8 Weeks / 12 Weeks / 16 Weeks / 20 Weeks           |
+| Target weight (optional) | Number input      | What they want to reach                            |
+| How urgent               | Segmented control | Sustainable (slow) / Balanced / Aggressive         |
 
 #### Section C — Training
 
-|Field                  |Type         |Options                                                        |
-|-----------------------|-------------|---------------------------------------------------------------|
-|Training days per week |Stepper (1–7)|                                                               |
-|Training location      |Tap cards    |Full gym / Home with equipment / Home bodyweight only          |
-|Current fitness level  |Tap cards    |Beginner / Intermediate / Advanced                             |
-|Injuries or limitations|Text area    |Placeholder: “E.g. bad knees, lower back pain — or leave blank”|
+| Field                   | Type          | Options                                                         |
+| ----------------------- | ------------- | --------------------------------------------------------------- |
+| Training days per week  | Stepper (1–7) |                                                                 |
+| Training location       | Tap cards     | Full gym / Home with equipment / Home bodyweight only           |
+| Current fitness level   | Tap cards     | Beginner / Intermediate / Advanced                              |
+| Injuries or limitations | Text area     | Placeholder: “E.g. bad knees, lower back pain — or leave blank” |
 
 #### Section D — Diet
 
-|Field                         |Type              |Options                                                    |
-|------------------------------|------------------|-----------------------------------------------------------|
-|Dietary preference            |Tap cards         |Omnivore / Vegetarian / Vegan / Halal / Pescatarian        |
-|Foods you dislike or can’t eat|Text area         |Placeholder: “E.g. I hate fish, no dairy, allergic to nuts”|
-|Meals per day preference      |Segmented         |3 meals / 4 meals / 5 meals / 6 meals                      |
-|Cooking time available        |Segmented         |Under 20 min / 30–45 min / I enjoy cooking                 |
-|Do you meal prep?             |Toggle            |Yes / No                                                   |
-|Cooking equipment             |Multi-select chips|Instant Pot, Air Fryer, Stovetop, Oven, Microwave, BBQ     |
+| Field                          | Type               | Options                                                     |
+| ------------------------------ | ------------------ | ----------------------------------------------------------- |
+| Dietary preference             | Tap cards          | Omnivore / Vegetarian / Vegan / Halal / Pescatarian         |
+| Foods you dislike or can’t eat | Text area          | Placeholder: “E.g. I hate fish, no dairy, allergic to nuts” |
+| Meals per day preference       | Segmented          | 3 meals / 4 meals / 5 meals / 6 meals                       |
+| Cooking time available         | Segmented          | Under 20 min / 30–45 min / I enjoy cooking                  |
+| Do you meal prep?              | Toggle             | Yes / No                                                    |
+| Cooking equipment              | Multi-select chips | Instant Pot, Air Fryer, Stovetop, Oven, Microwave, BBQ      |
 
 #### Section E — Supplements
 
-|Field                        |Type              |Notes                                                                                                                                  |
-|-----------------------------|------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-|Supplements you already have |Multi-select chips|Creatine, Whey Protein, Pre-Workout, Omega-3, Multivitamin, Vitamin D, Magnesium, Ashwagandha, ZMA, BCAAs, Casein, Caffeine Pills, None|
-|Supplement budget            |Tap cards         |I have what I need / Budget ($20–40/mo) / Mid-range ($40–80/mo) / No limit                                                             |
-|Other supplements (free text)|Text area         |Optional                                                                                                                               |
+| Field                         | Type               | Notes                                                                                                                                   |
+| ----------------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Supplements you already have  | Multi-select chips | Creatine, Whey Protein, Pre-Workout, Omega-3, Multivitamin, Vitamin D, Magnesium, Ashwagandha, ZMA, BCAAs, Casein, Caffeine Pills, None |
+| Supplement budget             | Tap cards          | I have what I need / Budget ($20–40/mo) / Mid-range ($40–80/mo) / No limit                                                              |
+| Other supplements (free text) | Text area          | Optional                                                                                                                                |
 
 #### Section F — Location & Lifestyle
 
-|Field                     |Type              |Notes                                                                                                 |
-|--------------------------|------------------|------------------------------------------------------------------------------------------------------|
-|Country                   |Dropdown          |Pre-filled list. Affects grocery store tips, supplement brand recommendations, currency.              |
-|City/Region (optional)    |Text input        |For hyper-local grocery tips                                                                          |
-|Daily activity outside gym|Tap cards         |Desk job (sedentary) / Light movement / Active job / Very active job                                  |
-|Sleep hours per night     |Stepper (4–10)    |                                                                                                      |
-|Stress level              |Segmented         |Low / Moderate / High / Very high                                                                     |
-|Biggest challenge         |Multi-select chips|Staying consistent / Meal prep time / Cravings / Low energy / Plateauing / Motivation / Cooking skills|
+| Field                      | Type               | Notes                                                                                                  |
+| -------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------ |
+| Country                    | Dropdown           | Pre-filled list. Affects grocery store tips, supplement brand recommendations, currency.               |
+| City/Region (optional)     | Text input         | For hyper-local grocery tips                                                                           |
+| Daily activity outside gym | Tap cards          | Desk job (sedentary) / Light movement / Active job / Very active job                                   |
+| Sleep hours per night      | Stepper (4–10)     |                                                                                                        |
+| Stress level               | Segmented          | Low / Moderate / High / Very high                                                                      |
+| Biggest challenge          | Multi-select chips | Staying consistent / Meal prep time / Cravings / Low energy / Plateauing / Motivation / Cooking skills |
 
 ### Form UX rules
 
@@ -165,7 +165,7 @@ Looks and feels like an Apple Settings screen or the Calm/Headspace onboarding. 
 - All selections are stored in `sessionStorage` so a page refresh doesn’t wipe progress
 - A progress indicator at the top shows how many sections are complete (6 dots, filled as user progresses)
 
------
+---
 
 ## 4. Screen 2 — Generated Prompt
 
@@ -205,13 +205,13 @@ Step 7  Come back here and tap "Upload My Plan" below
 If the uploaded file is missing required keys, show an error card:
 
 ```
-This JSON doesn't look right. Make sure you copied the entire response from 
+This JSON doesn't look right. Make sure you copied the entire response from
 Claude including the opening { and closing }. Try again.
 ```
 
 If valid, smooth transition to Screen 3.
 
------
+---
 
 ## 5. Screen 3 — The Health App
 
@@ -348,7 +348,7 @@ Protein powder section — 3 options generated by Claude:
 
 “Don’t need” section — what NOT to buy and why. Important for saving money.
 
------
+---
 
 ## 6. The Claude Prompt Template
 
@@ -357,11 +357,11 @@ This is the most critical piece of the entire system. The prompt must be precise
 ### Template structure
 
 ```
-You are a certified sports nutritionist, personal trainer, and meal planning expert. 
+You are a certified sports nutritionist, personal trainer, and meal planning expert.
 Your job is to create a complete, highly personalised health and fitness plan for a real person.
 
-Read the person's profile carefully. Every recommendation must be specific to their data — 
-not generic advice. Account for their dietary restrictions, cooking equipment, location, 
+Read the person's profile carefully. Every recommendation must be specific to their data —
+not generic advice. Account for their dietary restrictions, cooking equipment, location,
 supplement budget, and schedule.
 
 === PERSON'S PROFILE ===
@@ -369,24 +369,24 @@ supplement budget, and schedule.
 
 === YOUR TASK ===
 
-Generate a complete personalised plan and return it as a single JSON object. 
-The JSON must exactly match the schema below. Do not include any text before or after the JSON. 
+Generate a complete personalised plan and return it as a single JSON object.
+The JSON must exactly match the schema below. Do not include any text before or after the JSON.
 Do not use markdown formatting. Return only the raw JSON object starting with { and ending with }.
 
 Important instructions:
-- All calorie and macro calculations must be based on the person's actual TDEE 
+- All calorie and macro calculations must be based on the person's actual TDEE
   (use Mifflin-St Jeor formula adjusted for their activity level)
 - All meals must respect their dietary preference and avoid any listed dislikes
 - Grocery lists must use items available in their country
 - Supplement recommendations must fit within their stated budget
-- Protein powder section must list 3 real products available in their country 
+- Protein powder section must list 3 real products available in their country
   (Best / Budget / Premium) with real approximate prices in their local currency
 - Grocery store tips must be specific to their city/country if provided
 - Every meal must have real specific ingredients with gram amounts — not vague descriptions
 - Flavour rotations must be actual spice combinations, not just labels
-- The tips array must have at least 10 genuinely useful, specific tips 
+- The tips array must have at least 10 genuinely useful, specific tips
   (not generic fitness clichés)
-- Phase descriptions must be motivational and honest — mention what they will 
+- Phase descriptions must be motivational and honest — mention what they will
   actually feel and experience during that phase
 
 === JSON SCHEMA ===
@@ -592,45 +592,49 @@ When the user taps “Generate My Plan,” the app runs this function:
 
 ```javascript
 function buildPrompt(formData) {
-  const profileJSON = JSON.stringify({
-    name: formData.name,
-    age: formData.age,
-    sex: formData.sex,
-    weight: formData.weight + ' ' + formData.weightUnit,
-    height: formData.height + ' ' + formData.heightUnit,
-    body_fat_pct: formData.bodyFat || 'not provided',
-    goal: formData.goal,
-    timeline: formData.timeline + ' weeks',
-    target_weight: formData.targetWeight || 'not specified',
-    urgency: formData.urgency,
-    training_days_per_week: formData.trainingDays,
-    training_location: formData.trainingLocation,
-    fitness_level: formData.fitnessLevel,
-    injuries: formData.injuries || 'none',
-    dietary_preference: formData.dietaryPreference,
-    food_dislikes: formData.foodDislikes || 'none',
-    meals_per_day: formData.mealsPerDay,
-    cooking_time: formData.cookingTime,
-    meal_prep: formData.mealPrep,
-    cooking_equipment: formData.equipment,
-    supplements_owned: formData.supplementsOwned,
-    supplement_budget: formData.supplementBudget,
-    other_supplements: formData.otherSupplements || 'none',
-    country: formData.country,
-    city: formData.city || 'not provided',
-    activity_outside_gym: formData.activityLevel,
-    sleep_hours: formData.sleepHours,
-    stress_level: formData.stressLevel,
-    biggest_challenges: formData.challenges
-  }, null, 2);
+	const profileJSON = JSON.stringify(
+		{
+			name: formData.name,
+			age: formData.age,
+			sex: formData.sex,
+			weight: formData.weight + ' ' + formData.weightUnit,
+			height: formData.height + ' ' + formData.heightUnit,
+			body_fat_pct: formData.bodyFat || 'not provided',
+			goal: formData.goal,
+			timeline: formData.timeline + ' weeks',
+			target_weight: formData.targetWeight || 'not specified',
+			urgency: formData.urgency,
+			training_days_per_week: formData.trainingDays,
+			training_location: formData.trainingLocation,
+			fitness_level: formData.fitnessLevel,
+			injuries: formData.injuries || 'none',
+			dietary_preference: formData.dietaryPreference,
+			food_dislikes: formData.foodDislikes || 'none',
+			meals_per_day: formData.mealsPerDay,
+			cooking_time: formData.cookingTime,
+			meal_prep: formData.mealPrep,
+			cooking_equipment: formData.equipment,
+			supplements_owned: formData.supplementsOwned,
+			supplement_budget: formData.supplementBudget,
+			other_supplements: formData.otherSupplements || 'none',
+			country: formData.country,
+			city: formData.city || 'not provided',
+			activity_outside_gym: formData.activityLevel,
+			sleep_hours: formData.sleepHours,
+			stress_level: formData.stressLevel,
+			biggest_challenges: formData.challenges
+		},
+		null,
+		2
+	);
 
-  return PROMPT_TEMPLATE.replace('{FORM_DATA_JSON}', profileJSON);
+	return PROMPT_TEMPLATE.replace('{FORM_DATA_JSON}', profileJSON);
 }
 ```
 
 The user never sees this assembly happen. They just tap Generate and see the complete, ready-to-paste prompt.
 
------
+---
 
 ## 7. Design System — Apple HIG
 
@@ -638,79 +642,79 @@ The user never sees this assembly happen. They just tap Generate and see the com
 
 ```css
 :root {
-  /* Backgrounds */
-  --bg:           #F2F2F7;   /* iOS grouped table background */
-  --bg2:          #E5E5EA;   /* Deeper background for contrast */
-  --card:         #FFFFFF;   /* Card/cell surface */
-  --card-pressed: #F9F9F9;   /* Active/pressed state */
+	/* Backgrounds */
+	--bg: #f2f2f7; /* iOS grouped table background */
+	--bg2: #e5e5ea; /* Deeper background for contrast */
+	--card: #ffffff; /* Card/cell surface */
+	--card-pressed: #f9f9f9; /* Active/pressed state */
 
-  /* Labels */
-  --lbl1:    #000000;                   /* Primary */
-  --lbl2:    rgba(60,60,67,0.60);      /* Secondary */
-  --lbl3:    rgba(60,60,67,0.30);      /* Tertiary */
-  --lbl4:    rgba(60,60,67,0.18);      /* Quaternary / separators */
+	/* Labels */
+	--lbl1: #000000; /* Primary */
+	--lbl2: rgba(60, 60, 67, 0.6); /* Secondary */
+	--lbl3: rgba(60, 60, 67, 0.3); /* Tertiary */
+	--lbl4: rgba(60, 60, 67, 0.18); /* Quaternary / separators */
 
-  /* System colours */
-  --blue:    #007AFF;   /* Interactive, links, CTA */
-  --green:   #34C759;   /* Success, goals, positive */
-  --orange:  #FF9500;   /* Warnings, carbs */
-  --red:     #FF3B30;   /* Errors, destructive */
-  --purple:  #AF52DE;   /* Premium, special */
-  --teal:    #5AC8FA;   /* Info, protein */
-  --yellow:  #FFCC00;   /* Fat, optional */
-  --indigo:  #5856D6;   /* Phases */
+	/* System colours */
+	--blue: #007aff; /* Interactive, links, CTA */
+	--green: #34c759; /* Success, goals, positive */
+	--orange: #ff9500; /* Warnings, carbs */
+	--red: #ff3b30; /* Errors, destructive */
+	--purple: #af52de; /* Premium, special */
+	--teal: #5ac8fa; /* Info, protein */
+	--yellow: #ffcc00; /* Fat, optional */
+	--indigo: #5856d6; /* Phases */
 
-  /* Tinted backgrounds */
-  --blue-bg:   rgba(0,122,255,0.10);
-  --green-bg:  rgba(52,199,89,0.10);
-  --orange-bg: rgba(255,149,0,0.10);
-  --red-bg:    rgba(255,59,48,0.10);
-  --teal-bg:   rgba(90,200,250,0.10);
-  --yellow-bg: rgba(255,204,0,0.10);
-  --indigo-bg: rgba(88,86,214,0.10);
+	/* Tinted backgrounds */
+	--blue-bg: rgba(0, 122, 255, 0.1);
+	--green-bg: rgba(52, 199, 89, 0.1);
+	--orange-bg: rgba(255, 149, 0, 0.1);
+	--red-bg: rgba(255, 59, 48, 0.1);
+	--teal-bg: rgba(90, 200, 250, 0.1);
+	--yellow-bg: rgba(255, 204, 0, 0.1);
+	--indigo-bg: rgba(88, 86, 214, 0.1);
 
-  /* Separators */
-  --sep:    rgba(60,60,67,0.18);
-  --sep2:   rgba(60,60,67,0.08);
+	/* Separators */
+	--sep: rgba(60, 60, 67, 0.18);
+	--sep2: rgba(60, 60, 67, 0.08);
 
-  /* Radii */
-  --r-card:   16px;
-  --r-inner:  10px;
-  --r-sm:     8px;
-  --r-chip:   20px;
+	/* Radii */
+	--r-card: 16px;
+	--r-inner: 10px;
+	--r-sm: 8px;
+	--r-chip: 20px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.06);
+	/* Shadows */
+	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+	--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+	--shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.06);
 
-  /* Typography */
-  --ff: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
-  --mono: 'SF Mono', ui-monospace, 'Fira Code', monospace;
+	/* Typography */
+	--ff: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+	--mono: 'SF Mono', ui-monospace, 'Fira Code', monospace;
 }
 ```
 
 ### Typography scale
 
-|Style      |Size   |Weight |Usage                |
-|-----------|-------|-------|---------------------|
-|Large Title|34px   |700    |Screen heroes        |
-|Title 1    |28px   |700    |Page titles          |
-|Title 2    |22px   |700    |Section headers      |
-|Title 3    |20px   |600    |Card titles          |
-|Headline   |17px   |600    |Row labels           |
-|Body       |17px   |400    |Default text         |
-|Callout    |16px   |400    |Secondary content    |
-|Subhead    |15px   |400    |Metadata             |
-|Footnote   |13px   |400    |Captions, tips       |
-|Caption    |12px   |400    |Smallest text        |
-|Mono       |13–15px|400–600|Times, values, badges|
+| Style       | Size    | Weight  | Usage                 |
+| ----------- | ------- | ------- | --------------------- |
+| Large Title | 34px    | 700     | Screen heroes         |
+| Title 1     | 28px    | 700     | Page titles           |
+| Title 2     | 22px    | 700     | Section headers       |
+| Title 3     | 20px    | 600     | Card titles           |
+| Headline    | 17px    | 600     | Row labels            |
+| Body        | 17px    | 400     | Default text          |
+| Callout     | 16px    | 400     | Secondary content     |
+| Subhead     | 15px    | 400     | Metadata              |
+| Footnote    | 13px    | 400     | Captions, tips        |
+| Caption     | 12px    | 400     | Smallest text         |
+| Mono        | 13–15px | 400–600 | Times, values, badges |
 
 ### Spacing scale (4pt grid)
 
 ```
 4px   — Micro gaps between inline elements
-8px   — Between related elements  
+8px   — Between related elements
 12px  — Inner card padding (compact)
 16px  — Standard padding / row height padding
 20px  — Section padding horizontal
@@ -767,7 +771,7 @@ Section footer (12px, lbl2, normal case, padded 20px sides)
 - Active: `--blue`
 - Inactive: `rgba(60,60,67,0.4)`
 
------
+---
 
 ## 8. JSON Schema Validation
 
@@ -775,40 +779,46 @@ When the user uploads their `.json` file, the app validates before rendering:
 
 ```javascript
 function validatePlan(json) {
-  const required = [
-    'meta', 'user', 'phases', 'meal_plan', 
-    'prep_guide', 'grocery', 'supplements', 'tips'
-  ];
-  const missing = required.filter(k => !json[k]);
-  if (missing.length > 0) {
-    return { valid: false, error: `Missing sections: ${missing.join(', ')}` };
-  }
-  if (!Array.isArray(json.phases) || json.phases.length === 0) {
-    return { valid: false, error: 'Phases array is empty or missing' };
-  }
-  if (!json.meal_plan.workout_day || !json.meal_plan.rest_day) {
-    return { valid: false, error: 'Meal plan must have workout_day and rest_day' };
-  }
-  return { valid: true };
+	const required = [
+		'meta',
+		'user',
+		'phases',
+		'meal_plan',
+		'prep_guide',
+		'grocery',
+		'supplements',
+		'tips'
+	];
+	const missing = required.filter((k) => !json[k]);
+	if (missing.length > 0) {
+		return { valid: false, error: `Missing sections: ${missing.join(', ')}` };
+	}
+	if (!Array.isArray(json.phases) || json.phases.length === 0) {
+		return { valid: false, error: 'Phases array is empty or missing' };
+	}
+	if (!json.meal_plan.workout_day || !json.meal_plan.rest_day) {
+		return { valid: false, error: 'Meal plan must have workout_day and rest_day' };
+	}
+	return { valid: true };
 }
 ```
 
 On validation failure: show a friendly error card with the specific problem and a “Try again” button that re-opens the file picker.
 
------
+---
 
 ## 9. Local Storage Keys
 
-|Key                     |Type       |Contents                                                         |
-|------------------------|-----------|-----------------------------------------------------------------|
-|`health_plan`           |JSON string|The complete uploaded plan JSON                                  |
-|`health_form`           |JSON string|Saved form data (so user can come back and re-generate)          |
-|`health_grocery_checked`|JSON string|Set of checked grocery item keys                                 |
-|`health_prep_done`      |JSON string|Set of checked prep step keys                                    |
-|`health_active_screen`  |string     |`form` / `prompt` / `app` — which screen to show on load         |
-|`health_active_tab`     |string     |Last active tab in the app (home/phases/meals/prep/grocery/supps)|
+| Key                      | Type        | Contents                                                          |
+| ------------------------ | ----------- | ----------------------------------------------------------------- |
+| `health_plan`            | JSON string | The complete uploaded plan JSON                                   |
+| `health_form`            | JSON string | Saved form data (so user can come back and re-generate)           |
+| `health_grocery_checked` | JSON string | Set of checked grocery item keys                                  |
+| `health_prep_done`       | JSON string | Set of checked prep step keys                                     |
+| `health_active_screen`   | string      | `form` / `prompt` / `app` — which screen to show on load          |
+| `health_active_tab`      | string      | Last active tab in the app (home/phases/meals/prep/grocery/supps) |
 
------
+---
 
 ## 10. PWA Configuration
 
@@ -816,28 +826,28 @@ On validation failure: show a friendly error card with the specific problem and 
 
 ```json
 {
-  "name": "Health — Personalised Plan",
-  "short_name": "Health",
-  "description": "Your personalised nutrition and fitness plan",
-  "start_url": "/Health/",
-  "display": "standalone",
-  "background_color": "#F2F2F7",
-  "theme_color": "#F2F2F7",
-  "orientation": "portrait",
-  "icons": [
-    {
-      "src": "assets/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "assets/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ]
+	"name": "Health — Personalised Plan",
+	"short_name": "Health",
+	"description": "Your personalised nutrition and fitness plan",
+	"start_url": "/Health/",
+	"display": "standalone",
+	"background_color": "#F2F2F7",
+	"theme_color": "#F2F2F7",
+	"orientation": "portrait",
+	"icons": [
+		{
+			"src": "assets/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "assets/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	]
 }
 ```
 
@@ -850,37 +860,35 @@ The critical fix from the existing code — wrap `addAll` in `Promise.allSettled
 ```javascript
 const CACHE = 'health-v4';
 const ASSETS = [
-  '/Health/',
-  '/Health/index.html',
-  '/Health/manifest.json',
-  '/Health/assets/icon-192.png',
-  '/Health/assets/icon-512.png',
+	'/Health/',
+	'/Health/index.html',
+	'/Health/manifest.json',
+	'/Health/assets/icon-192.png',
+	'/Health/assets/icon-512.png'
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c =>
-      Promise.allSettled(ASSETS.map(url => c.add(url).catch(() => {})))
-    )
-  );
+self.addEventListener('install', (e) => {
+	e.waitUntil(
+		caches
+			.open(CACHE)
+			.then((c) => Promise.allSettled(ASSETS.map((url) => c.add(url).catch(() => {}))))
+	);
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
-  );
+self.addEventListener('fetch', (e) => {
+	e.respondWith(caches.match(e.request).then((r) => r || fetch(e.request)));
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
-  );
+self.addEventListener('activate', (e) => {
+	e.waitUntil(
+		caches
+			.keys()
+			.then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+	);
 });
 ```
 
------
+---
 
 ## 11. File Structure After Rebuild
 
@@ -911,7 +919,7 @@ Everything else is deleted:
 - `*.md` plan files (this file is the plan)
 - `claude-company-os 2.zip` (unrelated)
 
------
+---
 
 ## 12. Build Order — PR by PR
 
@@ -929,7 +937,7 @@ Actions:
 
 Result: Clean repo. No orphaned files. GitHub Pages will serve `index.html` which doesn’t exist yet — it will 404, which is fine until PR-2.
 
------
+---
 
 ### PR-2 — Core index.html: Design system + Screen 1 (Intake Form)
 
@@ -961,7 +969,7 @@ Test checklist:
 - [ ] Validation fires on empty required fields (scrolls to first error)
 - [ ] Country dropdown works
 
------
+---
 
 ### PR-3 — Screen 2: Prompt Generator
 
@@ -991,7 +999,7 @@ Test checklist:
 - [ ] Upload a malformed `.json` file — shows error card
 - [ ] Upload a JSON missing required keys — shows error with specific keys named
 
------
+---
 
 ### PR-4 — Screen 3: Tab Bar + Home Tab
 
@@ -1025,7 +1033,7 @@ Test checklist:
 - [ ] On reload, app goes straight to Screen 3 (loads plan from localStorage)
 - [ ] ⋯ menu has “Re-upload plan” that goes back to Screen 2
 
------
+---
 
 ### PR-5 — Screen 3: Phases + Meals Tabs
 
@@ -1051,7 +1059,7 @@ Test checklist:
 - [ ] Ingredient category dots show correct colours (teal=protein, lime=carbs, orange=veg)
 - [ ] Phase selector changes the meals shown
 
------
+---
 
 ### PR-6 — Screen 3: Prep + Grocery Tabs
 
@@ -1083,7 +1091,7 @@ Test checklist:
 - [ ] Budget swaps toggle shows/hides alternative items
 - [ ] Store tip appears at bottom
 
------
+---
 
 ### PR-7 — Screen 3: Supplements Tab
 
@@ -1106,7 +1114,7 @@ Test checklist:
 - [ ] 3 protein powder options show with prices
 - [ ] Skip list shows with reasons
 
------
+---
 
 ### PR-8 — Polish + Animations + Edge Cases
 
@@ -1133,14 +1141,14 @@ Test checklist:
 - [ ] Works as installed PWA on iPhone home screen
 - [ ] Status bar colour matches app background
 
------
+---
 
 ## 13. The README (replace current)
 
 ```markdown
 # Health — Personalised Plan
 
-A mobile web app that turns a personalised Claude-generated health plan into 
+A mobile web app that turns a personalised Claude-generated health plan into
 a beautiful, interactive guide.
 
 ## How it works
@@ -1149,7 +1157,7 @@ a beautiful, interactive guide.
 2. The app generates a pre-built prompt tailored to you
 3. Paste the prompt into Claude at claude.ai
 4. Upload the JSON plan Claude gives you
-5. Your personalised plan — meals, macros, phases, grocery list, supplements — 
+5. Your personalised plan — meals, macros, phases, grocery list, supplements —
    renders as a native-feeling mobile app
 
 ## Features
@@ -1171,7 +1179,7 @@ All data stays on your device — nothing is sent anywhere.
 Hosted on GitHub Pages: https://ruddvz.github.io/Health/
 ```
 
------
+---
 
 ## 14. Future Phases (after the core is shipped)
 
@@ -1193,7 +1201,7 @@ Weekly weigh-in logger. Simple line chart (weight over 16 weeks). Photo reminder
 
 If the user’s weight changes significantly, or they want to update their goal mid-program, a “Regenerate Plan” flow lets them update just the changed fields and regenerate a new prompt. The app detects what changed and explains why the plan might differ.
 
------
+---
 
 ## 15. What NOT to Change from the Old Repo
 
@@ -1204,7 +1212,7 @@ Some things in the existing codebase are worth keeping as reference even though 
 - The `store.js` localStorage helper pattern is clean — copy the pattern
 - The `sw.js` cache strategy (cache-first for assets, network-first for HTML) is correct — just fix the fatal error
 
------
+---
 
 ## 16. Definition of Done
 
@@ -1221,7 +1229,7 @@ The app is complete and ready to share when:
 1. The app works offline after the first load
 1. The design looks and feels like an Apple Health companion — no lime brutalism, no placeholder grey squares, no hardcoded content
 
------
+---
 
-*Plan v4.0 — Complete pivot to intake → Claude prompt → JSON upload architecture.*  
-*Written May 2026. Replaces all previous plan files.*
+_Plan v4.0 — Complete pivot to intake → Claude prompt → JSON upload architecture._  
+_Written May 2026. Replaces all previous plan files._

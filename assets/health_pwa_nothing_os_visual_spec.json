@@ -1,2002 +1,1906 @@
 {
-  "meta": {
-    "name": "Health PWA Nothing OS Inspired Visual Implementation Spec",
-    "version": "1.0.0",
-    "created_for": "ruddvz/Health",
-    "purpose": "Pixel-oriented visual JSON for implementing the full redesign as a static SvelteKit/GitHub Pages PWA.",
-    "design_reference": {
-      "style": "Nothing OS inspired, original, monochrome, dot-matrix, red accent, modular health widgets",
-      "source_image_file": "futuristic_health_app_ui_design.png",
-      "note": "Use this JSON as the source of truth. The generated concept image is directional; this file converts it into implementable layout, tokens, and behavior."
-    },
-    "target_stack": {
-      "framework": "SvelteKit",
-      "language": "TypeScript",
-      "deployment": "GitHub Pages",
-      "pwa": true,
-      "storage": "localStorage first, IndexedDB optional later",
-      "backend": "none"
-    }
-  },
-  "global_app": {
-    "app_name": "HEALTH",
-    "tagline": "PRIVATE. OFFLINE. PERSONAL.",
-    "default_route": "/today",
-    "base_path": "/Health",
-    "local_only_message": "Everything stays on this device.",
-    "data_privacy_short": "100% Local",
-    "primary_navigation": [
-      {
-        "id": "today",
-        "label": "Today",
-        "icon": "home",
-        "route": "/today"
-      },
-      {
-        "id": "meals",
-        "label": "Meals",
-        "icon": "calendar-meal",
-        "route": "/meals"
-      },
-      {
-        "id": "train",
-        "label": "Train",
-        "icon": "barbell",
-        "route": "/train"
-      },
-      {
-        "id": "progress",
-        "label": "Progress",
-        "icon": "trend",
-        "route": "/progress"
-      },
-      {
-        "id": "system",
-        "label": "System",
-        "icon": "sliders",
-        "route": "/system"
-      }
-    ],
-    "secondary_system_routes": [
-      {
-        "id": "grocery",
-        "label": "Grocery",
-        "route": "/system/grocery"
-      },
-      {
-        "id": "prep",
-        "label": "Prep",
-        "route": "/system/prep"
-      },
-      {
-        "id": "supplements",
-        "label": "Supplements",
-        "route": "/system/supplements"
-      },
-      {
-        "id": "settings",
-        "label": "Settings",
-        "route": "/system/settings"
-      },
-      {
-        "id": "privacy",
-        "label": "Privacy",
-        "route": "/system/privacy"
-      },
-      {
-        "id": "diagnostics",
-        "label": "Plan Diagnostics",
-        "route": "/system/diagnostics"
-      }
-    ]
-  },
-  "viewport": {
-    "mobile_canvas": {
-      "name": "phone",
-      "width": 393,
-      "height": 852,
-      "status_bar_height": 32,
-      "safe_top": 16,
-      "safe_bottom": 24,
-      "content_x": 16,
-      "content_width": 361,
-      "bottom_nav_height": 76,
-      "bottom_nav_y": 776,
-      "scrollable_content_bottom_padding": 108
-    },
-    "responsive": {
-      "mobile_first": true,
-      "breakpoints": {
-        "sm": 393,
-        "md": 768,
-        "lg": 1024,
-        "xl": 1280
-      },
-      "desktop_behavior": "Center the mobile app shell at max-width 430px. Optional desktop dashboard can be added later, but do not redesign during first implementation."
-    }
-  },
-  "design_tokens": {
-    "colors": {
-      "bg": "#0B0B0B",
-      "bg_elevated": "#101010",
-      "surface_1": "#121212",
-      "surface_2": "#181818",
-      "surface_3": "#202020",
-      "surface_hover": "#242424",
-      "text_1": "#F4F4F0",
-      "text_2": "#B9B9B2",
-      "text_3": "#777771",
-      "text_disabled": "#555550",
-      "line_1": "rgba(255,255,255,0.08)",
-      "line_2": "rgba(255,255,255,0.16)",
-      "line_3": "rgba(255,255,255,0.24)",
-      "red": "#FF2A2A",
-      "red_hover": "#FF4040",
-      "red_pressed": "#D91F1F",
-      "red_soft": "rgba(255,42,42,0.14)",
-      "red_line": "rgba(255,42,42,0.42)",
-      "white_soft": "rgba(255,255,255,0.92)",
-      "black_soft": "rgba(0,0,0,0.55)",
-      "success": "#49D17D",
-      "warning": "#FFCC4D",
-      "danger": "#FF2A2A",
-      "info": "#C9C9C9",
-      "chart_grid": "rgba(255,255,255,0.06)",
-      "dot_grid": "rgba(255,255,255,0.065)"
-    },
-    "typography": {
-      "font_ui": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, system-ui, sans-serif",
-      "font_mono": "'SF Mono', 'Roboto Mono', 'IBM Plex Mono', ui-monospace, monospace",
-      "font_dot": "Use CSS dot-matrix effect on mono text, not an external font dependency.",
-      "scale": {
-        "display": {
-          "size": 38,
-          "line_height": 42,
-          "weight": 700,
-          "tracking": 1.5,
-          "family": "font_mono",
-          "transform": "uppercase"
-        },
-        "screen_title": {
-          "size": 31,
-          "line_height": 36,
-          "weight": 700,
-          "tracking": 1.2,
-          "family": "font_mono",
-          "transform": "uppercase"
-        },
-        "h1": {
-          "size": 30,
-          "line_height": 34,
-          "weight": 650,
-          "tracking": -0.5,
-          "family": "font_ui"
-        },
-        "h2": {
-          "size": 21,
-          "line_height": 27,
-          "weight": 650,
-          "tracking": -0.2,
-          "family": "font_ui"
-        },
-        "h3": {
-          "size": 17,
-          "line_height": 23,
-          "weight": 650,
-          "tracking": 0,
-          "family": "font_ui"
-        },
-        "body": {
-          "size": 14,
-          "line_height": 21,
-          "weight": 400,
-          "tracking": 0,
-          "family": "font_ui"
-        },
-        "body_small": {
-          "size": 12,
-          "line_height": 17,
-          "weight": 400,
-          "tracking": 0,
-          "family": "font_ui"
-        },
-        "mono_label": {
-          "size": 10,
-          "line_height": 13,
-          "weight": 600,
-          "tracking": 0.9,
-          "family": "font_mono",
-          "transform": "uppercase"
-        },
-        "metric_large": {
-          "size": 30,
-          "line_height": 34,
-          "weight": 650,
-          "tracking": -0.5,
-          "family": "font_ui"
-        },
-        "metric_medium": {
-          "size": 22,
-          "line_height": 26,
-          "weight": 650,
-          "tracking": -0.3,
-          "family": "font_ui"
-        },
-        "nav_label": {
-          "size": 9,
-          "line_height": 11,
-          "weight": 500,
-          "tracking": -0.1,
-          "family": "font_ui"
-        }
-      }
-    },
-    "spacing": {
-      "0": 0,
-      "1": 4,
-      "2": 8,
-      "3": 12,
-      "4": 16,
-      "5": 20,
-      "6": 24,
-      "7": 28,
-      "8": 32,
-      "10": 40,
-      "12": 48
-    },
-    "radii": {
-      "xs": 8,
-      "sm": 12,
-      "md": 16,
-      "lg": 22,
-      "xl": 28,
-      "pill": 999
-    },
-    "borders": {
-      "hairline": "1px solid rgba(255,255,255,0.08)",
-      "standard": "1px solid rgba(255,255,255,0.12)",
-      "strong": "1px solid rgba(255,255,255,0.18)",
-      "red": "1px solid rgba(255,42,42,0.42)",
-      "dashed": "1px dashed rgba(255,255,255,0.24)"
-    },
-    "shadows": {
-      "card": "0 14px 40px rgba(0,0,0,0.32)",
-      "phone": "0 30px 90px rgba(0,0,0,0.55)",
-      "red_glow": "0 0 22px rgba(255,42,42,0.28)"
-    },
-    "motion": {
-      "duration_fast": "120ms",
-      "duration_base": "180ms",
-      "duration_slow": "260ms",
-      "easing": "cubic-bezier(.2,.8,.2,1)",
-      "press_scale": 0.985,
-      "reduced_motion": "Disable non-essential animations when prefers-reduced-motion is enabled."
-    },
-    "effects": {
-      "dot_grid_background": {
-        "css": "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.065) 1px, transparent 0)",
-        "size": "18px 18px",
-        "usage": "Use on page background and some empty card regions at low opacity."
-      },
-      "dot_title": {
-        "method": "Use mono uppercase text with CSS text-shadow/dotted mask or optional inline SVG pattern.",
-        "fallback": "Plain mono uppercase title."
-      }
-    }
-  },
-  "component_specs": {
-    "AppShell": {
-      "description": "Main mobile shell. Holds status area, page content, and bottom nav.",
-      "layout": {
-        "width": 393,
-        "min_height": 852,
-        "background": "bg",
-        "padding": 16,
-        "bottom_padding": 108
-      },
-      "css_requirements": [
-        "max-width: 430px on desktop",
-        "min-height: 100dvh",
-        "background uses dot grid at 15% opacity",
-        "overflow-x hidden"
-      ]
-    },
-    "ScreenHeader": {
-      "height": "auto",
-      "slots": [
-        "eyebrow",
-        "title",
-        "subtitle",
-        "right_action"
-      ],
-      "style": {
-        "title_token": "screen_title",
-        "eyebrow_token": "mono_label",
-        "title_color": "text_1",
-        "eyebrow_color": "text_3",
-        "margin_bottom": 14
-      }
-    },
-    "BottomNav": {
-      "position": {
-        "x": 0,
-        "y": 776,
-        "w": 393,
-        "h": 76
-      },
-      "style": {
-        "background": "rgba(11,11,11,0.92)",
-        "backdrop_filter": "blur(18px)",
-        "border_top": "hairline",
-        "padding": "8px 12px calc(8px + env(safe-area-inset-bottom))",
-        "item_width": "20%",
-        "active_color": "red",
-        "inactive_color": "text_3"
-      },
-      "states": {
-        "active": {
-          "icon_color": "red",
-          "label_color": "red"
-        },
-        "inactive": {
-          "icon_color": "text_3",
-          "label_color": "text_3"
-        },
-        "pressed": {
-          "scale": 0.96
-        }
-      }
-    },
-    "NothingWidget": {
-      "description": "Base card for most dashboard modules.",
-      "base_style": {
-        "background": "linear-gradient(180deg, #181818 0%, #111111 100%)",
-        "border": "standard",
-        "border_radius": 18,
-        "padding": 14,
-        "box_shadow": "card",
-        "overflow": "hidden"
-      },
-      "optional_decor": {
-        "dot_grid": true,
-        "red_accent_line": false,
-        "corner_glyph": false
-      }
-    },
-    "RedButton": {
-      "height": 52,
-      "border_radius": 12,
-      "background": "red",
-      "color": "#FFFFFF",
-      "font": "body_small",
-      "font_weight": 650,
-      "states": {
-        "hover": {
-          "background": "red_hover"
-        },
-        "pressed": {
-          "background": "red_pressed",
-          "scale": 0.985
-        },
-        "disabled": {
-          "background": "#3A1A1A",
-          "color": "text_3"
-        }
-      }
-    },
-    "SegmentedControl": {
-      "height": 38,
-      "background": "surface_1",
-      "border": "hairline",
-      "border_radius": 12,
-      "selected": {
-        "background": "red",
-        "color": "#FFFFFF"
-      },
-      "unselected": {
-        "background": "transparent",
-        "color": "text_2"
-      }
-    },
-    "MetricRing": {
-      "size": 78,
-      "stroke_width": 6,
-      "track": "rgba(255,255,255,0.08)",
-      "progress": "red",
-      "center_value_token": "metric_medium",
-      "center_label_token": "mono_label"
-    },
-    "GlyphProgress": {
-      "segments": 10,
-      "filled_symbol": "●",
-      "empty_symbol": "○",
-      "filled_color": "red",
-      "empty_color": "line_3",
-      "font": "font_mono"
-    },
-    "ListRow": {
-      "height_min": 54,
-      "background": "surface_1",
-      "border": "hairline",
-      "border_radius": 14,
-      "padding": "12px 14px",
-      "title_token": "body",
-      "subtitle_token": "body_small",
-      "right_meta_token": "body_small"
-    },
-    "WarningCard": {
-      "background": "rgba(255,42,42,0.09)",
-      "border": "red",
-      "border_radius": 16,
-      "padding": 14,
-      "title_color": "red",
-      "body_color": "text_2"
-    }
-  },
-  "shared_layout_patterns": {
-    "page_content": {
-      "x": 16,
-      "y": 44,
-      "w": 361,
-      "bottom": 760
-    },
-    "card_gap": 12,
-    "section_gap": 20,
-    "two_column_grid": {
-      "columns": 2,
-      "gap": 10,
-      "column_width": 175
-    },
-    "three_column_grid": {
-      "columns": 3,
-      "gap": 8,
-      "column_width": 115
-    },
-    "caption_labels": {
-      "use_in_showcase_only": true,
-      "style": "mono_label",
-      "color": "text_2"
-    }
-  },
-  "pages": {
-    "onboarding": {
-      "route": "/",
-      "screen_id": "01_onboarding",
-      "active_nav": null,
-      "purpose": "Guide the user through profile, lifestyle, plan import, and confirmation.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "progress_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 28,
-          "props": {
-            "label": "STEP 1 OF 4",
-            "progress": 0.25
-          }
-        },
-        {
-          "type": "heading",
-          "x": 16,
-          "y": 90,
-          "w": 300,
-          "h": 78,
-          "text": "Let’s build\nyour plan",
-          "token": "h1"
-        },
-        {
-          "type": "text",
-          "x": 16,
-          "y": 168,
-          "w": 260,
-          "h": 42,
-          "text": "We’ll use your plan to personalize\nyour daily dashboard.",
-          "token": "body_small",
-          "color": "text_2"
-        },
-        {
-          "type": "step_card",
-          "x": 16,
-          "y": 228,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "index": 1,
-            "title": "Your profile",
-            "subtitle": "Basic info, goals & preferences",
-            "icon": "user",
-            "status": "complete"
-          }
-        },
-        {
-          "type": "step_card",
-          "x": 16,
-          "y": 302,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "index": 2,
-            "title": "Your lifestyle",
-            "subtitle": "Activity level & daily rhythm",
-            "icon": "clock",
-            "status": "complete"
-          }
-        },
-        {
-          "type": "step_card",
-          "x": 16,
-          "y": 376,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "index": 3,
-            "title": "Your plan",
-            "subtitle": "Import your health plan",
-            "icon": "document",
-            "status": "current"
-          }
-        },
-        {
-          "type": "step_card",
-          "x": 16,
-          "y": 450,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "index": 4,
-            "title": "Confirm & finish",
-            "subtitle": "Review and generate",
-            "icon": "spinner",
-            "status": "locked"
-          }
-        },
-        {
-          "type": "red_button",
-          "x": 16,
-          "y": 538,
-          "w": 361,
-          "h": 52,
-          "text": "Continue",
-          "action": "go_next_step"
-        },
-        {
-          "type": "text_button",
-          "x": 16,
-          "y": 604,
-          "w": 361,
-          "h": 34,
-          "text": "Skip for now",
-          "action": "go_import"
-        }
-      ],
-      "states": {
-        "step_1_profile": [
-          "name",
-          "age",
-          "sex",
-          "height",
-          "weight",
-          "goal"
-        ],
-        "step_2_lifestyle": [
-          "wake_time",
-          "sleep_time",
-          "training_time",
-          "activity_level"
-        ],
-        "step_3_plan": [
-          "upload_json",
-          "paste_json",
-          "generate_prompt"
-        ],
-        "step_4_confirm": [
-          "privacy_notice",
-          "local_storage_notice",
-          "start_app"
-        ]
-      }
-    },
-    "import_plan": {
-      "route": "/import",
-      "screen_id": "02_import_plan",
-      "active_nav": null,
-      "purpose": "Let the user copy prompt, paste JSON, or upload plan file.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 54,
-          "w": 361,
-          "h": 112,
-          "props": {
-            "eyebrow": "IMPORT YOUR PLAN",
-            "title": "Bring in your\nhealth plan",
-            "subtitle": "Use your JSON plan to power your dashboard."
-          }
-        },
-        {
-          "type": "json_drop_zone",
-          "x": 16,
-          "y": 190,
-          "w": 361,
-          "h": 210,
-          "props": {
-            "icon": "braces",
-            "label": ".JSON",
-            "dot_grid": true
-          }
-        },
-        {
-          "type": "list_button",
-          "x": 16,
-          "y": 426,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "icon": "copy",
-            "label": "Copy Prompt",
-            "chevron": true,
-            "action": "copy_prompt"
-          }
-        },
-        {
-          "type": "list_button",
-          "x": 16,
-          "y": 496,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "icon": "paste",
-            "label": "Paste JSON",
-            "chevron": true,
-            "action": "open_paste_json"
-          }
-        },
-        {
-          "type": "dashed_button",
-          "x": 16,
-          "y": 568,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "icon": "upload",
-            "label": "Upload Plan File",
-            "action": "open_file_picker"
-          }
-        },
-        {
-          "type": "helper_text",
-          "x": 16,
-          "y": 650,
-          "w": 361,
-          "h": 50,
-          "text": "Your uploaded plan is stored only in this browser.",
-          "color": "text_3"
-        }
-      ],
-      "validation": {
-        "accepted_file_types": [
-          ".json",
-          "application/json"
-        ],
-        "max_file_size_mb": 2,
-        "parse_errors": "Show exact JSON parsing error and do not save invalid data.",
-        "security": "Never render uploaded strings as raw HTML."
-      }
-    },
-    "today": {
-      "route": "/today",
-      "screen_id": "03_today_dashboard",
-      "active_nav": "today",
-      "purpose": "Daily command center showing next action, macros, water, and timeline.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 80,
-          "props": {
-            "title": "TODAY",
-            "subtitle": "Good evening, Rudra",
-            "right_action": "day_settings"
-          }
-        },
-        {
-          "type": "phase_row",
-          "x": 16,
-          "y": 124,
-          "w": 361,
-          "h": 28,
-          "props": {
-            "label": "Week 1",
-            "dropdown": true
-          }
-        },
-        {
-          "type": "segmented_control",
-          "x": 16,
-          "y": 162,
-          "w": 361,
-          "h": 38,
-          "props": {
-            "options": [
-              "Workout Day",
-              "Rest Day"
-            ],
-            "selected": "Workout Day"
-          }
-        },
-        {
-          "type": "next_action_card",
-          "x": 16,
-          "y": 214,
-          "w": 361,
-          "h": 84,
-          "props": {
-            "eyebrow": "NEXT ACTION",
-            "title": "Lower Body Strength",
-            "subtitle": "Start your workout",
-            "icon": "waveform",
-            "cta": "arrow_red"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 314,
-          "w": 361,
-          "h": 18,
-          "text": "MACROS"
-        },
-        {
-          "type": "metric_ring",
-          "x": 24,
-          "y": 344,
-          "w": 104,
-          "h": 104,
-          "props": {
-            "value": 142,
-            "unit": "g",
-            "label": "Protein",
-            "max": 160
-          }
-        },
-        {
-          "type": "metric_ring",
-          "x": 145,
-          "y": 344,
-          "w": 104,
-          "h": 104,
-          "props": {
-            "value": 210,
-            "unit": "g",
-            "label": "Carbs",
-            "max": 250
-          }
-        },
-        {
-          "type": "metric_ring",
-          "x": 266,
-          "y": 344,
-          "w": 104,
-          "h": 104,
-          "props": {
-            "value": 58,
-            "unit": "g",
-            "label": "Fat",
-            "max": 70
-          }
-        },
-        {
-          "type": "metric_tile",
-          "x": 16,
-          "y": 468,
-          "w": 175,
-          "h": 92,
-          "props": {
-            "label": "WATER",
-            "value": "1.6 / 3.0 L",
-            "subvalue": "53%",
-            "progress": 0.53,
-            "icon": "droplet"
-          }
-        },
-        {
-          "type": "metric_tile",
-          "x": 202,
-          "y": 468,
-          "w": 175,
-          "h": 92,
-          "props": {
-            "label": "CALORIES",
-            "value": "1,842",
-            "subvalue": "/ 2,300 kcal",
-            "progress": 0.8,
-            "icon": "flame"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 582,
-          "w": 361,
-          "h": 18,
-          "text": "TIMELINE"
-        },
-        {
-          "type": "timeline_card",
-          "x": 16,
-          "y": 612,
-          "w": 361,
-          "h": 92,
-          "props": {
-            "items": [
-              {
-                "time": "7:30 AM",
-                "title": "Meal 1",
-                "subtitle": "Oats, Whey, Banana",
-                "state": "done"
-              },
-              {
-                "time": "10:00 PM",
-                "title": "Train",
-                "subtitle": "Lower Body Strength",
-                "state": "next"
-              }
-            ]
-          }
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ],
-      "data_bindings": {
-        "phase": "plan.phases[currentPhase]",
-        "day_type": "ui.activeDayType",
-        "next_action": "logic.schedule.getNextAction(now, plan.schedule, dayType)",
-        "macro_values": "logic.nutrition.getDayTotals(plan, activePhase, dayType)",
-        "timeline": "logic.schedule.buildTimeline(plan.schedule, dayType)"
-      }
-    },
-    "meals": {
-      "route": "/meals",
-      "screen_id": "04_meals",
-      "active_nav": "meals",
-      "purpose": "Show meals, target gaps, quick fixes, and cooking actions.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "MEALS",
-            "right_action": "filter"
-          }
-        },
-        {
-          "type": "chip_row",
-          "x": 16,
-          "y": 116,
-          "w": 361,
-          "h": 36,
-          "props": {
-            "chips": [
-              "Workout Day",
-              "Rest Day",
-              "All"
-            ],
-            "selected": "Workout Day"
-          }
-        },
-        {
-          "type": "target_gap_card",
-          "x": 16,
-          "y": 166,
-          "w": 361,
-          "h": 126,
-          "props": {
-            "title": "TARGET GAP",
-            "message": "You’re slightly under on carbs.",
-            "metrics": [
-              {
-                "label": "Carbs",
-                "value": "-40g",
-                "color": "red"
-              },
-              {
-                "label": "Protein",
-                "value": "+8g",
-                "color": "warning"
-              },
-              {
-                "label": "Fat",
-                "value": "-5g",
-                "color": "red"
-              }
-            ],
-            "cta": "Quick Fix"
-          }
-        },
-        {
-          "type": "meal_card",
-          "x": 16,
-          "y": 310,
-          "w": 361,
-          "h": 86,
-          "props": {
-            "index": 1,
-            "time": "07:30 AM",
-            "name": "Oats, Whey, Banana",
-            "kcal": 540,
-            "macros": {
-              "protein": "35g",
-              "carbs": "70g",
-              "fat": "12g"
-            }
-          }
-        },
-        {
-          "type": "meal_card",
-          "x": 16,
-          "y": 408,
-          "w": 361,
-          "h": 86,
-          "props": {
-            "index": 2,
-            "time": "12:30 PM",
-            "name": "Chicken, Rice, Veg",
-            "kcal": 620,
-            "macros": {
-              "protein": "40g",
-              "carbs": "65g",
-              "fat": "14g"
-            }
-          }
-        },
-        {
-          "type": "meal_card",
-          "x": 16,
-          "y": 506,
-          "w": 361,
-          "h": 86,
-          "props": {
-            "index": 3,
-            "time": "04:30 PM",
-            "name": "Greek Yogurt, Berries",
-            "kcal": 250,
-            "macros": {
-              "protein": "20g",
-              "carbs": "25g",
-              "fat": "6g"
-            }
-          }
-        },
-        {
-          "type": "secondary_button",
-          "x": 16,
-          "y": 610,
-          "w": 361,
-          "h": 50,
-          "text": "+ Add Meal",
-          "action": "manual_add_meal"
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ],
-      "interactions": {
-        "tap_meal_card": "open meal detail sheet",
-        "quick_fix": "open macro repair sheet",
-        "filter": "open day/phase filter sheet"
-      }
-    },
-    "train": {
-      "route": "/train",
-      "screen_id": "05_train",
-      "active_nav": "train",
-      "purpose": "Render workout program and start workout session.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "TRAIN",
-            "right_action": "tune"
-          }
-        },
-        {
-          "type": "workout_hero_card",
-          "x": 16,
-          "y": 120,
-          "w": 361,
-          "h": 194,
-          "props": {
-            "title": "LOWER BODY STRENGTH",
-            "tag": "Strength",
-            "duration": "60 min",
-            "description": "Compound lifts for lower body power and strength.",
-            "body_map_highlight": "legs_red"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 334,
-          "w": 361,
-          "h": 18,
-          "text": "EXERCISES",
-          "right_text": "5 exercises"
-        },
-        {
-          "type": "exercise_row",
-          "x": 16,
-          "y": 364,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "index": 1,
-            "name": "Back Squat",
-            "sets_reps": "4 sets × 6–8 reps",
-            "rest": "120s"
-          }
-        },
-        {
-          "type": "exercise_row",
-          "x": 16,
-          "y": 428,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "index": 2,
-            "name": "Romanian Deadlift",
-            "sets_reps": "4 sets × 8–10 reps",
-            "rest": "90s"
-          }
-        },
-        {
-          "type": "exercise_row",
-          "x": 16,
-          "y": 492,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "index": 3,
-            "name": "Leg Press",
-            "sets_reps": "3 sets × 10–12 reps",
-            "rest": "90s"
-          }
-        },
-        {
-          "type": "exercise_row",
-          "x": 16,
-          "y": 556,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "index": 4,
-            "name": "Walking Lunge",
-            "sets_reps": "3 sets × 12 each",
-            "rest": "60s"
-          }
-        },
-        {
-          "type": "exercise_row",
-          "x": 16,
-          "y": 620,
-          "w": 361,
-          "h": 58,
-          "props": {
-            "index": 5,
-            "name": "Standing Calf Raise",
-            "sets_reps": "4 sets × 15–20 reps",
-            "rest": "45s"
-          }
-        },
-        {
-          "type": "red_button",
-          "x": 16,
-          "y": 700,
-          "w": 361,
-          "h": 52,
-          "text": "Start Session",
-          "action": "start_workout"
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ],
-      "workout_mode": {
-        "route": "/train/session",
-        "components": [
-          "ExerciseTracker",
-          "SetLogger",
-          "RestTimer",
-          "ProgressionHint"
-        ],
-        "required_fields": [
-          "exercise.name",
-          "sets",
-          "reps",
-          "rest_seconds",
-          "last_performance",
-          "progression_rule"
-        ]
-      }
-    },
-    "progress": {
-      "route": "/progress",
-      "screen_id": "06_progress",
-      "active_nav": "progress",
-      "purpose": "Show body and adherence trends with weekly check-in.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "PROGRESS",
-            "right_action": "settings"
-          }
-        },
-        {
-          "type": "chip_row",
-          "x": 16,
-          "y": 116,
-          "w": 361,
-          "h": 36,
-          "props": {
-            "chips": [
-              "Overview",
-              "Trends",
-              "Metrics"
-            ],
-            "selected": "Overview"
-          }
-        },
-        {
-          "type": "chart_card",
-          "x": 16,
-          "y": 166,
-          "w": 361,
-          "h": 184,
-          "props": {
-            "title": "WEIGHT TREND",
-            "value": "75.4 kg",
-            "delta": "-0.6 kg vs last week",
-            "chart_type": "red_line",
-            "x_labels": [
-              "Mon",
-              "Tue",
-              "Wed",
-              "Thu",
-              "Fri",
-              "Sat",
-              "Sun"
-            ]
-          }
-        },
-        {
-          "type": "adherence_card",
-          "x": 16,
-          "y": 364,
-          "w": 361,
-          "h": 122,
-          "props": {
-            "title": "ADHERENCE",
-            "value": "92%",
-            "subtitle": "7 day average",
-            "bars": [
-              0.7,
-              0.9,
-              0.8,
-              1.0,
-              0.95,
-              0.85,
-              0.75
-            ]
-          }
-        },
-        {
-          "type": "checkin_card",
-          "x": 16,
-          "y": 500,
-          "w": 361,
-          "h": 152,
-          "props": {
-            "title": "WEEKLY CHECK-IN",
-            "question": "How was your week?",
-            "subtitle": "Log your energy, sleep & notes.",
-            "cta": "Log Check-in"
-          }
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ],
-      "data_bindings": {
-        "weight_trend": "progress.weightEntries",
-        "adherence": "logic.progress.calculateAdherence(progress, plan)",
-        "weekly_checkin": "progress.weeklyCheckins"
-      }
-    },
-    "grocery": {
-      "route": "/system/grocery",
-      "screen_id": "07_grocery",
-      "active_nav": "system",
-      "purpose": "Store/category grouped shopping checklist.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "GROCERY"
-          }
-        },
-        {
-          "type": "chip_row",
-          "x": 16,
-          "y": 116,
-          "w": 361,
-          "h": 36,
-          "props": {
-            "chips": [
-              "All",
-              "Store",
-              "Category"
-            ],
-            "selected": "All"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 168,
-          "w": 361,
-          "h": 18,
-          "text": "STORE: SUPERMARKET"
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 198,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Oats",
-            "quantity": "1.5 kg"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 244,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": true,
-            "label": "Chicken Breast",
-            "quantity": "1.0 kg"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 290,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Eggs",
-            "quantity": "12 pcs"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 336,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Greek Yogurt",
-            "quantity": "1.0 kg"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 382,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Bananas",
-            "quantity": "1 bunch"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 446,
-          "w": 361,
-          "h": 18,
-          "text": "STORE: GREENGROCER"
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 476,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": true,
-            "label": "Spinach",
-            "quantity": "500 g"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 522,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Broccoli",
-            "quantity": "1 head"
-          }
-        },
-        {
-          "type": "checklist_row",
-          "x": 16,
-          "y": 568,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "checked": false,
-            "label": "Bell Peppers",
-            "quantity": "2 pcs"
-          }
-        },
-        {
-          "type": "secondary_button",
-          "x": 16,
-          "y": 690,
-          "w": 361,
-          "h": 52,
-          "text": "+ Add Item",
-          "action": "add_grocery_item"
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ]
-    },
-    "prep": {
-      "route": "/system/prep",
-      "screen_id": "08_prep",
-      "active_nav": "system",
-      "purpose": "Timed weekly meal-prep checklist.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "PREP"
-          }
-        },
-        {
-          "type": "section_title_block",
-          "x": 16,
-          "y": 118,
-          "w": 361,
-          "h": 42,
-          "props": {
-            "title": "SUNDAY PREP",
-            "subtitle": "Estimated time: 2h 15m",
-            "subtitle_color": "red"
-          }
-        },
-        {
-          "type": "prep_step_card",
-          "x": 16,
-          "y": 176,
-          "w": 361,
-          "h": 76,
-          "props": {
-            "icon": "grain",
-            "title": "Cook Grains",
-            "subtitle": "Cook rice, quinoa or oats.",
-            "time": "30m",
-            "checked": true
-          }
-        },
-        {
-          "type": "prep_step_card",
-          "x": 16,
-          "y": 264,
-          "w": 361,
-          "h": 76,
-          "props": {
-            "icon": "protein",
-            "title": "Cook Proteins",
-            "subtitle": "Grill chicken, boil eggs.",
-            "time": "45m",
-            "checked": true
-          }
-        },
-        {
-          "type": "prep_step_card",
-          "x": 16,
-          "y": 352,
-          "w": 361,
-          "h": 76,
-          "props": {
-            "icon": "veg",
-            "title": "Chop Vegetables",
-            "subtitle": "Wash, chop and store.",
-            "time": "30m",
-            "checked": false
-          }
-        },
-        {
-          "type": "prep_step_card",
-          "x": 16,
-          "y": 440,
-          "w": 361,
-          "h": 76,
-          "props": {
-            "icon": "container",
-            "title": "Portion & Store",
-            "subtitle": "Pack meals for the week.",
-            "time": "30m",
-            "checked": false
-          }
-        },
-        {
-          "type": "tip_card",
-          "x": 16,
-          "y": 540,
-          "w": 361,
-          "h": 108,
-          "props": {
-            "icon": "chef",
-            "title": "Prep Tip",
-            "body": "Batch cooking saves time and keeps you consistent."
-          }
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ]
-    },
-    "supplements": {
-      "route": "/system/supplements",
-      "screen_id": "09_supplements",
-      "active_nav": "system",
-      "purpose": "Daily supplement schedule with cautious safety language.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "SUPPLEMENTS"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 118,
-          "w": 361,
-          "h": 18,
-          "text": "TODAY’S SCHEDULE"
-        },
-        {
-          "type": "schedule_row",
-          "x": 16,
-          "y": 148,
-          "w": 361,
-          "h": 56,
-          "props": {
-            "time": "08:00",
-            "title": "Omega 3",
-            "subtitle": "With breakfast",
-            "checked": true
-          }
-        },
-        {
-          "type": "schedule_row",
-          "x": 16,
-          "y": 210,
-          "w": 361,
-          "h": 56,
-          "props": {
-            "time": "12:00",
-            "title": "Vitamin D3",
-            "subtitle": "With a meal",
-            "checked": true
-          }
-        },
-        {
-          "type": "schedule_row",
-          "x": 16,
-          "y": 272,
-          "w": 361,
-          "h": 56,
-          "props": {
-            "time": "17:00",
-            "title": "Creatine Monohydrate",
-            "subtitle": "5 g with water",
-            "checked": false
-          }
-        },
-        {
-          "type": "schedule_row",
-          "x": 16,
-          "y": 334,
-          "w": 361,
-          "h": 56,
-          "props": {
-            "time": "21:30",
-            "title": "Magnesium",
-            "subtitle": "Before bed",
-            "checked": false
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 414,
-          "w": 361,
-          "h": 18,
-          "text": "ALL SUPPLEMENTS"
-        },
-        {
-          "type": "chip_row",
-          "x": 16,
-          "y": 444,
-          "w": 361,
-          "h": 36,
-          "props": {
-            "chips": [
-              "All",
-              "Performance",
-              "Health",
-              "Other"
-            ],
-            "selected": "All"
-          }
-        },
-        {
-          "type": "supplement_card",
-          "x": 16,
-          "y": 496,
-          "w": 361,
-          "h": 72,
-          "props": {
-            "title": "Whey Protein",
-            "subtitle": "25 g • Post-workout",
-            "tag": "Daily"
-          }
-        },
-        {
-          "type": "supplement_card",
-          "x": 16,
-          "y": 580,
-          "w": 361,
-          "h": 72,
-          "props": {
-            "title": "Creatine Monohydrate",
-            "subtitle": "5 g • Daily",
-            "tag": "Daily"
-          }
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ],
-      "tone_rules": [
-        "Never promise medical outcomes.",
-        "Use may support / can help some people / check label / consult a professional language.",
-        "Show warnings for medications, conditions, pregnancy, and unusual symptoms."
-      ]
-    },
-    "system": {
-      "route": "/system",
-      "screen_id": "10_system",
-      "active_nav": "system",
-      "purpose": "Settings, privacy, data export/delete, diagnostics, app version.",
-      "layout": [
-        {
-          "type": "status_bar",
-          "x": 16,
-          "y": 8,
-          "w": 361,
-          "h": 24
-        },
-        {
-          "type": "screen_header",
-          "x": 16,
-          "y": 44,
-          "w": 361,
-          "h": 62,
-          "props": {
-            "title": "SYSTEM"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 122,
-          "w": 361,
-          "h": 18,
-          "text": "PRIVACY & DATA"
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 152,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "lock",
-            "title": "100% Local",
-            "subtitle": "Everything is stored on this device.",
-            "chevron": true
-          }
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 226,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "export",
-            "title": "Export Plan",
-            "subtitle": "Save a backup of your plan.",
-            "chevron": true
-          }
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 300,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "trash",
-            "title": "Delete Local Data",
-            "subtitle": "Remove all app data permanently.",
-            "chevron": true,
-            "tone": "danger"
-          }
-        },
-        {
-          "type": "section_label",
-          "x": 16,
-          "y": 390,
-          "w": 361,
-          "h": 18,
-          "text": "APP"
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 420,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "offline",
-            "title": "Offline Ready",
-            "subtitle": "Works fully without internet.",
-            "status": "success",
-            "chevron": true
-          }
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 494,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "diagnostics",
-            "title": "Plan Diagnostics",
-            "subtitle": "Check plan health & issues.",
-            "chevron": true
-          }
-        },
-        {
-          "type": "settings_row",
-          "x": 16,
-          "y": 568,
-          "w": 361,
-          "h": 64,
-          "props": {
-            "icon": "info",
-            "title": "About",
-            "subtitle": "Version 1.0.0 • Up to date.",
-            "chevron": true
-          }
-        },
-        {
-          "type": "bottom_nav",
-          "x": 0,
-          "y": 776,
-          "w": 393,
-          "h": 76
-        }
-      ]
-    }
-  },
-  "data_model_requirements": {
-    "plan_storage_key": "health.v2.plan",
-    "progress_storage_key": "health.v2.progress",
-    "grocery_storage_key": "health.v2.grocery",
-    "settings_storage_key": "health.v2.settings",
-    "required_plan_sections": [
-      "meta",
-      "user",
-      "phases",
-      "meal_plan",
-      "prep_guide",
-      "grocery",
-      "supplements"
-    ],
-    "recommended_plan_sections": [
-      "schedule",
-      "training",
-      "progress",
-      "safety",
-      "flavour_rotations",
-      "weekly_check_in"
-    ],
-    "validation_levels": {
-      "error": "Block import/rendering",
-      "warning": "Allow import but show diagnostics",
-      "info": "Suggestion only"
-    },
-    "core_warnings": [
-      "Meal calories differ from phase target by more than 100 kcal.",
-      "Meal times do not match user wake/sleep/training schedule.",
-      "Training notes exist but no full training program exists.",
-      "Supplement claims are missing safety notes.",
-      "Grocery prices are not dated or user-editable."
-    ]
-  },
-  "interaction_specs": {
-    "upload_plan": {
-      "steps": [
-        "file_select",
-        "size_check",
-        "json_parse",
-        "schema_validate",
-        "normalize",
-        "save_local",
-        "navigate_today"
-      ],
-      "error_ui": "Inline error card on import screen with exact reason."
-    },
-    "paste_json": {
-      "modal": true,
-      "textarea_min_height": 280,
-      "actions": [
-        "Validate",
-        "Cancel"
-      ]
-    },
-    "day_type_toggle": {
-      "location": [
-        "today",
-        "meals"
-      ],
-      "state_key": "health.v2.activeDayType",
-      "options": [
-        "workout",
-        "rest"
-      ]
-    },
-    "meal_quick_fix": {
-      "open_as": "bottom_sheet",
-      "suggestions": [
-        "Greek yogurt",
-        "banana",
-        "rice",
-        "whey",
-        "cottage cheese"
-      ],
-      "logic": "macroRepair.calculateGap(targets, actualTotals)"
-    },
-    "start_workout": {
-      "route": "/train/session",
-      "persists": [
-        "sets",
-        "reps",
-        "weight",
-        "duration",
-        "notes"
-      ]
-    },
-    "weekly_checkin": {
-      "fields": [
-        "weight_kg",
-        "waist_cm",
-        "energy_1_10",
-        "sleep_hours",
-        "notes"
-      ],
-      "frequency": "weekly",
-      "storage": "health.v2.progress"
-    },
-    "delete_local_data": {
-      "requires_confirm": true,
-      "confirm_copy": "Delete all local app data from this device? This cannot be undone unless you exported a backup.",
-      "keys_to_clear": [
-        "health.v2.plan",
-        "health.v2.progress",
-        "health.v2.grocery",
-        "health.v2.settings"
-      ]
-    }
-  },
-  "accessibility_requirements": {
-    "minimum_touch_target": 44,
-    "contrast": "WCAG AA minimum; white/red on black must be tested.",
-    "focus_states": "Visible red/white outline on keyboard focus.",
-    "screen_reader": [
-      "All icon buttons need aria-label.",
-      "Bottom nav needs aria-current on active route.",
-      "Upload errors need aria-live polite.",
-      "Progress rings need text equivalents."
-    ],
-    "reduced_motion": true,
-    "semantic_html": [
-      "Use button for actions.",
-      "Use nav for bottom navigation.",
-      "Use main for page content.",
-      "Use h1 once per screen."
-    ]
-  },
-  "implementation_notes": {
-    "pixel_perfect_warning": "Do not copy text artifacts from the generated image. Use the copy in this JSON.",
-    "component_priority_order": [
-      "tokens.css",
-      "AppShell",
-      "BottomNav",
-      "NothingWidget",
-      "ScreenHeader",
-      "SegmentedControl",
-      "ListRow",
-      "TodayDashboard",
-      "MealsScreen",
-      "TrainingScreen",
-      "ProgressScreen",
-      "SystemScreen"
-    ],
-    "do_not_use": [
-      "External fonts unless self-hosted",
-      "External analytics",
-      "Raw innerHTML for uploaded plan content",
-      "Large UI libraries",
-      "Random new colors outside tokens"
-    ],
-    "must_use": [
-      "CSS variables",
-      "Local storage namespacing",
-      "Schema validation",
-      "Safe text rendering",
-      "Mobile-first layout"
-    ]
-  }
+	"meta": {
+		"name": "Health PWA Nothing OS Inspired Visual Implementation Spec",
+		"version": "1.0.0",
+		"created_for": "ruddvz/Health",
+		"purpose": "Pixel-oriented visual JSON for implementing the full redesign as a static SvelteKit/GitHub Pages PWA.",
+		"design_reference": {
+			"style": "Nothing OS inspired, original, monochrome, dot-matrix, red accent, modular health widgets",
+			"source_image_file": "futuristic_health_app_ui_design.png",
+			"note": "Use this JSON as the source of truth. The generated concept image is directional; this file converts it into implementable layout, tokens, and behavior."
+		},
+		"target_stack": {
+			"framework": "SvelteKit",
+			"language": "TypeScript",
+			"deployment": "GitHub Pages",
+			"pwa": true,
+			"storage": "localStorage first, IndexedDB optional later",
+			"backend": "none"
+		}
+	},
+	"global_app": {
+		"app_name": "HEALTH",
+		"tagline": "PRIVATE. OFFLINE. PERSONAL.",
+		"default_route": "/today",
+		"base_path": "/Health",
+		"local_only_message": "Everything stays on this device.",
+		"data_privacy_short": "100% Local",
+		"primary_navigation": [
+			{
+				"id": "today",
+				"label": "Today",
+				"icon": "home",
+				"route": "/today"
+			},
+			{
+				"id": "meals",
+				"label": "Meals",
+				"icon": "calendar-meal",
+				"route": "/meals"
+			},
+			{
+				"id": "train",
+				"label": "Train",
+				"icon": "barbell",
+				"route": "/train"
+			},
+			{
+				"id": "progress",
+				"label": "Progress",
+				"icon": "trend",
+				"route": "/progress"
+			},
+			{
+				"id": "system",
+				"label": "System",
+				"icon": "sliders",
+				"route": "/system"
+			}
+		],
+		"secondary_system_routes": [
+			{
+				"id": "grocery",
+				"label": "Grocery",
+				"route": "/system/grocery"
+			},
+			{
+				"id": "prep",
+				"label": "Prep",
+				"route": "/system/prep"
+			},
+			{
+				"id": "supplements",
+				"label": "Supplements",
+				"route": "/system/supplements"
+			},
+			{
+				"id": "settings",
+				"label": "Settings",
+				"route": "/system/settings"
+			},
+			{
+				"id": "privacy",
+				"label": "Privacy",
+				"route": "/system/privacy"
+			},
+			{
+				"id": "diagnostics",
+				"label": "Plan Diagnostics",
+				"route": "/system/diagnostics"
+			}
+		]
+	},
+	"viewport": {
+		"mobile_canvas": {
+			"name": "phone",
+			"width": 393,
+			"height": 852,
+			"status_bar_height": 32,
+			"safe_top": 16,
+			"safe_bottom": 24,
+			"content_x": 16,
+			"content_width": 361,
+			"bottom_nav_height": 76,
+			"bottom_nav_y": 776,
+			"scrollable_content_bottom_padding": 108
+		},
+		"responsive": {
+			"mobile_first": true,
+			"breakpoints": {
+				"sm": 393,
+				"md": 768,
+				"lg": 1024,
+				"xl": 1280
+			},
+			"desktop_behavior": "Center the mobile app shell at max-width 430px. Optional desktop dashboard can be added later, but do not redesign during first implementation."
+		}
+	},
+	"design_tokens": {
+		"colors": {
+			"bg": "#0B0B0B",
+			"bg_elevated": "#101010",
+			"surface_1": "#121212",
+			"surface_2": "#181818",
+			"surface_3": "#202020",
+			"surface_hover": "#242424",
+			"text_1": "#F4F4F0",
+			"text_2": "#B9B9B2",
+			"text_3": "#777771",
+			"text_disabled": "#555550",
+			"line_1": "rgba(255,255,255,0.08)",
+			"line_2": "rgba(255,255,255,0.16)",
+			"line_3": "rgba(255,255,255,0.24)",
+			"red": "#FF2A2A",
+			"red_hover": "#FF4040",
+			"red_pressed": "#D91F1F",
+			"red_soft": "rgba(255,42,42,0.14)",
+			"red_line": "rgba(255,42,42,0.42)",
+			"white_soft": "rgba(255,255,255,0.92)",
+			"black_soft": "rgba(0,0,0,0.55)",
+			"success": "#49D17D",
+			"warning": "#FFCC4D",
+			"danger": "#FF2A2A",
+			"info": "#C9C9C9",
+			"chart_grid": "rgba(255,255,255,0.06)",
+			"dot_grid": "rgba(255,255,255,0.065)"
+		},
+		"typography": {
+			"font_ui": "-apple-system, BlinkMacSystemFont, 'SF Pro Text', Inter, system-ui, sans-serif",
+			"font_mono": "'SF Mono', 'Roboto Mono', 'IBM Plex Mono', ui-monospace, monospace",
+			"font_dot": "Use CSS dot-matrix effect on mono text, not an external font dependency.",
+			"scale": {
+				"display": {
+					"size": 38,
+					"line_height": 42,
+					"weight": 700,
+					"tracking": 1.5,
+					"family": "font_mono",
+					"transform": "uppercase"
+				},
+				"screen_title": {
+					"size": 31,
+					"line_height": 36,
+					"weight": 700,
+					"tracking": 1.2,
+					"family": "font_mono",
+					"transform": "uppercase"
+				},
+				"h1": {
+					"size": 30,
+					"line_height": 34,
+					"weight": 650,
+					"tracking": -0.5,
+					"family": "font_ui"
+				},
+				"h2": {
+					"size": 21,
+					"line_height": 27,
+					"weight": 650,
+					"tracking": -0.2,
+					"family": "font_ui"
+				},
+				"h3": {
+					"size": 17,
+					"line_height": 23,
+					"weight": 650,
+					"tracking": 0,
+					"family": "font_ui"
+				},
+				"body": {
+					"size": 14,
+					"line_height": 21,
+					"weight": 400,
+					"tracking": 0,
+					"family": "font_ui"
+				},
+				"body_small": {
+					"size": 12,
+					"line_height": 17,
+					"weight": 400,
+					"tracking": 0,
+					"family": "font_ui"
+				},
+				"mono_label": {
+					"size": 10,
+					"line_height": 13,
+					"weight": 600,
+					"tracking": 0.9,
+					"family": "font_mono",
+					"transform": "uppercase"
+				},
+				"metric_large": {
+					"size": 30,
+					"line_height": 34,
+					"weight": 650,
+					"tracking": -0.5,
+					"family": "font_ui"
+				},
+				"metric_medium": {
+					"size": 22,
+					"line_height": 26,
+					"weight": 650,
+					"tracking": -0.3,
+					"family": "font_ui"
+				},
+				"nav_label": {
+					"size": 9,
+					"line_height": 11,
+					"weight": 500,
+					"tracking": -0.1,
+					"family": "font_ui"
+				}
+			}
+		},
+		"spacing": {
+			"0": 0,
+			"1": 4,
+			"2": 8,
+			"3": 12,
+			"4": 16,
+			"5": 20,
+			"6": 24,
+			"7": 28,
+			"8": 32,
+			"10": 40,
+			"12": 48
+		},
+		"radii": {
+			"xs": 8,
+			"sm": 12,
+			"md": 16,
+			"lg": 22,
+			"xl": 28,
+			"pill": 999
+		},
+		"borders": {
+			"hairline": "1px solid rgba(255,255,255,0.08)",
+			"standard": "1px solid rgba(255,255,255,0.12)",
+			"strong": "1px solid rgba(255,255,255,0.18)",
+			"red": "1px solid rgba(255,42,42,0.42)",
+			"dashed": "1px dashed rgba(255,255,255,0.24)"
+		},
+		"shadows": {
+			"card": "0 14px 40px rgba(0,0,0,0.32)",
+			"phone": "0 30px 90px rgba(0,0,0,0.55)",
+			"red_glow": "0 0 22px rgba(255,42,42,0.28)"
+		},
+		"motion": {
+			"duration_fast": "120ms",
+			"duration_base": "180ms",
+			"duration_slow": "260ms",
+			"easing": "cubic-bezier(.2,.8,.2,1)",
+			"press_scale": 0.985,
+			"reduced_motion": "Disable non-essential animations when prefers-reduced-motion is enabled."
+		},
+		"effects": {
+			"dot_grid_background": {
+				"css": "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.065) 1px, transparent 0)",
+				"size": "18px 18px",
+				"usage": "Use on page background and some empty card regions at low opacity."
+			},
+			"dot_title": {
+				"method": "Use mono uppercase text with CSS text-shadow/dotted mask or optional inline SVG pattern.",
+				"fallback": "Plain mono uppercase title."
+			}
+		}
+	},
+	"component_specs": {
+		"AppShell": {
+			"description": "Main mobile shell. Holds status area, page content, and bottom nav.",
+			"layout": {
+				"width": 393,
+				"min_height": 852,
+				"background": "bg",
+				"padding": 16,
+				"bottom_padding": 108
+			},
+			"css_requirements": [
+				"max-width: 430px on desktop",
+				"min-height: 100dvh",
+				"background uses dot grid at 15% opacity",
+				"overflow-x hidden"
+			]
+		},
+		"ScreenHeader": {
+			"height": "auto",
+			"slots": ["eyebrow", "title", "subtitle", "right_action"],
+			"style": {
+				"title_token": "screen_title",
+				"eyebrow_token": "mono_label",
+				"title_color": "text_1",
+				"eyebrow_color": "text_3",
+				"margin_bottom": 14
+			}
+		},
+		"BottomNav": {
+			"position": {
+				"x": 0,
+				"y": 776,
+				"w": 393,
+				"h": 76
+			},
+			"style": {
+				"background": "rgba(11,11,11,0.92)",
+				"backdrop_filter": "blur(18px)",
+				"border_top": "hairline",
+				"padding": "8px 12px calc(8px + env(safe-area-inset-bottom))",
+				"item_width": "20%",
+				"active_color": "red",
+				"inactive_color": "text_3"
+			},
+			"states": {
+				"active": {
+					"icon_color": "red",
+					"label_color": "red"
+				},
+				"inactive": {
+					"icon_color": "text_3",
+					"label_color": "text_3"
+				},
+				"pressed": {
+					"scale": 0.96
+				}
+			}
+		},
+		"NothingWidget": {
+			"description": "Base card for most dashboard modules.",
+			"base_style": {
+				"background": "linear-gradient(180deg, #181818 0%, #111111 100%)",
+				"border": "standard",
+				"border_radius": 18,
+				"padding": 14,
+				"box_shadow": "card",
+				"overflow": "hidden"
+			},
+			"optional_decor": {
+				"dot_grid": true,
+				"red_accent_line": false,
+				"corner_glyph": false
+			}
+		},
+		"RedButton": {
+			"height": 52,
+			"border_radius": 12,
+			"background": "red",
+			"color": "#FFFFFF",
+			"font": "body_small",
+			"font_weight": 650,
+			"states": {
+				"hover": {
+					"background": "red_hover"
+				},
+				"pressed": {
+					"background": "red_pressed",
+					"scale": 0.985
+				},
+				"disabled": {
+					"background": "#3A1A1A",
+					"color": "text_3"
+				}
+			}
+		},
+		"SegmentedControl": {
+			"height": 38,
+			"background": "surface_1",
+			"border": "hairline",
+			"border_radius": 12,
+			"selected": {
+				"background": "red",
+				"color": "#FFFFFF"
+			},
+			"unselected": {
+				"background": "transparent",
+				"color": "text_2"
+			}
+		},
+		"MetricRing": {
+			"size": 78,
+			"stroke_width": 6,
+			"track": "rgba(255,255,255,0.08)",
+			"progress": "red",
+			"center_value_token": "metric_medium",
+			"center_label_token": "mono_label"
+		},
+		"GlyphProgress": {
+			"segments": 10,
+			"filled_symbol": "●",
+			"empty_symbol": "○",
+			"filled_color": "red",
+			"empty_color": "line_3",
+			"font": "font_mono"
+		},
+		"ListRow": {
+			"height_min": 54,
+			"background": "surface_1",
+			"border": "hairline",
+			"border_radius": 14,
+			"padding": "12px 14px",
+			"title_token": "body",
+			"subtitle_token": "body_small",
+			"right_meta_token": "body_small"
+		},
+		"WarningCard": {
+			"background": "rgba(255,42,42,0.09)",
+			"border": "red",
+			"border_radius": 16,
+			"padding": 14,
+			"title_color": "red",
+			"body_color": "text_2"
+		}
+	},
+	"shared_layout_patterns": {
+		"page_content": {
+			"x": 16,
+			"y": 44,
+			"w": 361,
+			"bottom": 760
+		},
+		"card_gap": 12,
+		"section_gap": 20,
+		"two_column_grid": {
+			"columns": 2,
+			"gap": 10,
+			"column_width": 175
+		},
+		"three_column_grid": {
+			"columns": 3,
+			"gap": 8,
+			"column_width": 115
+		},
+		"caption_labels": {
+			"use_in_showcase_only": true,
+			"style": "mono_label",
+			"color": "text_2"
+		}
+	},
+	"pages": {
+		"onboarding": {
+			"route": "/",
+			"screen_id": "01_onboarding",
+			"active_nav": null,
+			"purpose": "Guide the user through profile, lifestyle, plan import, and confirmation.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "progress_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 28,
+					"props": {
+						"label": "STEP 1 OF 4",
+						"progress": 0.25
+					}
+				},
+				{
+					"type": "heading",
+					"x": 16,
+					"y": 90,
+					"w": 300,
+					"h": 78,
+					"text": "Let’s build\nyour plan",
+					"token": "h1"
+				},
+				{
+					"type": "text",
+					"x": 16,
+					"y": 168,
+					"w": 260,
+					"h": 42,
+					"text": "We’ll use your plan to personalize\nyour daily dashboard.",
+					"token": "body_small",
+					"color": "text_2"
+				},
+				{
+					"type": "step_card",
+					"x": 16,
+					"y": 228,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"index": 1,
+						"title": "Your profile",
+						"subtitle": "Basic info, goals & preferences",
+						"icon": "user",
+						"status": "complete"
+					}
+				},
+				{
+					"type": "step_card",
+					"x": 16,
+					"y": 302,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"index": 2,
+						"title": "Your lifestyle",
+						"subtitle": "Activity level & daily rhythm",
+						"icon": "clock",
+						"status": "complete"
+					}
+				},
+				{
+					"type": "step_card",
+					"x": 16,
+					"y": 376,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"index": 3,
+						"title": "Your plan",
+						"subtitle": "Import your health plan",
+						"icon": "document",
+						"status": "current"
+					}
+				},
+				{
+					"type": "step_card",
+					"x": 16,
+					"y": 450,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"index": 4,
+						"title": "Confirm & finish",
+						"subtitle": "Review and generate",
+						"icon": "spinner",
+						"status": "locked"
+					}
+				},
+				{
+					"type": "red_button",
+					"x": 16,
+					"y": 538,
+					"w": 361,
+					"h": 52,
+					"text": "Continue",
+					"action": "go_next_step"
+				},
+				{
+					"type": "text_button",
+					"x": 16,
+					"y": 604,
+					"w": 361,
+					"h": 34,
+					"text": "Skip for now",
+					"action": "go_import"
+				}
+			],
+			"states": {
+				"step_1_profile": ["name", "age", "sex", "height", "weight", "goal"],
+				"step_2_lifestyle": ["wake_time", "sleep_time", "training_time", "activity_level"],
+				"step_3_plan": ["upload_json", "paste_json", "generate_prompt"],
+				"step_4_confirm": ["privacy_notice", "local_storage_notice", "start_app"]
+			}
+		},
+		"import_plan": {
+			"route": "/import",
+			"screen_id": "02_import_plan",
+			"active_nav": null,
+			"purpose": "Let the user copy prompt, paste JSON, or upload plan file.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 54,
+					"w": 361,
+					"h": 112,
+					"props": {
+						"eyebrow": "IMPORT YOUR PLAN",
+						"title": "Bring in your\nhealth plan",
+						"subtitle": "Use your JSON plan to power your dashboard."
+					}
+				},
+				{
+					"type": "json_drop_zone",
+					"x": 16,
+					"y": 190,
+					"w": 361,
+					"h": 210,
+					"props": {
+						"icon": "braces",
+						"label": ".JSON",
+						"dot_grid": true
+					}
+				},
+				{
+					"type": "list_button",
+					"x": 16,
+					"y": 426,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"icon": "copy",
+						"label": "Copy Prompt",
+						"chevron": true,
+						"action": "copy_prompt"
+					}
+				},
+				{
+					"type": "list_button",
+					"x": 16,
+					"y": 496,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"icon": "paste",
+						"label": "Paste JSON",
+						"chevron": true,
+						"action": "open_paste_json"
+					}
+				},
+				{
+					"type": "dashed_button",
+					"x": 16,
+					"y": 568,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"icon": "upload",
+						"label": "Upload Plan File",
+						"action": "open_file_picker"
+					}
+				},
+				{
+					"type": "helper_text",
+					"x": 16,
+					"y": 650,
+					"w": 361,
+					"h": 50,
+					"text": "Your uploaded plan is stored only in this browser.",
+					"color": "text_3"
+				}
+			],
+			"validation": {
+				"accepted_file_types": [".json", "application/json"],
+				"max_file_size_mb": 2,
+				"parse_errors": "Show exact JSON parsing error and do not save invalid data.",
+				"security": "Never render uploaded strings as raw HTML."
+			}
+		},
+		"today": {
+			"route": "/today",
+			"screen_id": "03_today_dashboard",
+			"active_nav": "today",
+			"purpose": "Daily command center showing next action, macros, water, and timeline.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 80,
+					"props": {
+						"title": "TODAY",
+						"subtitle": "Good evening, Rudra",
+						"right_action": "day_settings"
+					}
+				},
+				{
+					"type": "phase_row",
+					"x": 16,
+					"y": 124,
+					"w": 361,
+					"h": 28,
+					"props": {
+						"label": "Week 1",
+						"dropdown": true
+					}
+				},
+				{
+					"type": "segmented_control",
+					"x": 16,
+					"y": 162,
+					"w": 361,
+					"h": 38,
+					"props": {
+						"options": ["Workout Day", "Rest Day"],
+						"selected": "Workout Day"
+					}
+				},
+				{
+					"type": "next_action_card",
+					"x": 16,
+					"y": 214,
+					"w": 361,
+					"h": 84,
+					"props": {
+						"eyebrow": "NEXT ACTION",
+						"title": "Lower Body Strength",
+						"subtitle": "Start your workout",
+						"icon": "waveform",
+						"cta": "arrow_red"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 314,
+					"w": 361,
+					"h": 18,
+					"text": "MACROS"
+				},
+				{
+					"type": "metric_ring",
+					"x": 24,
+					"y": 344,
+					"w": 104,
+					"h": 104,
+					"props": {
+						"value": 142,
+						"unit": "g",
+						"label": "Protein",
+						"max": 160
+					}
+				},
+				{
+					"type": "metric_ring",
+					"x": 145,
+					"y": 344,
+					"w": 104,
+					"h": 104,
+					"props": {
+						"value": 210,
+						"unit": "g",
+						"label": "Carbs",
+						"max": 250
+					}
+				},
+				{
+					"type": "metric_ring",
+					"x": 266,
+					"y": 344,
+					"w": 104,
+					"h": 104,
+					"props": {
+						"value": 58,
+						"unit": "g",
+						"label": "Fat",
+						"max": 70
+					}
+				},
+				{
+					"type": "metric_tile",
+					"x": 16,
+					"y": 468,
+					"w": 175,
+					"h": 92,
+					"props": {
+						"label": "WATER",
+						"value": "1.6 / 3.0 L",
+						"subvalue": "53%",
+						"progress": 0.53,
+						"icon": "droplet"
+					}
+				},
+				{
+					"type": "metric_tile",
+					"x": 202,
+					"y": 468,
+					"w": 175,
+					"h": 92,
+					"props": {
+						"label": "CALORIES",
+						"value": "1,842",
+						"subvalue": "/ 2,300 kcal",
+						"progress": 0.8,
+						"icon": "flame"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 582,
+					"w": 361,
+					"h": 18,
+					"text": "TIMELINE"
+				},
+				{
+					"type": "timeline_card",
+					"x": 16,
+					"y": 612,
+					"w": 361,
+					"h": 92,
+					"props": {
+						"items": [
+							{
+								"time": "7:30 AM",
+								"title": "Meal 1",
+								"subtitle": "Oats, Whey, Banana",
+								"state": "done"
+							},
+							{
+								"time": "10:00 PM",
+								"title": "Train",
+								"subtitle": "Lower Body Strength",
+								"state": "next"
+							}
+						]
+					}
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			],
+			"data_bindings": {
+				"phase": "plan.phases[currentPhase]",
+				"day_type": "ui.activeDayType",
+				"next_action": "logic.schedule.getNextAction(now, plan.schedule, dayType)",
+				"macro_values": "logic.nutrition.getDayTotals(plan, activePhase, dayType)",
+				"timeline": "logic.schedule.buildTimeline(plan.schedule, dayType)"
+			}
+		},
+		"meals": {
+			"route": "/meals",
+			"screen_id": "04_meals",
+			"active_nav": "meals",
+			"purpose": "Show meals, target gaps, quick fixes, and cooking actions.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "MEALS",
+						"right_action": "filter"
+					}
+				},
+				{
+					"type": "chip_row",
+					"x": 16,
+					"y": 116,
+					"w": 361,
+					"h": 36,
+					"props": {
+						"chips": ["Workout Day", "Rest Day", "All"],
+						"selected": "Workout Day"
+					}
+				},
+				{
+					"type": "target_gap_card",
+					"x": 16,
+					"y": 166,
+					"w": 361,
+					"h": 126,
+					"props": {
+						"title": "TARGET GAP",
+						"message": "You’re slightly under on carbs.",
+						"metrics": [
+							{
+								"label": "Carbs",
+								"value": "-40g",
+								"color": "red"
+							},
+							{
+								"label": "Protein",
+								"value": "+8g",
+								"color": "warning"
+							},
+							{
+								"label": "Fat",
+								"value": "-5g",
+								"color": "red"
+							}
+						],
+						"cta": "Quick Fix"
+					}
+				},
+				{
+					"type": "meal_card",
+					"x": 16,
+					"y": 310,
+					"w": 361,
+					"h": 86,
+					"props": {
+						"index": 1,
+						"time": "07:30 AM",
+						"name": "Oats, Whey, Banana",
+						"kcal": 540,
+						"macros": {
+							"protein": "35g",
+							"carbs": "70g",
+							"fat": "12g"
+						}
+					}
+				},
+				{
+					"type": "meal_card",
+					"x": 16,
+					"y": 408,
+					"w": 361,
+					"h": 86,
+					"props": {
+						"index": 2,
+						"time": "12:30 PM",
+						"name": "Chicken, Rice, Veg",
+						"kcal": 620,
+						"macros": {
+							"protein": "40g",
+							"carbs": "65g",
+							"fat": "14g"
+						}
+					}
+				},
+				{
+					"type": "meal_card",
+					"x": 16,
+					"y": 506,
+					"w": 361,
+					"h": 86,
+					"props": {
+						"index": 3,
+						"time": "04:30 PM",
+						"name": "Greek Yogurt, Berries",
+						"kcal": 250,
+						"macros": {
+							"protein": "20g",
+							"carbs": "25g",
+							"fat": "6g"
+						}
+					}
+				},
+				{
+					"type": "secondary_button",
+					"x": 16,
+					"y": 610,
+					"w": 361,
+					"h": 50,
+					"text": "+ Add Meal",
+					"action": "manual_add_meal"
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			],
+			"interactions": {
+				"tap_meal_card": "open meal detail sheet",
+				"quick_fix": "open macro repair sheet",
+				"filter": "open day/phase filter sheet"
+			}
+		},
+		"train": {
+			"route": "/train",
+			"screen_id": "05_train",
+			"active_nav": "train",
+			"purpose": "Render workout program and start workout session.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "TRAIN",
+						"right_action": "tune"
+					}
+				},
+				{
+					"type": "workout_hero_card",
+					"x": 16,
+					"y": 120,
+					"w": 361,
+					"h": 194,
+					"props": {
+						"title": "LOWER BODY STRENGTH",
+						"tag": "Strength",
+						"duration": "60 min",
+						"description": "Compound lifts for lower body power and strength.",
+						"body_map_highlight": "legs_red"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 334,
+					"w": 361,
+					"h": 18,
+					"text": "EXERCISES",
+					"right_text": "5 exercises"
+				},
+				{
+					"type": "exercise_row",
+					"x": 16,
+					"y": 364,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"index": 1,
+						"name": "Back Squat",
+						"sets_reps": "4 sets × 6–8 reps",
+						"rest": "120s"
+					}
+				},
+				{
+					"type": "exercise_row",
+					"x": 16,
+					"y": 428,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"index": 2,
+						"name": "Romanian Deadlift",
+						"sets_reps": "4 sets × 8–10 reps",
+						"rest": "90s"
+					}
+				},
+				{
+					"type": "exercise_row",
+					"x": 16,
+					"y": 492,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"index": 3,
+						"name": "Leg Press",
+						"sets_reps": "3 sets × 10–12 reps",
+						"rest": "90s"
+					}
+				},
+				{
+					"type": "exercise_row",
+					"x": 16,
+					"y": 556,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"index": 4,
+						"name": "Walking Lunge",
+						"sets_reps": "3 sets × 12 each",
+						"rest": "60s"
+					}
+				},
+				{
+					"type": "exercise_row",
+					"x": 16,
+					"y": 620,
+					"w": 361,
+					"h": 58,
+					"props": {
+						"index": 5,
+						"name": "Standing Calf Raise",
+						"sets_reps": "4 sets × 15–20 reps",
+						"rest": "45s"
+					}
+				},
+				{
+					"type": "red_button",
+					"x": 16,
+					"y": 700,
+					"w": 361,
+					"h": 52,
+					"text": "Start Session",
+					"action": "start_workout"
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			],
+			"workout_mode": {
+				"route": "/train/session",
+				"components": ["ExerciseTracker", "SetLogger", "RestTimer", "ProgressionHint"],
+				"required_fields": [
+					"exercise.name",
+					"sets",
+					"reps",
+					"rest_seconds",
+					"last_performance",
+					"progression_rule"
+				]
+			}
+		},
+		"progress": {
+			"route": "/progress",
+			"screen_id": "06_progress",
+			"active_nav": "progress",
+			"purpose": "Show body and adherence trends with weekly check-in.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "PROGRESS",
+						"right_action": "settings"
+					}
+				},
+				{
+					"type": "chip_row",
+					"x": 16,
+					"y": 116,
+					"w": 361,
+					"h": 36,
+					"props": {
+						"chips": ["Overview", "Trends", "Metrics"],
+						"selected": "Overview"
+					}
+				},
+				{
+					"type": "chart_card",
+					"x": 16,
+					"y": 166,
+					"w": 361,
+					"h": 184,
+					"props": {
+						"title": "WEIGHT TREND",
+						"value": "75.4 kg",
+						"delta": "-0.6 kg vs last week",
+						"chart_type": "red_line",
+						"x_labels": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+					}
+				},
+				{
+					"type": "adherence_card",
+					"x": 16,
+					"y": 364,
+					"w": 361,
+					"h": 122,
+					"props": {
+						"title": "ADHERENCE",
+						"value": "92%",
+						"subtitle": "7 day average",
+						"bars": [0.7, 0.9, 0.8, 1.0, 0.95, 0.85, 0.75]
+					}
+				},
+				{
+					"type": "checkin_card",
+					"x": 16,
+					"y": 500,
+					"w": 361,
+					"h": 152,
+					"props": {
+						"title": "WEEKLY CHECK-IN",
+						"question": "How was your week?",
+						"subtitle": "Log your energy, sleep & notes.",
+						"cta": "Log Check-in"
+					}
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			],
+			"data_bindings": {
+				"weight_trend": "progress.weightEntries",
+				"adherence": "logic.progress.calculateAdherence(progress, plan)",
+				"weekly_checkin": "progress.weeklyCheckins"
+			}
+		},
+		"grocery": {
+			"route": "/system/grocery",
+			"screen_id": "07_grocery",
+			"active_nav": "system",
+			"purpose": "Store/category grouped shopping checklist.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "GROCERY"
+					}
+				},
+				{
+					"type": "chip_row",
+					"x": 16,
+					"y": 116,
+					"w": 361,
+					"h": 36,
+					"props": {
+						"chips": ["All", "Store", "Category"],
+						"selected": "All"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 168,
+					"w": 361,
+					"h": 18,
+					"text": "STORE: SUPERMARKET"
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 198,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Oats",
+						"quantity": "1.5 kg"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 244,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": true,
+						"label": "Chicken Breast",
+						"quantity": "1.0 kg"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 290,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Eggs",
+						"quantity": "12 pcs"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 336,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Greek Yogurt",
+						"quantity": "1.0 kg"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 382,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Bananas",
+						"quantity": "1 bunch"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 446,
+					"w": 361,
+					"h": 18,
+					"text": "STORE: GREENGROCER"
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 476,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": true,
+						"label": "Spinach",
+						"quantity": "500 g"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 522,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Broccoli",
+						"quantity": "1 head"
+					}
+				},
+				{
+					"type": "checklist_row",
+					"x": 16,
+					"y": 568,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"checked": false,
+						"label": "Bell Peppers",
+						"quantity": "2 pcs"
+					}
+				},
+				{
+					"type": "secondary_button",
+					"x": 16,
+					"y": 690,
+					"w": 361,
+					"h": 52,
+					"text": "+ Add Item",
+					"action": "add_grocery_item"
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			]
+		},
+		"prep": {
+			"route": "/system/prep",
+			"screen_id": "08_prep",
+			"active_nav": "system",
+			"purpose": "Timed weekly meal-prep checklist.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "PREP"
+					}
+				},
+				{
+					"type": "section_title_block",
+					"x": 16,
+					"y": 118,
+					"w": 361,
+					"h": 42,
+					"props": {
+						"title": "SUNDAY PREP",
+						"subtitle": "Estimated time: 2h 15m",
+						"subtitle_color": "red"
+					}
+				},
+				{
+					"type": "prep_step_card",
+					"x": 16,
+					"y": 176,
+					"w": 361,
+					"h": 76,
+					"props": {
+						"icon": "grain",
+						"title": "Cook Grains",
+						"subtitle": "Cook rice, quinoa or oats.",
+						"time": "30m",
+						"checked": true
+					}
+				},
+				{
+					"type": "prep_step_card",
+					"x": 16,
+					"y": 264,
+					"w": 361,
+					"h": 76,
+					"props": {
+						"icon": "protein",
+						"title": "Cook Proteins",
+						"subtitle": "Grill chicken, boil eggs.",
+						"time": "45m",
+						"checked": true
+					}
+				},
+				{
+					"type": "prep_step_card",
+					"x": 16,
+					"y": 352,
+					"w": 361,
+					"h": 76,
+					"props": {
+						"icon": "veg",
+						"title": "Chop Vegetables",
+						"subtitle": "Wash, chop and store.",
+						"time": "30m",
+						"checked": false
+					}
+				},
+				{
+					"type": "prep_step_card",
+					"x": 16,
+					"y": 440,
+					"w": 361,
+					"h": 76,
+					"props": {
+						"icon": "container",
+						"title": "Portion & Store",
+						"subtitle": "Pack meals for the week.",
+						"time": "30m",
+						"checked": false
+					}
+				},
+				{
+					"type": "tip_card",
+					"x": 16,
+					"y": 540,
+					"w": 361,
+					"h": 108,
+					"props": {
+						"icon": "chef",
+						"title": "Prep Tip",
+						"body": "Batch cooking saves time and keeps you consistent."
+					}
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			]
+		},
+		"supplements": {
+			"route": "/system/supplements",
+			"screen_id": "09_supplements",
+			"active_nav": "system",
+			"purpose": "Daily supplement schedule with cautious safety language.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "SUPPLEMENTS"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 118,
+					"w": 361,
+					"h": 18,
+					"text": "TODAY’S SCHEDULE"
+				},
+				{
+					"type": "schedule_row",
+					"x": 16,
+					"y": 148,
+					"w": 361,
+					"h": 56,
+					"props": {
+						"time": "08:00",
+						"title": "Omega 3",
+						"subtitle": "With breakfast",
+						"checked": true
+					}
+				},
+				{
+					"type": "schedule_row",
+					"x": 16,
+					"y": 210,
+					"w": 361,
+					"h": 56,
+					"props": {
+						"time": "12:00",
+						"title": "Vitamin D3",
+						"subtitle": "With a meal",
+						"checked": true
+					}
+				},
+				{
+					"type": "schedule_row",
+					"x": 16,
+					"y": 272,
+					"w": 361,
+					"h": 56,
+					"props": {
+						"time": "17:00",
+						"title": "Creatine Monohydrate",
+						"subtitle": "5 g with water",
+						"checked": false
+					}
+				},
+				{
+					"type": "schedule_row",
+					"x": 16,
+					"y": 334,
+					"w": 361,
+					"h": 56,
+					"props": {
+						"time": "21:30",
+						"title": "Magnesium",
+						"subtitle": "Before bed",
+						"checked": false
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 414,
+					"w": 361,
+					"h": 18,
+					"text": "ALL SUPPLEMENTS"
+				},
+				{
+					"type": "chip_row",
+					"x": 16,
+					"y": 444,
+					"w": 361,
+					"h": 36,
+					"props": {
+						"chips": ["All", "Performance", "Health", "Other"],
+						"selected": "All"
+					}
+				},
+				{
+					"type": "supplement_card",
+					"x": 16,
+					"y": 496,
+					"w": 361,
+					"h": 72,
+					"props": {
+						"title": "Whey Protein",
+						"subtitle": "25 g • Post-workout",
+						"tag": "Daily"
+					}
+				},
+				{
+					"type": "supplement_card",
+					"x": 16,
+					"y": 580,
+					"w": 361,
+					"h": 72,
+					"props": {
+						"title": "Creatine Monohydrate",
+						"subtitle": "5 g • Daily",
+						"tag": "Daily"
+					}
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			],
+			"tone_rules": [
+				"Never promise medical outcomes.",
+				"Use may support / can help some people / check label / consult a professional language.",
+				"Show warnings for medications, conditions, pregnancy, and unusual symptoms."
+			]
+		},
+		"system": {
+			"route": "/system",
+			"screen_id": "10_system",
+			"active_nav": "system",
+			"purpose": "Settings, privacy, data export/delete, diagnostics, app version.",
+			"layout": [
+				{
+					"type": "status_bar",
+					"x": 16,
+					"y": 8,
+					"w": 361,
+					"h": 24
+				},
+				{
+					"type": "screen_header",
+					"x": 16,
+					"y": 44,
+					"w": 361,
+					"h": 62,
+					"props": {
+						"title": "SYSTEM"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 122,
+					"w": 361,
+					"h": 18,
+					"text": "PRIVACY & DATA"
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 152,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "lock",
+						"title": "100% Local",
+						"subtitle": "Everything is stored on this device.",
+						"chevron": true
+					}
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 226,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "export",
+						"title": "Export Plan",
+						"subtitle": "Save a backup of your plan.",
+						"chevron": true
+					}
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 300,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "trash",
+						"title": "Delete Local Data",
+						"subtitle": "Remove all app data permanently.",
+						"chevron": true,
+						"tone": "danger"
+					}
+				},
+				{
+					"type": "section_label",
+					"x": 16,
+					"y": 390,
+					"w": 361,
+					"h": 18,
+					"text": "APP"
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 420,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "offline",
+						"title": "Offline Ready",
+						"subtitle": "Works fully without internet.",
+						"status": "success",
+						"chevron": true
+					}
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 494,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "diagnostics",
+						"title": "Plan Diagnostics",
+						"subtitle": "Check plan health & issues.",
+						"chevron": true
+					}
+				},
+				{
+					"type": "settings_row",
+					"x": 16,
+					"y": 568,
+					"w": 361,
+					"h": 64,
+					"props": {
+						"icon": "info",
+						"title": "About",
+						"subtitle": "Version 1.0.0 • Up to date.",
+						"chevron": true
+					}
+				},
+				{
+					"type": "bottom_nav",
+					"x": 0,
+					"y": 776,
+					"w": 393,
+					"h": 76
+				}
+			]
+		}
+	},
+	"data_model_requirements": {
+		"plan_storage_key": "health.v2.plan",
+		"progress_storage_key": "health.v2.progress",
+		"grocery_storage_key": "health.v2.grocery",
+		"settings_storage_key": "health.v2.settings",
+		"required_plan_sections": [
+			"meta",
+			"user",
+			"phases",
+			"meal_plan",
+			"prep_guide",
+			"grocery",
+			"supplements"
+		],
+		"recommended_plan_sections": [
+			"schedule",
+			"training",
+			"progress",
+			"safety",
+			"flavour_rotations",
+			"weekly_check_in"
+		],
+		"validation_levels": {
+			"error": "Block import/rendering",
+			"warning": "Allow import but show diagnostics",
+			"info": "Suggestion only"
+		},
+		"core_warnings": [
+			"Meal calories differ from phase target by more than 100 kcal.",
+			"Meal times do not match user wake/sleep/training schedule.",
+			"Training notes exist but no full training program exists.",
+			"Supplement claims are missing safety notes.",
+			"Grocery prices are not dated or user-editable."
+		]
+	},
+	"interaction_specs": {
+		"upload_plan": {
+			"steps": [
+				"file_select",
+				"size_check",
+				"json_parse",
+				"schema_validate",
+				"normalize",
+				"save_local",
+				"navigate_today"
+			],
+			"error_ui": "Inline error card on import screen with exact reason."
+		},
+		"paste_json": {
+			"modal": true,
+			"textarea_min_height": 280,
+			"actions": ["Validate", "Cancel"]
+		},
+		"day_type_toggle": {
+			"location": ["today", "meals"],
+			"state_key": "health.v2.activeDayType",
+			"options": ["workout", "rest"]
+		},
+		"meal_quick_fix": {
+			"open_as": "bottom_sheet",
+			"suggestions": ["Greek yogurt", "banana", "rice", "whey", "cottage cheese"],
+			"logic": "macroRepair.calculateGap(targets, actualTotals)"
+		},
+		"start_workout": {
+			"route": "/train/session",
+			"persists": ["sets", "reps", "weight", "duration", "notes"]
+		},
+		"weekly_checkin": {
+			"fields": ["weight_kg", "waist_cm", "energy_1_10", "sleep_hours", "notes"],
+			"frequency": "weekly",
+			"storage": "health.v2.progress"
+		},
+		"delete_local_data": {
+			"requires_confirm": true,
+			"confirm_copy": "Delete all local app data from this device? This cannot be undone unless you exported a backup.",
+			"keys_to_clear": [
+				"health.v2.plan",
+				"health.v2.progress",
+				"health.v2.grocery",
+				"health.v2.settings"
+			]
+		}
+	},
+	"accessibility_requirements": {
+		"minimum_touch_target": 44,
+		"contrast": "WCAG AA minimum; white/red on black must be tested.",
+		"focus_states": "Visible red/white outline on keyboard focus.",
+		"screen_reader": [
+			"All icon buttons need aria-label.",
+			"Bottom nav needs aria-current on active route.",
+			"Upload errors need aria-live polite.",
+			"Progress rings need text equivalents."
+		],
+		"reduced_motion": true,
+		"semantic_html": [
+			"Use button for actions.",
+			"Use nav for bottom navigation.",
+			"Use main for page content.",
+			"Use h1 once per screen."
+		]
+	},
+	"implementation_notes": {
+		"pixel_perfect_warning": "Do not copy text artifacts from the generated image. Use the copy in this JSON.",
+		"component_priority_order": [
+			"tokens.css",
+			"AppShell",
+			"BottomNav",
+			"NothingWidget",
+			"ScreenHeader",
+			"SegmentedControl",
+			"ListRow",
+			"TodayDashboard",
+			"MealsScreen",
+			"TrainingScreen",
+			"ProgressScreen",
+			"SystemScreen"
+		],
+		"do_not_use": [
+			"External fonts unless self-hosted",
+			"External analytics",
+			"Raw innerHTML for uploaded plan content",
+			"Large UI libraries",
+			"Random new colors outside tokens"
+		],
+		"must_use": [
+			"CSS variables",
+			"Local storage namespacing",
+			"Schema validation",
+			"Safe text rendering",
+			"Mobile-first layout"
+		]
+	}
 }

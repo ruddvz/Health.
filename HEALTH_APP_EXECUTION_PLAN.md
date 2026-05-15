@@ -39,7 +39,7 @@ The app should be a **personal health-plan viewer and daily execution companion*
 
 ## 3. Information Architecture (target)
 
-**Bottom nav (max 5):** Today · Meals · Training · Progress · More  
+**Bottom nav (max 5):** Today · Meals · Training · Progress · More
 
 **More:** Phases, Grocery, Prep, Supplements, Settings, Export / Re-upload, Privacy, About.
 
@@ -47,15 +47,15 @@ The app should be a **personal health-plan viewer and daily execution companion*
 
 ## 4. Screen Redesign (summary)
 
-| Area | Goal |
-|------|------|
-| Intake | Card flow, sections (About, Goal, Schedule, Training, Food, Lifestyle, Supplements), autosave, “Skip and upload JSON”, validations |
-| Prompt | Numbered stepper, copy, paste JSON option, common mistakes, missing keys |
-| Today | Greeting, phase, day toggle, primary card by time, macro strip, timeline from **user schedule**, smart warnings |
-| Meals | Macro view, cards, swaps, cooking mode, grocery add, macro gap repair |
-| Training | Weekly split, today’s workout, set tracker, rest timer, history local |
-| Progress | Weight/waist/photos, streaks, check-in, red-flag engine, export |
-| Grocery / Prep / Supps | Under More; polish store/category modes, safety, tone |
+| Area                   | Goal                                                                                                                               |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Intake                 | Card flow, sections (About, Goal, Schedule, Training, Food, Lifestyle, Supplements), autosave, “Skip and upload JSON”, validations |
+| Prompt                 | Numbered stepper, copy, paste JSON option, common mistakes, missing keys                                                           |
+| Today                  | Greeting, phase, day toggle, primary card by time, macro strip, timeline from **user schedule**, smart warnings                    |
+| Meals                  | Macro view, cards, swaps, cooking mode, grocery add, macro gap repair                                                              |
+| Training               | Weekly split, today’s workout, set tracker, rest timer, history local                                                              |
+| Progress               | Weight/waist/photos, streaks, check-in, red-flag engine, export                                                                    |
+| Grocery / Prep / Supps | Under More; polish store/category modes, safety, tone                                                                              |
 
 ---
 
@@ -95,18 +95,18 @@ Top-level keys: `meta` (schema_version 2.0, locale, units, disclaimer), `user`, 
 
 ## 13. Engineering PR Sequence (definition)
 
-| PR | Focus |
-|----|--------|
-| **PR-1** | Section comments, upload size limit, parse errors, validation wrapper, safe DOM helpers, delete local data, privacy card |
-| **PR-2** | Schema v2 validator, warnings, v1 migration, normalized sample JSON |
-| **PR-3** | Design tokens + shared components |
-| **PR-4** | Intake redesign + prompt v2 |
-| **PR-5** | Today dashboard |
-| **PR-6** | Meals 2.0 + macro repair |
-| **PR-7** | Training tab + local history |
-| **PR-8** | Progress tab + export |
-| **PR-9** | Grocery / prep / supps polish |
-| **PR-10** | PWA polish, a11y pass, README / CHANGELOG / samples / QA checklist |
+| PR        | Focus                                                                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------ |
+| **PR-1**  | Section comments, upload size limit, parse errors, validation wrapper, safe DOM helpers, delete local data, privacy card |
+| **PR-2**  | Schema v2 validator, warnings, v1 migration, normalized sample JSON                                                      |
+| **PR-3**  | Design tokens + shared components                                                                                        |
+| **PR-4**  | Intake redesign + prompt v2                                                                                              |
+| **PR-5**  | Today dashboard                                                                                                          |
+| **PR-6**  | Meals 2.0 + macro repair                                                                                                 |
+| **PR-7**  | Training tab + local history                                                                                             |
+| **PR-8**  | Progress tab + export                                                                                                    |
+| **PR-9**  | Grocery / prep / supps polish                                                                                            |
+| **PR-10** | PWA polish, a11y pass, README / CHANGELOG / samples / QA checklist                                                       |
 
 ---
 
@@ -130,36 +130,36 @@ Polished on phone/tablet/desktop; first screen understandable in ~5 seconds; sam
 
 ## 17. Final Build Order
 
-1. Safe JSON validation and migration  
-2. Design system  
-3. Today dashboard  
-4. Meal target consistency + macro repair  
-5. Schedule-aware timeline  
-6. Training tab  
-7. Progress tracking  
-8. Grocery / prep / supplement polish  
-9. PWA update / offline  
-10. Accessibility and QA  
+1. Safe JSON validation and migration
+2. Design system
+3. Today dashboard
+4. Meal target consistency + macro repair
+5. Schedule-aware timeline
+6. Training tab
+7. Progress tracking
+8. Grocery / prep / supplement polish
+9. PWA update / offline
+10. Accessibility and QA
 
-**North star:** *“What should I do next, and is my plan still on track?”*
+**North star:** _“What should I do next, and is my plan still on track?”_
 
 ---
 
 ## Repo implementation status
 
-| Item | Status |
-|------|--------|
-| This roadmap file | Added |
-| PR-1 baseline | Landed on `cursor/health-plan-and-safety-8dc9` (merged into subsequent work) |
+| Item                                 | Status                                                                                                                                                                                                           |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| This roadmap file                    | Added                                                                                                                                                                                                            |
+| PR-1 baseline                        | Landed on `cursor/health-plan-and-safety-8dc9` (merged into subsequent work)                                                                                                                                     |
 | PR-2 schema / migration / enrichment | `normalizePlanV1ToV2`, `enrichPlanForApp`, duplicate phase id errors, wake/sleep vs meal warnings, `schema_version` 2.0 on save; samples `samples/minimal-plan-v2.json`, `samples/rudra-plan-v2-normalized.json` |
-| PR-3 design system | Design tokens (`--ds-*`), light mode (`data-theme="light"`), new cook overlay + training timer styles |
-| PR-4 intake / prompt | Allergies + medication flag, schedule clocks, skip-to-JSON, paste JSON, prompt tail |
-| PR-5 Today dashboard | Schedule-sorted timeline, macro strip vs phase, Sunday prep + Monday check-in reminders, smarter “up next” meal |
-| PR-6 Meals 2.0 | Swaps (`details`), cook mode overlay, backup / emergency meal list when JSON provides it |
-| PR-7 Training | `weekly_split` + on-device rest countdown |
-| PR-8 Progress | Waist + check-in notes, soft “insights” from logs, weight export unchanged |
-| PR-9 Grocery / prep / supps | (unchanged this pass) price disclaimer, prep food-safety, supplement tone |
-| PR-10 PWA / docs / QA | Offline page uses system fonts only; SW snackbar retained |
+| PR-3 design system                   | Design tokens (`--ds-*`), light mode (`data-theme="light"`), new cook overlay + training timer styles                                                                                                            |
+| PR-4 intake / prompt                 | Allergies + medication flag, schedule clocks, skip-to-JSON, paste JSON, prompt tail                                                                                                                              |
+| PR-5 Today dashboard                 | Schedule-sorted timeline, macro strip vs phase, Sunday prep + Monday check-in reminders, smarter “up next” meal                                                                                                  |
+| PR-6 Meals 2.0                       | Swaps (`details`), cook mode overlay, backup / emergency meal list when JSON provides it                                                                                                                         |
+| PR-7 Training                        | `weekly_split` + on-device rest countdown                                                                                                                                                                        |
+| PR-8 Progress                        | Waist + check-in notes, soft “insights” from logs, weight export unchanged                                                                                                                                       |
+| PR-9 Grocery / prep / supps          | (unchanged this pass) price disclaimer, prep food-safety, supplement tone                                                                                                                                        |
+| PR-10 PWA / docs / QA                | Offline page uses system fonts only; SW snackbar retained                                                                                                                                                        |
 
 Branch: `cursor/health-pr2-pr10-8dc9`
 
