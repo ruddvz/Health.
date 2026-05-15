@@ -9,13 +9,20 @@
 	import SecondaryButton from '$lib/components/spec/SecondaryButton.svelte';
 	import StatusStrip from '$lib/components/spec/StatusStrip.svelte';
 	import TargetGapCard from '$lib/components/spec/TargetGapCard.svelte';
-	import { isoDateKey } from '$lib/logic/dateKey';
+	import { logicalDateKey } from '$lib/logic/dateKey';
 	import { plannedMacrosFromMeals } from '$lib/logic/dayTotals';
+	import { getMealSlotState, mealSlotKey } from '$lib/logic/mealSlots';
 	import { newId } from '$lib/logic/id';
 	import type { QuickFixPreset } from '$lib/logic/quickFixPresets';
 	import { getMealsForDay, getPhaseTargets } from '$lib/logic/planDerive';
-	import { persistActiveDayType, persistProgress, plan, progress } from '$lib/stores/healthApp';
-	import type { ExtraMeal } from '$lib/types/planV2';
+	import {
+		persistActiveDayType,
+		persistProgress,
+		plan,
+		progress,
+		settings
+	} from '$lib/stores/healthApp';
+	import type { DayType, ExtraMeal, MealSlotStatus } from '$lib/types/planV2';
 	import { get } from 'svelte/store';
 
 	let chip = $state<'Workout Day' | 'Rest Day' | 'All'>('Workout Day');
@@ -27,6 +34,11 @@
 	let emP = $state('');
 	let emC = $state('');
 	let emF = $state('');
+
+	const logDay = $derived(logicalDateKey(new Date(), $settings));
+	const dayTypeForTrack = $derived<DayType | null>(
+		chip === 'Rest Day' ? 'rest' : chip === 'Workout Day' ? 'workout' : null
+	);
 
 	const meals = $derived.by(() => {
 		if (chip === 'All') {
@@ -71,11 +83,20 @@
 		};
 	});
 
+	function setMealSlot(slot: number, dayType: DayType, s: 'pending' | MealSlotStatus) {
+		const cur = get(progress);
+		const k = mealSlotKey(logDay, dayType, slot);
+		const nextMap = { ...(cur.mealSlotStatus ?? {}) };
+		if (s === 'pending') delete nextMap[k];
+		else nextMap[k] = s;
+		persistProgress({ ...cur, mealSlotStatus: nextMap });
+	}
+
 	function onQuickPick(p: QuickFixPreset) {
 		const cur = get(progress);
 		const item = {
 			id: newId(),
-			day: isoDateKey(),
+			day: logicalDateKey(new Date(), get(settings)),
 			label: p.label,
 			kcal: p.kcal,
 			protein_g: p.protein_g,
@@ -92,7 +113,7 @@
 		const cur = get(progress);
 		const row: ExtraMeal = {
 			id: newId(),
-			day: isoDateKey(),
+			day: logicalDateKey(new Date(), get(settings)),
 			name: emName.trim() || 'Snack',
 			time: emTime,
 			kcal,
@@ -141,7 +162,7 @@
 			/>
 		{/if}
 
-		{#each meals as m, i (m.slot + '-' + i)}
+		{#each meals as m, i (`${chip}-${m.slot}-${i}`)}
 			<MealCard
 				index={m.slot}
 				time={m.time}
@@ -150,7 +171,12 @@
 				protein={m.protein}
 				carbs={m.carbs}
 				fat={m.fat}
-				onclick={() => {}}
+				track={dayTypeForTrack
+					? {
+							status: getMealSlotState($progress, logDay, dayTypeForTrack, m.slot),
+							onChange: (nx) => setMealSlot(m.slot, dayTypeForTrack, nx)
+						}
+					: undefined}
 			/>
 		{/each}
 

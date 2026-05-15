@@ -11,7 +11,8 @@
 	import StatusStrip from '$lib/components/spec/StatusStrip.svelte';
 	import TimelineCard from '$lib/components/spec/TimelineCard.svelte';
 	import { consumedTotalsForToday, waterLitersForDay } from '$lib/logic/dayTotals';
-	import { isoDateKey } from '$lib/logic/dateKey';
+	import { logicalDateKey } from '$lib/logic/dateKey';
+	import { getMealSlotState, mealSlotKey } from '$lib/logic/mealSlots';
 	import {
 		getMealsForDay,
 		getPhaseLabel,
@@ -24,17 +25,19 @@
 		persistActiveDayType,
 		persistProgress,
 		plan,
-		progress
+		progress,
+		settings
 	} from '$lib/stores/healthApp';
-	import type { DayType } from '$lib/types/planV2';
+	import type { DayType, MealSlotStatus } from '$lib/types/planV2';
 	import { get } from 'svelte/store';
 
 	let phaseIndex = $state(0);
 
-	const totals = $derived(
-		consumedTotalsForToday($plan, $activeDayType as DayType, phaseIndex, $progress)
-	);
-	const meals = $derived(getMealsForDay($plan, $activeDayType as DayType));
+	const logDay = $derived(logicalDateKey(new Date(), $settings));
+	const dayT = $derived($activeDayType as DayType);
+
+	const totals = $derived(consumedTotalsForToday($plan, dayT, phaseIndex, $progress, $settings));
+	const meals = $derived(getMealsForDay($plan, dayT));
 
 	const waterTarget = 3;
 	const waterL = $derived(waterLitersForDay($progress, totals.day));
@@ -43,6 +46,15 @@
 		totals.targets.kcal > 0 ? Math.min(1, totals.kcal / totals.targets.kcal) : 0
 	);
 
+	function setSlot(slot: number, s: 'pending' | MealSlotStatus) {
+		const cur = get(progress);
+		const k = mealSlotKey(logDay, dayT, slot);
+		const nextMap = { ...(cur.mealSlotStatus ?? {}) };
+		if (s === 'pending') delete nextMap[k];
+		else nextMap[k] = s;
+		persistProgress({ ...cur, mealSlotStatus: nextMap });
+	}
+
 	const timeline = $derived.by(() => {
 		const items: {
 			time: string;
@@ -50,22 +62,31 @@
 			subtitle: string;
 			state: 'done' | 'next' | 'upcoming';
 		}[] = [];
+		let pendingIdx = -1;
+		for (let i = 0; i < meals.length; i++) {
+			const st = getMealSlotState($progress, logDay, dayT, meals[i].slot);
+			if (pendingIdx < 0 && st === 'pending') pendingIdx = i;
+		}
 		for (let i = 0; i < meals.length; i++) {
 			const m = meals[i];
+			const st = getMealSlotState($progress, logDay, dayT, m.slot);
+			let state: 'done' | 'next' | 'upcoming' = 'upcoming';
+			if (st === 'logged') state = 'done';
+			else if (i === pendingIdx) state = 'next';
 			items.push({
 				time: m.time,
 				title: `Meal ${m.slot}`,
 				subtitle: m.name,
-				state: i === 0 ? 'done' : i === 1 ? 'next' : 'upcoming'
+				state
 			});
 		}
 		const td = getTrainingDay($plan, 0);
-		if (td && typeof td.name === 'string' && $activeDayType === 'workout') {
+		if (td && typeof td.name === 'string' && dayT === 'workout') {
 			items.push({
 				time: '6:00 PM',
 				title: 'Train',
 				subtitle: String(td.name),
-				state: items.length === 1 ? 'next' : 'upcoming'
+				state: pendingIdx < 0 ? 'next' : 'upcoming'
 			});
 		}
 		return items.length
@@ -82,13 +103,13 @@
 
 	const nextTitle = $derived.by(() => {
 		const td = getTrainingDay($plan, 0);
-		if ($activeDayType === 'workout' && td && typeof td.name === 'string') return String(td.name);
+		if (dayT === 'workout' && td && typeof td.name === 'string') return String(td.name);
 		return 'Recovery day';
 	});
 
 	function bumpWater(delta: number) {
 		const cur = get(progress);
-		const key = isoDateKey();
+		const key = logicalDateKey(new Date(), get(settings));
 		const prev = waterLitersForDay(cur, key);
 		const next = Math.max(0, Math.round((prev + delta) * 100) / 100);
 		persistProgress({
@@ -109,6 +130,7 @@
 		<ScreenHeaderBlock title="TODAY" subtitle="{greeting()}, {getUserName($plan)}" />
 
 		<div class="phase mono-caps">{getPhaseLabel($plan, phaseIndex)}</div>
+		<p class="hint mono-caps">Logical day {logDay} · adjust time zone in Settings</p>
 
 		<SegmentedControl
 			options={[
@@ -122,11 +144,11 @@
 		<NextActionCard
 			eyebrow="NEXT ACTION"
 			title={nextTitle}
-			subtitle={$activeDayType === 'workout' ? 'Start your workout' : 'Focus on recovery'}
+			subtitle={dayT === 'workout' ? 'Start your workout' : 'Focus on recovery'}
 			onclick={() => goto(resolve('/train'))}
 		/>
 
-		<SectionLabel text="MACROS" />
+		<SectionLabel text="MACROS (LOGGED MEALS + EXTRAS)" />
 
 		<div class="rings">
 			<MetricRing
@@ -172,6 +194,36 @@
 			/>
 		</div>
 
+		<SectionLabel text="MEAL INTAKE" />
+		{#each meals as m (mealSlotKey(logDay, dayT, m.slot))}
+			<div class="slot nothing-surface">
+				<div class="slot-head">
+					<p class="mono-caps t">Meal {m.slot}</p>
+					<p class="name">{m.name}</p>
+					<p class="meta mono-caps">{m.time} · {m.kcal} kcal</p>
+				</div>
+				<div class="slot-actions" role="group" aria-label="Mark meal {m.slot}">
+					<button
+						type="button"
+						class="sb pressable"
+						data-on={getMealSlotState($progress, logDay, dayT, m.slot) === 'logged'}
+						onclick={() => setSlot(m.slot, 'logged')}>Log</button
+					>
+					<button
+						type="button"
+						class="sb pressable"
+						data-on={getMealSlotState($progress, logDay, dayT, m.slot) === 'skipped'}
+						onclick={() => setSlot(m.slot, 'skipped')}>Skip</button
+					>
+					<button
+						type="button"
+						class="sb ghost pressable"
+						onclick={() => setSlot(m.slot, 'pending')}>Reset</button
+					>
+				</div>
+			</div>
+		{/each}
+
 		<SectionLabel text="TIMELINE" />
 		<TimelineCard items={timeline} />
 	</main>
@@ -184,9 +236,15 @@
 	}
 
 	.phase {
-		margin: 0 0 var(--space-2);
+		margin: 0 0 var(--space-1);
 		font-size: 10px;
 		color: var(--text-2);
+	}
+
+	.hint {
+		margin: 0 0 var(--space-2);
+		font-size: 8px;
+		color: var(--text-3);
 	}
 
 	.rings {
@@ -224,5 +282,57 @@
 		color: var(--text-1);
 		font-weight: 800;
 		cursor: pointer;
+	}
+
+	.slot {
+		padding: var(--space-3);
+		margin-bottom: var(--space-2);
+	}
+
+	.slot-head .t {
+		margin: 0;
+		font-size: 9px;
+		color: var(--text-3);
+	}
+
+	.name {
+		margin: 4px 0 0;
+		font-size: 15px;
+		font-weight: 650;
+		color: var(--text-1);
+	}
+
+	.meta {
+		margin: 6px 0 0;
+		font-size: 9px;
+		color: var(--text-2);
+	}
+
+	.slot-actions {
+		display: flex;
+		gap: 8px;
+		margin-top: var(--space-3);
+	}
+
+	.sb {
+		flex: 1;
+		min-height: 36px;
+		border-radius: var(--radius-xs);
+		border: 1px solid var(--line-1);
+		background: rgba(0, 0, 0, 0.35);
+		color: var(--text-2);
+		font-size: 11px;
+		font-weight: 650;
+		cursor: pointer;
+	}
+
+	.sb[data-on='true'] {
+		border-color: var(--red-line);
+		color: var(--text-1);
+		box-shadow: inset 0 0 0 1px rgba(255, 42, 42, 0.22);
+	}
+
+	.sb.ghost {
+		flex: 0.55;
 	}
 </style>

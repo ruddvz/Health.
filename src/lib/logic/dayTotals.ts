@@ -1,5 +1,6 @@
 import type { DayType, PlanV2, ProgressV2 } from '$lib/types/planV2';
-import { isoDateKey } from './dateKey';
+import { logicalDateKey } from './dateKey';
+import { mealSlotKey } from './mealSlots';
 import { getMealsForDay, getPhaseTargets, type MealRow } from './planDerive';
 
 export function parseMacroGrams(s: string): number | null {
@@ -61,17 +62,24 @@ function sumQuickFixForDay(progress: ProgressV2, day: string) {
 	return { kcal, protein, carbs, fat };
 }
 
+/**
+ * Consumed macros for the logical day: only **logged** template meals count toward the meal
+ * baseline; quick fixes and extra meals still add on top.
+ */
 export function consumedTotalsForToday(
 	plan: PlanV2 | null,
 	dayType: DayType,
 	phaseIndex: number,
 	progress: ProgressV2,
+	settings: Record<string, unknown>,
 	date = new Date()
 ) {
-	const day = isoDateKey(date);
+	const day = logicalDateKey(date, settings);
 	const targets = getPhaseTargets(plan, phaseIndex);
 	const meals = getMealsForDay(plan, dayType);
-	const base = plannedMacrosFromMeals(meals, targets);
+	const statuses = progress.mealSlotStatus ?? {};
+	const loggedMeals = meals.filter((m) => statuses[mealSlotKey(day, dayType, m.slot)] === 'logged');
+	const base = plannedMacrosFromMeals(loggedMeals, targets);
 	const ex = sumExtrasForDay(progress, day);
 	const qf = sumQuickFixForDay(progress, day);
 	return {

@@ -1,4 +1,5 @@
 import type { ProgressV2 } from '$lib/types/planV2';
+import { logicalDateKeyFromIso, rollingLogicalDayKeys } from './dateKey';
 
 export interface WeightChartModel {
 	labels: string[];
@@ -7,29 +8,21 @@ export interface WeightChartModel {
 	deltaLabel: string;
 }
 
-function dayKey(d: Date) {
-	const y = d.getFullYear();
-	const m = String(d.getMonth() + 1).padStart(2, '0');
-	const day = String(d.getDate()).padStart(2, '0');
-	return `${y}-${m}-${day}`;
-}
-
 function parseKg(s: string | undefined): number | null {
-	if (!s) return null;
+	if (s === undefined) return null;
 	const v = Number(String(s).replace(',', '.').trim());
 	return Number.isFinite(v) ? v : null;
 }
 
-/** Last 7 calendar days sparkline from explicit weightEntries + check-in weights. */
-export function buildWeightChartModel(progress: ProgressV2): WeightChartModel {
+/** Last 7 rolling days: keys follow logical calendar; sparkline from weightEntries + check-ins. */
+export function buildWeightChartModel(
+	progress: ProgressV2,
+	settings: Record<string, unknown> = {}
+): WeightChartModel {
 	const today = new Date();
-	const labels: string[] = [];
+	const { keys, labels } = rollingLogicalDayKeys(today, settings);
 	const raw: (number | null)[] = [];
-	for (let i = 6; i >= 0; i--) {
-		const d = new Date(today);
-		d.setDate(d.getDate() - i);
-		labels.push(['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()] ?? '—');
-		const key = dayKey(d);
+	for (const key of keys) {
 		let v: number | null = null;
 		const fromEntries = (progress.weightEntries ?? []).filter((e) => e.date === key);
 		if (fromEntries.length) {
@@ -37,7 +30,9 @@ export function buildWeightChartModel(progress: ProgressV2): WeightChartModel {
 			v = typeof last?.kg === 'number' ? last.kg : null;
 		}
 		if (v === null) {
-			const cin = (progress.weeklyCheckins ?? []).find((c) => c.date.startsWith(key));
+			const cin = (progress.weeklyCheckins ?? []).find(
+				(c) => logicalDateKeyFromIso(c.date, settings) === key
+			);
 			v = parseKg(cin?.weight_kg ?? undefined);
 		}
 		raw.push(v);
@@ -47,7 +42,6 @@ export function buildWeightChartModel(progress: ProgressV2): WeightChartModel {
 	const prev = nums.length > 1 ? nums[nums.length - 2] : null;
 	const filled = raw.map((x, idx) => {
 		if (x !== null) return x;
-		// carry forward / backward simple imputation for chart only
 		let b: number | null = null;
 		for (let j = idx - 1; j >= 0; j--) {
 			if (raw[j] !== null) {

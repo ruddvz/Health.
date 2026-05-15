@@ -1,12 +1,13 @@
 <script lang="ts">
-	import { appResolve } from '$lib/paths';
+	import { resolve } from '$app/paths';
+	import type { AppRoute } from '$lib/appRoutes';
 
 	interface Props {
 		icon?: string;
 		title: string;
 		subtitle: string;
 		chevron?: boolean;
-		href?: string;
+		href?: AppRoute;
 		tone?: 'default' | 'danger';
 		onclick?: () => void;
 	}
@@ -22,7 +23,7 @@
 </script>
 
 {#if href}
-	<a class="row nothing-surface pressable" class:danger={tone === 'danger'} href={appResolve(href)}>
+	<a class="row nothing-surface pressable" class:danger={tone === 'danger'} href={resolve(href)}>
 		<span class="mono-caps ico" aria-hidden="true">{icon}</span>
 		<div class="mid">
 			<p class="t">{title}</p>

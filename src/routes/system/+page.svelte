@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ROUTES } from '$lib/appRoutes';
 	import ScreenHeaderBlock from '$lib/components/spec/ScreenHeaderBlock.svelte';
 	import SectionLabel from '$lib/components/spec/SectionLabel.svelte';
 	import SettingsRowLink from '$lib/components/spec/SettingsRowLink.svelte';
@@ -14,20 +15,20 @@
 		icon="LOCK"
 		title="100% Local"
 		subtitle="Everything is stored on this device."
-		href="/system/privacy"
+		href={ROUTES.systemPrivacy}
 	/>
 	<SettingsRowLink
 		icon="OUT"
 		title="Export Plan"
 		subtitle="Save a backup of your plan."
-		href="/system/settings"
+		href={ROUTES.systemSettings}
 	/>
 	<SettingsRowLink
 		icon="DEL"
 		title="Delete Local Data"
 		subtitle="Remove all app data permanently."
 		tone="danger"
-		href="/system/settings"
+		href={ROUTES.systemSettings}
 	/>
 
 	<SectionLabel text="APP" />
@@ -35,29 +36,34 @@
 		icon="OFF"
 		title="Offline Ready"
 		subtitle="Works fully without internet."
-		href="/system/settings"
+		href={ROUTES.systemSettings}
 	/>
 	<SettingsRowLink
 		icon="DX"
 		title="Plan Diagnostics"
 		subtitle="Check plan health & issues."
-		href="/system/diagnostics"
+		href={ROUTES.systemDiagnostics}
 	/>
 	<SettingsRowLink
 		icon="i"
 		title="About"
 		subtitle="Version 1.0.0 • Up to date."
-		href="/system/settings"
+		href={ROUTES.systemSettings}
 	/>
 
 	<SectionLabel text="TOOLS" />
-	<SettingsRowLink icon="CART" title="Grocery" subtitle="Store checklist" href="/system/grocery" />
-	<SettingsRowLink icon="PREP" title="Prep" subtitle="Weekly prep steps" href="/system/prep" />
+	<SettingsRowLink
+		icon="CART"
+		title="Grocery"
+		subtitle="Store checklist"
+		href={ROUTES.systemGrocery}
+	/>
+	<SettingsRowLink icon="PREP" title="Prep" subtitle="Weekly prep steps" href={ROUTES.systemPrep} />
 	<SettingsRowLink
 		icon="PILL"
 		title="Supplements"
 		subtitle="Schedule & stack"
-		href="/system/supplements"
+		href={ROUTES.systemSupplements}
 	/>
 </main>
 

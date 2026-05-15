@@ -2,8 +2,10 @@
 	interface Props {
 		busy?: boolean;
 		onFiles?: (files: File[]) => void;
+		/** Opens the hidden file input (keyboard + screen reader friendly). */
+		onBrowse?: () => void;
 	}
-	let { busy = false, onFiles }: Props = $props();
+	let { busy = false, onFiles, onBrowse }: Props = $props();
 
 	let dragDepth = $state(0);
 	const dragOver = $derived(dragDepth > 0);
@@ -49,7 +51,11 @@
 	<div class="inner">
 		<span class="mono-caps brace" aria-hidden="true">{'{ }'}</span>
 		<p class="mono-caps lab">.JSON</p>
-		<p class="hint">Drop a file or use upload below</p>
+		<p class="hint">Drop a file, browse, or use upload below</p>
+		{#if onBrowse}
+			<button type="button" class="browse pressable" onclick={() => onBrowse()}>Browse files</button
+			>
+		{/if}
 	</div>
 </div>
 
@@ -62,6 +68,10 @@
 		justify-content: center;
 		margin-bottom: var(--space-3);
 		overflow: hidden;
+	}
+
+	.zone:focus-visible {
+		box-shadow: none;
 	}
 
 	.zone::before {
@@ -103,6 +113,19 @@
 		margin: var(--space-3) 0 0;
 		font-size: 13px;
 		color: var(--text-3);
+	}
+
+	.browse {
+		margin-top: var(--space-4);
+		min-height: 44px;
+		padding: 0 var(--space-5);
+		border-radius: var(--radius-sm);
+		border: 1px solid var(--line-2);
+		background: rgba(0, 0, 0, 0.4);
+		color: var(--text-1);
+		font-weight: 650;
+		font-size: 13px;
+		cursor: pointer;
 	}
 
 	.busy {

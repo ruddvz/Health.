@@ -7,12 +7,14 @@
 	import CheckinCard from '$lib/components/spec/CheckinCard.svelte';
 	import ChipRow from '$lib/components/spec/ChipRow.svelte';
 	import ScreenHeaderBlock from '$lib/components/spec/ScreenHeaderBlock.svelte';
+	import SectionLabel from '$lib/components/spec/SectionLabel.svelte';
 	import StatusStrip from '$lib/components/spec/StatusStrip.svelte';
 	import { adherenceBars7d } from '$lib/logic/adherenceDerive';
-	import { isoDateKey } from '$lib/logic/dateKey';
+	import { logicalDateKey } from '$lib/logic/dateKey';
 	import { newId } from '$lib/logic/id';
 	import { buildWeightChartModel } from '$lib/logic/weightSeries';
-	import { persistProgress, plan, progress } from '$lib/stores/healthApp';
+	import { liftStatsFromSessions, recentSessions } from '$lib/logic/workoutHistory';
+	import { persistProgress, plan, progress, settings } from '$lib/stores/healthApp';
 	import type { WeeklyCheckinEntry } from '$lib/types/planV2';
 	import { get } from 'svelte/store';
 
@@ -24,11 +26,15 @@
 	let sleepH = $state('');
 	let notes = $state('');
 
-	const chart = $derived(buildWeightChartModel($progress));
-	const bars = $derived(adherenceBars7d($progress));
+	const chart = $derived(buildWeightChartModel($progress, $settings));
+	const bars = $derived(adherenceBars7d($progress, new Date(), $settings));
 	const adherencePct = $derived(
 		bars.length ? Math.round((bars.reduce((a, b) => a + b, 0) / bars.length) * 100) : 0
 	);
+
+	const histSessions = $derived(recentSessions($progress, 12));
+	const sessions = $derived(recentSessions($progress, 5));
+	const liftStats = $derived(liftStatsFromSessions(histSessions));
 
 	function parseKg(s: string): number | null {
 		const v = Number(String(s).replace(',', '.').trim());
@@ -50,7 +56,8 @@
 		let weightEntries = [...(cur.weightEntries ?? [])];
 		const wn = parseKg(weightKg);
 		if (wn !== null) {
-			weightEntries = [...weightEntries, { date: isoDateKey(), kg: wn }];
+			const dk = logicalDateKey(new Date(), get(settings));
+			weightEntries = [...weightEntries, { date: dk, kg: wn }];
 		}
 		persistProgress({ ...cur, weeklyCheckins: nextCheckins, weightEntries });
 		checkOpen = false;
@@ -59,6 +66,17 @@
 		energy = '';
 		sleepH = '';
 		notes = '';
+	}
+
+	function fmtShort(iso: string) {
+		const t = Date.parse(iso);
+		if (!Number.isFinite(t)) return iso;
+		return new Intl.DateTimeFormat(undefined, {
+			month: 'short',
+			day: 'numeric',
+			hour: '2-digit',
+			minute: '2-digit'
+		}).format(new Date(t));
 	}
 
 	$effect(() => {
@@ -92,6 +110,36 @@
 			subtitle="7 day blend (water · training · check-ins)"
 			{bars}
 		/>
+
+		<SectionLabel text="RECENT WORKOUTS" />
+		{#if sessions.length === 0}
+			<p class="empty">Finish a session from Train to build history here.</p>
+		{:else}
+			<ul class="list nothing-surface">
+				{#each sessions as s (s.id)}
+					<li class="row">
+						<p class="mono-caps t">{fmtShort(s.finishedAt)}</p>
+						<p class="b">{s.exercises.length} exercises · logged sets</p>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+
+		{#if liftStats.length}
+			<SectionLabel text="LAST LOGGED WEIGHTS" />
+			<div class="lift nothing-surface">
+				{#each liftStats as ls (ls.name)}
+					<div class="lr">
+						<p class="nm">{ls.name}</p>
+						<p class="vals mono-caps">
+							Last {ls.lastKg !== null ? `${ls.lastKg} kg` : '—'} · Best {ls.bestKg !== null
+								? `${ls.bestKg} kg`
+								: '—'}
+						</p>
+					</div>
+				{/each}
+			</div>
+		{/if}
 
 		<CheckinCard
 			title="WEEKLY CHECK-IN"
@@ -146,6 +194,68 @@
 	.screen {
 		flex: 1;
 		padding-bottom: var(--space-6);
+	}
+
+	.empty {
+		margin: 0 0 var(--space-3);
+		font-size: 14px;
+		color: var(--text-2);
+	}
+
+	.list {
+		list-style: none;
+		padding: 0;
+		margin: 0 0 var(--space-4);
+		border-radius: var(--radius-md);
+		overflow: hidden;
+	}
+
+	.row {
+		padding: var(--space-3) var(--space-4);
+		border-bottom: 1px solid var(--line-1);
+	}
+
+	.row:last-child {
+		border-bottom: none;
+	}
+
+	.t {
+		margin: 0;
+		font-size: 9px;
+		color: var(--text-3);
+	}
+
+	.b {
+		margin: 6px 0 0;
+		font-size: 14px;
+		color: var(--text-1);
+	}
+
+	.lift {
+		padding: var(--space-3);
+		margin-bottom: var(--space-4);
+	}
+
+	.lr {
+		padding: var(--space-2) 0;
+		border-bottom: 1px solid var(--line-1);
+	}
+
+	.lr:last-child {
+		border-bottom: none;
+	}
+
+	.nm {
+		margin: 0;
+		font-size: 14px;
+		font-weight: 650;
+		color: var(--text-1);
+	}
+
+	.vals {
+		margin: 6px 0 0;
+		font-size: 9px;
+		color: var(--text-3);
 	}
 
 	.modal {

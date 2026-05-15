@@ -85,6 +85,8 @@ export interface WeeklyCheckinEntry {
 	notes?: string;
 }
 
+export type MealSlotStatus = 'logged' | 'skipped';
+
 export interface ProgressV2 {
 	weightEntries?: { date: string; kg: number }[];
 	weeklyCheckins?: WeeklyCheckinEntry[];
@@ -102,6 +104,8 @@ export interface ProgressV2 {
 	suppChecked?: Record<string, boolean>;
 	extraMeals?: ExtraMeal[];
 	quickFixItems?: QuickFixItem[];
-	/** Liters logged per calendar day */
+	/** Liters logged per logical calendar day (see settings time zone / boundary). */
 	waterLitersByDay?: Record<string, number>;
+	/** Per-slot meal logging for a logical day, key `${day}:${dayType}:${slot}`. */
+	mealSlotStatus?: Record<string, MealSlotStatus>;
 }

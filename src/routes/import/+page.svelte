@@ -112,7 +112,7 @@
 		subtitle="Use your JSON plan to power your dashboard."
 	/>
 
-	<JsonDropZone {busy} onFiles={onDropFiles} />
+	<JsonDropZone {busy} onFiles={onDropFiles} onBrowse={openPicker} />
 
 	<ListRowButton label="Copy Prompt" chevron onclick={copyPrompt} />
 	<ListRowButton label="Paste JSON" chevron onclick={() => (pasteOpen = true)} />
