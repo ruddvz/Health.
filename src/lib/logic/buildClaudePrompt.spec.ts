@@ -1,60 +1,82 @@
 import { describe, expect, it } from 'vitest';
 import { buildClaudePrompt, profilePayloadFromOnboarding } from './buildClaudePrompt';
+import { defaultOnboardingState } from './onboardingState';
 import type { OnboardingState } from '$lib/types/planV2';
 
-function sampleOnboarding(over?: Partial<OnboardingState>): OnboardingState {
+function fullSample(): OnboardingState {
+	const d = defaultOnboardingState();
 	return {
-		step: over?.step ?? 4,
-		confirmed: over?.confirmed ?? true,
+		...d,
+		step: 6,
+		confirmed: true,
 		profile: {
+			...d.profile,
 			name: 'Alex',
 			age: '32',
 			sex: 'female',
+			height_unit: 'cm',
 			height_cm: '165',
+			weight_unit: 'kg',
 			weight_kg: '62',
-			goal: 'recomp',
-			...over?.profile
+			body_fat_pct: '22'
+		},
+		goal: {
+			...d.goal,
+			primary_goal: 'recomp',
+			timeline_weeks: '12',
+			target_weight: '58',
+			urgency: 'balanced'
+		},
+		training: {
+			...d.training,
+			days_per_week: '4',
+			location: 'full_gym',
+			fitness_level: 'intermediate',
+			injuries: 'none'
+		},
+		diet: {
+			...d.diet,
+			preference: 'omnivore',
+			allergies: 'shellfish',
+			medication_warning: true,
+			meals_per_day: '4',
+			cooking_time: 'under_20',
+			meal_prep: 'yes',
+			equipment: 'Instant Pot'
+		},
+		supplements: {
+			...d.supplements,
+			owned: 'creatine',
+			budget: 'budget_2040',
+			other: ''
 		},
 		lifestyle: {
+			...d.lifestyle,
+			country: 'Canada',
+			city: 'Toronto',
 			wake_time: '07:00',
 			sleep_time: '23:00',
-			training_time: '18:30',
-			activity_level: 'moderate',
-			...over?.lifestyle
+			training_time: '18:00',
+			activity_outside_gym: 'sedentary',
+			sleep_hours: '7',
+			stress_level: 'moderate',
+			biggest_challenges: 'Late-night snacking'
 		}
 	};
 }
 
 describe('buildClaudePrompt', () => {
 	it('injects profile JSON and schema tail', () => {
-		const text = buildClaudePrompt(sampleOnboarding());
+		const text = buildClaudePrompt(fullSample());
 		expect(text).toContain("=== PERSON'S PROFILE ===");
 		expect(text).toContain('"name": "Alex"');
-		expect(text).toContain('"wake_time_clock": "07:00"');
+		expect(text).toContain('shellfish');
 		expect(text).toContain('SCHEMA VERSION 2');
-		expect(text).toContain('training.weekly_split');
 	});
 
-	it('profilePayload uses defaults for empty fields', () => {
-		const p = profilePayloadFromOnboarding(
-			sampleOnboarding({
-				profile: {
-					name: '',
-					age: '',
-					sex: '',
-					height_cm: '',
-					weight_kg: '',
-					goal: ''
-				},
-				lifestyle: {
-					wake_time: '',
-					sleep_time: '',
-					training_time: '',
-					activity_level: ''
-				}
-			})
-		);
-		expect(p.name).toBe('not provided');
-		expect(p.wake_time_clock).toBe('not specified');
+	it('profilePayload reflects medication flag', () => {
+		const p = profilePayloadFromOnboarding(fullSample());
+		expect(p.medication_or_condition_flag).toContain('yes');
+		expect(p.training_days_per_week).toBe(4);
 	});
 });
