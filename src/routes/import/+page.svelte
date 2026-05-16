@@ -140,8 +140,8 @@
 	<section class="prompt-block nothing-surface" aria-labelledby="prompt-h">
 		<h2 id="prompt-h" class="mono-caps sec-title">Claude prompt</h2>
 		<p class="sec-sub">
-			Built from your intake answers (defaults fill fields the short wizard does not ask yet). You
-			can always copy from the box if the button fails.
+			Built from your saved intake answers. Blank fields appear as "not specified" in the profile
+			JSON. You can always copy from the box if the button fails.
 		</p>
 		<ListRowButton
 			label={copyHint?.startsWith('Copied') ? 'Copied ✓' : 'Copy prompt'}

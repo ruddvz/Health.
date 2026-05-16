@@ -8,6 +8,7 @@ import {
 	LS_PROGRESS,
 	LS_SETTINGS
 } from '$lib/constants/storage';
+import { defaultOnboardingState, normalizeOnboarding } from '$lib/logic/onboardingState';
 import type { DayType, OnboardingState, PlanV2, ProgressV2 } from '$lib/types/planV2';
 import { parsePlanJsonText } from '$lib/validation/planV2';
 
@@ -17,26 +18,7 @@ export const activeDayType = writable<DayType>('workout');
 export const progress = writable<ProgressV2>({});
 export const settings = writable<Record<string, unknown>>({});
 
-const defaultOnboarding = (): OnboardingState => ({
-	step: 1,
-	profile: {
-		name: '',
-		age: '',
-		sex: '',
-		height_cm: '',
-		weight_kg: '',
-		goal: ''
-	},
-	lifestyle: {
-		wake_time: '',
-		sleep_time: '',
-		training_time: '',
-		activity_level: ''
-	},
-	confirmed: false
-});
-
-export const onboarding = writable<OnboardingState>(defaultOnboarding());
+export const onboarding = writable<OnboardingState>(defaultOnboardingState());
 
 function readJson<T>(key: string, fallback: T): T {
 	if (!browser) return fallback;
@@ -78,7 +60,14 @@ export function hydrateFromLocalStorage() {
 
 	progress.set(readJson<ProgressV2>(LS_PROGRESS, {}));
 	settings.set(readJson<Record<string, unknown>>(LS_SETTINGS, {}));
-	onboarding.set(readJson<OnboardingState>(LS_ONBOARDING, defaultOnboarding()));
+	let obRaw: unknown = null;
+	try {
+		const s = localStorage.getItem(LS_ONBOARDING);
+		if (s) obRaw = JSON.parse(s);
+	} catch {
+		obRaw = null;
+	}
+	onboarding.set(normalizeOnboarding(obRaw));
 }
 
 export function persistOnboarding(state: OnboardingState) {
@@ -124,7 +113,7 @@ export function clearAllLocalHealthData() {
 	activeDayType.set('workout');
 	progress.set({});
 	settings.set({});
-	onboarding.set(defaultOnboarding());
+	onboarding.set(defaultOnboardingState());
 }
 
 export function getPlan(): PlanV2 | null {

@@ -8,23 +8,68 @@ export type PlanV2 = Record<string, unknown> & {
 
 export type DayType = 'workout' | 'rest';
 
+export type PrimaryGoalKey = 'fat_loss' | 'muscle_gain' | 'recomp' | 'maintenance';
+
+export type TimelineWeeksKey = '8' | '12' | '16' | '20';
+
+export type UrgencyKey = 'sustainable' | 'balanced' | 'aggressive';
+
+/** Six-step intake aligned with legacy `profilePayload` fields for Claude. */
 export interface OnboardingState {
-	step: 1 | 2 | 3 | 4;
+	step: 1 | 2 | 3 | 4 | 5 | 6;
+	confirmed: boolean;
 	profile: {
 		name: string;
 		age: string;
 		sex: string;
+		height_unit: 'cm' | 'ftin';
 		height_cm: string;
+		height_ft: string;
+		height_in: string;
+		weight_unit: 'kg' | 'lbs';
 		weight_kg: string;
-		goal: string;
+		weight_lbs: string;
+		body_fat_pct: string;
+	};
+	goal: {
+		primary_goal: PrimaryGoalKey | '';
+		timeline_weeks: TimelineWeeksKey | '';
+		target_weight: string;
+		urgency: UrgencyKey | '';
+		notes: string;
+	};
+	training: {
+		days_per_week: string;
+		location: string;
+		fitness_level: string;
+		injuries: string;
+	};
+	diet: {
+		preference: string;
+		food_dislikes: string;
+		allergies: string;
+		medication_warning: boolean;
+		meals_per_day: string;
+		cooking_time: string;
+		meal_prep: string;
+		equipment: string;
+	};
+	supplements: {
+		owned: string;
+		budget: string;
+		other: string;
 	};
 	lifestyle: {
+		country: string;
+		city: string;
 		wake_time: string;
 		sleep_time: string;
 		training_time: string;
-		activity_level: string;
+		activity_outside_gym: string;
+		sleep_hours: string;
+		stress_level: string;
+		biggest_challenges: string;
 	};
-	confirmed: boolean;
 }
 
 export interface WorkoutSetEntry {
