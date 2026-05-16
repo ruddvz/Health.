@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { defaultOnboardingState } from './onboardingState';
-import { validateIntakeComplete, validateIntakeStep } from './onboardingValidation';
+import {
+	validateIntakeComplete,
+	validateIntakeStep,
+	intakeErrorKeysForStep
+} from './onboardingValidation';
 
 describe('onboardingValidation', () => {
 	it('requires profile basics on step 1', () => {
@@ -32,6 +36,13 @@ describe('onboardingValidation', () => {
 
 	it('validateIntakeComplete aggregates all steps', () => {
 		expect(validateIntakeComplete(defaultOnboardingState()).ok).toBe(false);
+	});
+
+	it('intakeErrorKeysForStep lists keys for clearing section errors', () => {
+		expect(intakeErrorKeysForStep(1)).toContain('profile.name');
+		expect(intakeErrorKeysForStep(4)).toEqual(
+			expect.arrayContaining(['diet.preference', 'diet.meal_prep'])
+		);
 	});
 });
 

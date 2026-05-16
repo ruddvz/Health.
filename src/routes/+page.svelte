@@ -9,8 +9,13 @@
 	import StepCard from '$lib/components/spec/StepCard.svelte';
 	import TextLinkButton from '$lib/components/spec/TextLinkButton.svelte';
 	import InlineErrorCard from '$lib/components/spec/InlineErrorCard.svelte';
+	import { applyIntakeStepDefaults } from '$lib/logic/intakeStepDefaults';
 	import type { IntakeErrors } from '$lib/logic/onboardingValidation';
-	import { validateIntakeComplete, validateIntakeStep } from '$lib/logic/onboardingValidation';
+	import {
+		intakeErrorKeysForStep,
+		validateIntakeComplete,
+		validateIntakeStep
+	} from '$lib/logic/onboardingValidation';
 	import type { OnboardingState, PrimaryGoalKey, UrgencyKey } from '$lib/types/planV2';
 	import { onboarding, persistOnboarding, plan } from '$lib/stores/healthApp';
 
@@ -118,6 +123,24 @@
 		patch({ expandedIntakeNoticePending: false });
 	}
 
+	function intakeErrDomId(errorKey: string): string {
+		return `intake-err-${errorKey.replace(/\./g, '-')}`;
+	}
+
+	function errDescribedBy(key: string): string | undefined {
+		return fieldErrors[key] ? intakeErrDomId(key) : undefined;
+	}
+
+	function useExampleValuesForThisStep() {
+		const s = $onboarding.step;
+		const next = applyIntakeStepDefaults(s, $onboarding);
+		persistOnboarding(next);
+		const removable = new Set(intakeErrorKeysForStep(s));
+		fieldErrors = Object.fromEntries(
+			Object.entries(fieldErrors).filter(([k]) => !removable.has(k))
+		);
+	}
+
 	function errorSummary(): string {
 		return Object.entries(fieldErrors)
 			.filter(([, m]) => m)
@@ -149,6 +172,19 @@
 </script>
 
 <main class="screen px-screen pt-safe stack">
+	{#snippet stepDefaultsHint()}
+		<div class="defaults-block">
+			<p class="defaults-copy">
+				Example values fill only empty or invalid fields on this step. The rest of your answers stay
+				as they are.
+			</p>
+			<TextLinkButton
+				text="Use example values for this step"
+				onclick={useExampleValuesForThisStep}
+			/>
+		</div>
+	{/snippet}
+
 	<StatusStrip />
 
 	{#if $onboarding.expandedIntakeNoticePending}
@@ -184,15 +220,23 @@
 
 	{#if $onboarding.step === 1}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<label class="field">
 				<span class="mono-caps lab">Name</span>
 				<input
 					class="inp"
 					type="text"
 					autocomplete="name"
+					aria-invalid={Boolean(fieldErrors['profile.name'])}
+					aria-describedby={errDescribedBy('profile.name')}
 					value={$onboarding.profile.name}
 					oninput={(e) => patchProfile({ name: (e.target as HTMLInputElement).value })}
 				/>
+				{#if fieldErrors['profile.name']}
+					<span id={intakeErrDomId('profile.name')} class="field-msg"
+						>{fieldErrors['profile.name']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Age</span>
@@ -201,14 +245,23 @@
 					type="number"
 					min="16"
 					max="80"
+					aria-invalid={Boolean(fieldErrors['profile.age'])}
+					aria-describedby={errDescribedBy('profile.age')}
 					value={$onboarding.profile.age}
 					oninput={(e) => patchProfile({ age: (e.target as HTMLInputElement).value })}
 				/>
+				{#if fieldErrors['profile.age']}
+					<span id={intakeErrDomId('profile.age')} class="field-msg"
+						>{fieldErrors['profile.age']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Sex</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['profile.sex'])}
+					aria-describedby={errDescribedBy('profile.sex')}
 					value={$onboarding.profile.sex}
 					onchange={(e) => patchProfile({ sex: (e.target as HTMLSelectElement).value })}
 				>
@@ -217,6 +270,11 @@
 					<option value="male">Male</option>
 					<option value="other">Other</option>
 				</select>
+				{#if fieldErrors['profile.sex']}
+					<span id={intakeErrDomId('profile.sex')} class="field-msg"
+						>{fieldErrors['profile.sex']}</span
+					>
+				{/if}
 			</label>
 			<div class="field">
 				<span class="mono-caps lab">Height</span>
@@ -243,6 +301,8 @@
 						min="120"
 						max="250"
 						placeholder="e.g. 175"
+						aria-invalid={Boolean(fieldErrors['profile.height'])}
+						aria-describedby={errDescribedBy('profile.height')}
 						value={$onboarding.profile.height_cm}
 						oninput={(e) => patchProfile({ height_cm: (e.target as HTMLInputElement).value })}
 					/>
@@ -255,6 +315,8 @@
 							max="8"
 							placeholder="ft"
 							aria-label="Feet"
+							aria-invalid={Boolean(fieldErrors['profile.height'])}
+							aria-describedby={errDescribedBy('profile.height')}
 							value={$onboarding.profile.height_ft}
 							oninput={(e) => patchProfile({ height_ft: (e.target as HTMLInputElement).value })}
 						/>
@@ -265,10 +327,17 @@
 							max="11"
 							placeholder="in"
 							aria-label="Inches"
+							aria-invalid={Boolean(fieldErrors['profile.height'])}
+							aria-describedby={errDescribedBy('profile.height')}
 							value={$onboarding.profile.height_in}
 							oninput={(e) => patchProfile({ height_in: (e.target as HTMLInputElement).value })}
 						/>
 					</div>
+				{/if}
+				{#if fieldErrors['profile.height']}
+					<span id={intakeErrDomId('profile.height')} class="field-msg"
+						>{fieldErrors['profile.height']}</span
+					>
 				{/if}
 			</div>
 			<div class="field">
@@ -295,6 +364,8 @@
 						type="number"
 						min="1"
 						step="0.1"
+						aria-invalid={Boolean(fieldErrors['profile.weight'])}
+						aria-describedby={errDescribedBy('profile.weight')}
 						value={$onboarding.profile.weight_kg}
 						oninput={(e) => patchProfile({ weight_kg: (e.target as HTMLInputElement).value })}
 					/>
@@ -304,9 +375,16 @@
 						type="number"
 						min="1"
 						step="0.1"
+						aria-invalid={Boolean(fieldErrors['profile.weight'])}
+						aria-describedby={errDescribedBy('profile.weight')}
 						value={$onboarding.profile.weight_lbs}
 						oninput={(e) => patchProfile({ weight_lbs: (e.target as HTMLInputElement).value })}
 					/>
+				{/if}
+				{#if fieldErrors['profile.weight']}
+					<span id={intakeErrDomId('profile.weight')} class="field-msg"
+						>{fieldErrors['profile.weight']}</span
+					>
 				{/if}
 			</div>
 			<label class="field">
@@ -325,9 +403,16 @@
 		</div>
 	{:else if $onboarding.step === 2}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<fieldset class="fs">
 				<legend class="mono-caps lab" id="goal-legend">Primary goal</legend>
-				<div class="pick-grid" role="radiogroup" aria-labelledby="goal-legend">
+				<div
+					class="pick-grid"
+					role="radiogroup"
+					aria-labelledby="goal-legend"
+					aria-invalid={Boolean(fieldErrors['goal.primary_goal'])}
+					aria-describedby={errDescribedBy('goal.primary_goal')}
+				>
 					{#each goals as g (g.id)}
 						<button
 							type="button"
@@ -342,9 +427,20 @@
 						</button>
 					{/each}
 				</div>
+				{#if fieldErrors['goal.primary_goal']}
+					<span id={intakeErrDomId('goal.primary_goal')} class="field-msg"
+						>{fieldErrors['goal.primary_goal']}</span
+					>
+				{/if}
 			</fieldset>
-			<p class="mono-caps lab mt2">Program length</p>
-			<div class="seg" role="radiogroup" aria-label="Program length in weeks">
+			<p class="mono-caps lab mt2" id="timeline-legend">Program length</p>
+			<div
+				class="seg"
+				role="radiogroup"
+				aria-labelledby="timeline-legend"
+				aria-invalid={Boolean(fieldErrors['goal.timeline_weeks'])}
+				aria-describedby={errDescribedBy('goal.timeline_weeks')}
+			>
 				{#each ['8', '12', '16', '20'] as w (w)}
 					<button
 						type="button"
@@ -358,6 +454,11 @@
 					>
 				{/each}
 			</div>
+			{#if fieldErrors['goal.timeline_weeks']}
+				<span id={intakeErrDomId('goal.timeline_weeks')} class="field-msg"
+					>{fieldErrors['goal.timeline_weeks']}</span
+				>
+			{/if}
 			<label class="field">
 				<span class="mono-caps lab">Target weight <span class="opt">optional</span></span>
 				<input
@@ -370,8 +471,14 @@
 					oninput={(e) => patchGoal({ target_weight: (e.target as HTMLInputElement).value })}
 				/>
 			</label>
-			<p class="mono-caps lab">Pace</p>
-			<div class="seg" role="radiogroup" aria-label="Goal pace">
+			<p class="mono-caps lab" id="pace-legend">Pace</p>
+			<div
+				class="seg"
+				role="radiogroup"
+				aria-labelledby="pace-legend"
+				aria-invalid={Boolean(fieldErrors['goal.urgency'])}
+				aria-describedby={errDescribedBy('goal.urgency')}
+			>
 				{#each urgencies as u (u.id)}
 					<button
 						type="button"
@@ -383,6 +490,11 @@
 					>
 				{/each}
 			</div>
+			{#if fieldErrors['goal.urgency']}
+				<span id={intakeErrDomId('goal.urgency')} class="field-msg"
+					>{fieldErrors['goal.urgency']}</span
+				>
+			{/if}
 			<label class="field">
 				<span class="mono-caps lab">Extra context <span class="opt">optional</span></span>
 				<textarea
@@ -396,6 +508,7 @@
 		</div>
 	{:else if $onboarding.step === 3}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<label class="field">
 				<span class="mono-caps lab">Training days per week</span>
 				<input
@@ -403,14 +516,23 @@
 					type="number"
 					min="1"
 					max="7"
+					aria-invalid={Boolean(fieldErrors['training.days_per_week'])}
+					aria-describedby={errDescribedBy('training.days_per_week')}
 					value={$onboarding.training.days_per_week}
 					oninput={(e) => patchTraining({ days_per_week: (e.target as HTMLInputElement).value })}
 				/>
+				{#if fieldErrors['training.days_per_week']}
+					<span id={intakeErrDomId('training.days_per_week')} class="field-msg"
+						>{fieldErrors['training.days_per_week']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Where you train</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['training.location'])}
+					aria-describedby={errDescribedBy('training.location')}
 					value={$onboarding.training.location}
 					onchange={(e) => patchTraining({ location: (e.target as HTMLSelectElement).value })}
 				>
@@ -419,11 +541,18 @@
 					<option value="home_equipment">Home + equipment</option>
 					<option value="home_bodyweight">Home bodyweight only</option>
 				</select>
+				{#if fieldErrors['training.location']}
+					<span id={intakeErrDomId('training.location')} class="field-msg"
+						>{fieldErrors['training.location']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Fitness level</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['training.fitness_level'])}
+					aria-describedby={errDescribedBy('training.fitness_level')}
 					value={$onboarding.training.fitness_level}
 					onchange={(e) => patchTraining({ fitness_level: (e.target as HTMLSelectElement).value })}
 				>
@@ -432,6 +561,11 @@
 					<option value="intermediate">Intermediate</option>
 					<option value="advanced">Advanced</option>
 				</select>
+				{#if fieldErrors['training.fitness_level']}
+					<span id={intakeErrDomId('training.fitness_level')} class="field-msg"
+						>{fieldErrors['training.fitness_level']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Injuries or limitations</span>
@@ -446,10 +580,13 @@
 		</div>
 	{:else if $onboarding.step === 4}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<label class="field">
 				<span class="mono-caps lab">Dietary preference</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['diet.preference'])}
+					aria-describedby={errDescribedBy('diet.preference')}
 					value={$onboarding.diet.preference}
 					onchange={(e) => patchDiet({ preference: (e.target as HTMLSelectElement).value })}
 				>
@@ -460,6 +597,11 @@
 					<option value="halal">Halal</option>
 					<option value="pescatarian">Pescatarian</option>
 				</select>
+				{#if fieldErrors['diet.preference']}
+					<span id={intakeErrDomId('diet.preference')} class="field-msg"
+						>{fieldErrors['diet.preference']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Foods you dislike or avoid</span>
@@ -496,6 +638,8 @@
 				<span class="mono-caps lab">Meals per day</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['diet.meals_per_day'])}
+					aria-describedby={errDescribedBy('diet.meals_per_day')}
 					value={$onboarding.diet.meals_per_day}
 					onchange={(e) => patchDiet({ meals_per_day: (e.target as HTMLSelectElement).value })}
 				>
@@ -505,11 +649,18 @@
 					<option value="5">5</option>
 					<option value="6">6</option>
 				</select>
+				{#if fieldErrors['diet.meals_per_day']}
+					<span id={intakeErrDomId('diet.meals_per_day')} class="field-msg"
+						>{fieldErrors['diet.meals_per_day']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Typical cooking time</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['diet.cooking_time'])}
+					aria-describedby={errDescribedBy('diet.cooking_time')}
 					value={$onboarding.diet.cooking_time}
 					onchange={(e) => patchDiet({ cooking_time: (e.target as HTMLSelectElement).value })}
 				>
@@ -518,11 +669,18 @@
 					<option value="30_45">30–45 min</option>
 					<option value="enjoy">Enjoy longer cooking</option>
 				</select>
+				{#if fieldErrors['diet.cooking_time']}
+					<span id={intakeErrDomId('diet.cooking_time')} class="field-msg"
+						>{fieldErrors['diet.cooking_time']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Meal prep</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['diet.meal_prep'])}
+					aria-describedby={errDescribedBy('diet.meal_prep')}
 					value={$onboarding.diet.meal_prep}
 					onchange={(e) => patchDiet({ meal_prep: (e.target as HTMLSelectElement).value })}
 				>
@@ -530,6 +688,11 @@
 					<option value="yes">Yes</option>
 					<option value="no">No</option>
 				</select>
+				{#if fieldErrors['diet.meal_prep']}
+					<span id={intakeErrDomId('diet.meal_prep')} class="field-msg"
+						>{fieldErrors['diet.meal_prep']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Cooking equipment</span>
@@ -544,6 +707,7 @@
 		</div>
 	{:else if $onboarding.step === 5}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<label class="field">
 				<span class="mono-caps lab">Supplements you already have</span>
 				<textarea
@@ -555,8 +719,14 @@
 				></textarea>
 			</label>
 			<fieldset class="fs">
-				<legend class="mono-caps lab">Supplement budget</legend>
-				<div class="pick-grid tight" role="radiogroup" aria-label="Supplement budget">
+				<legend class="mono-caps lab" id="supp-budget-legend">Supplement budget</legend>
+				<div
+					class="pick-grid tight"
+					role="radiogroup"
+					aria-labelledby="supp-budget-legend"
+					aria-invalid={Boolean(fieldErrors['supplements.budget'])}
+					aria-describedby={errDescribedBy('supplements.budget')}
+				>
 					<button
 						type="button"
 						class="pick"
@@ -600,6 +770,11 @@
 						<span class="pt">No limit</span>
 					</button>
 				</div>
+				{#if fieldErrors['supplements.budget']}
+					<span id={intakeErrDomId('supplements.budget')} class="field-msg"
+						>{fieldErrors['supplements.budget']}</span
+					>
+				{/if}
 			</fieldset>
 			<label class="field">
 				<span class="mono-caps lab">Other supplements <span class="opt">optional</span></span>
@@ -613,6 +788,7 @@
 		</div>
 	{:else}
 		<div class="form nothing-surface">
+			{@render stepDefaultsHint()}
 			<label class="field">
 				<span class="mono-caps lab">Country</span>
 				<input
@@ -621,6 +797,8 @@
 					list="country-list"
 					autocomplete="country-name"
 					placeholder="e.g. Canada"
+					aria-invalid={Boolean(fieldErrors['lifestyle.country'])}
+					aria-describedby={errDescribedBy('lifestyle.country')}
 					value={$onboarding.lifestyle.country}
 					oninput={(e) => patchLifestyle({ country: (e.target as HTMLInputElement).value })}
 				/>
@@ -634,6 +812,11 @@
 					<option value="France"></option>
 					<option value="Other"></option>
 				</datalist>
+				{#if fieldErrors['lifestyle.country']}
+					<span id={intakeErrDomId('lifestyle.country')} class="field-msg"
+						>{fieldErrors['lifestyle.country']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">City / region <span class="opt">optional</span></span>
@@ -675,6 +858,8 @@
 				<span class="mono-caps lab">Daily activity outside the gym</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['lifestyle.activity_outside_gym'])}
+					aria-describedby={errDescribedBy('lifestyle.activity_outside_gym')}
 					value={$onboarding.lifestyle.activity_outside_gym}
 					onchange={(e) =>
 						patchLifestyle({ activity_outside_gym: (e.target as HTMLSelectElement).value })}
@@ -685,6 +870,11 @@
 					<option value="active_job">Active job</option>
 					<option value="very_active_job">Very active day</option>
 				</select>
+				{#if fieldErrors['lifestyle.activity_outside_gym']}
+					<span id={intakeErrDomId('lifestyle.activity_outside_gym')} class="field-msg"
+						>{fieldErrors['lifestyle.activity_outside_gym']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Sleep hours / night</span>
@@ -702,6 +892,8 @@
 				<span class="mono-caps lab">Stress level</span>
 				<select
 					class="inp"
+					aria-invalid={Boolean(fieldErrors['lifestyle.stress_level'])}
+					aria-describedby={errDescribedBy('lifestyle.stress_level')}
 					value={$onboarding.lifestyle.stress_level}
 					onchange={(e) => patchLifestyle({ stress_level: (e.target as HTMLSelectElement).value })}
 				>
@@ -711,6 +903,11 @@
 					<option value="high">High</option>
 					<option value="very_high">Very high</option>
 				</select>
+				{#if fieldErrors['lifestyle.stress_level']}
+					<span id={intakeErrDomId('lifestyle.stress_level')} class="field-msg"
+						>{fieldErrors['lifestyle.stress_level']}</span
+					>
+				{/if}
 			</label>
 			<label class="field">
 				<span class="mono-caps lab">Biggest challenges</span>
@@ -807,6 +1004,30 @@
 		font-size: 9px;
 		color: var(--text-3);
 		letter-spacing: 0.06em;
+	}
+
+	.defaults-block {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding-bottom: var(--space-2);
+		margin-bottom: var(--space-2);
+		border-bottom: 1px solid var(--line-1);
+	}
+
+	.defaults-copy {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.45;
+		color: var(--text-3);
+	}
+
+	.field-msg {
+		margin: 0;
+		font-size: 13px;
+		line-height: 1.35;
+		color: #ff8a8a;
+		font-weight: 600;
 	}
 
 	.fs {

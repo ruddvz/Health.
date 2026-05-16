@@ -2,6 +2,26 @@ import type { OnboardingState } from '$lib/types/planV2';
 
 export type IntakeErrors = Partial<Record<string, string>>;
 
+/** Error keys `validateIntakeStep` may set for a given step (for clearing UI errors). */
+export function intakeErrorKeysForStep(step: OnboardingState['step']): readonly string[] {
+	switch (step) {
+		case 1:
+			return ['profile.name', 'profile.age', 'profile.sex', 'profile.height', 'profile.weight'];
+		case 2:
+			return ['goal.primary_goal', 'goal.timeline_weeks', 'goal.urgency'];
+		case 3:
+			return ['training.days_per_week', 'training.location', 'training.fitness_level'];
+		case 4:
+			return ['diet.preference', 'diet.meals_per_day', 'diet.cooking_time', 'diet.meal_prep'];
+		case 5:
+			return ['supplements.budget'];
+		case 6:
+			return ['lifestyle.country', 'lifestyle.activity_outside_gym', 'lifestyle.stress_level'];
+		default:
+			return [];
+	}
+}
+
 function ageOk(age: string): boolean {
 	const n = parseInt(age, 10);
 	return Number.isFinite(n) && n >= 16 && n <= 80;
