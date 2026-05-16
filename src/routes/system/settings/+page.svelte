@@ -5,10 +5,12 @@
 	import RedActionButton from '$lib/components/nothing/RedActionButton.svelte';
 	import ScreenHeaderBlock from '$lib/components/spec/ScreenHeaderBlock.svelte';
 	import { LS_PLAN } from '$lib/constants/storage';
+	import { normalizeOnboarding } from '$lib/logic/onboardingState';
 	import {
 		activeDayType,
 		clearAllLocalHealthData,
 		onboarding,
+		persistOnboarding,
 		persistSettings,
 		plan,
 		progress,
@@ -76,6 +78,36 @@
 		URL.revokeObjectURL(a.href);
 	}
 
+	let intakeFileInput: HTMLInputElement | null = null;
+
+	function exportIntakeOnly() {
+		if (!browser) return;
+		const blob = new Blob([JSON.stringify(get(onboarding), null, 2)], { type: 'application/json' });
+		const a = document.createElement('a');
+		a.href = URL.createObjectURL(blob);
+		a.download = 'health-intake.json';
+		a.click();
+		URL.revokeObjectURL(a.href);
+	}
+
+	function openIntakePicker() {
+		intakeFileInput?.click();
+	}
+
+	async function onIntakeImport(ev: Event) {
+		const t = ev.target as HTMLInputElement;
+		const f = t.files?.[0];
+		t.value = '';
+		if (!f) return;
+		try {
+			const text = await f.text();
+			const parsed = JSON.parse(text) as unknown;
+			persistOnboarding(normalizeOnboarding(parsed));
+		} catch {
+			window.alert('Could not read intake JSON. Export from this screen or copy from a backup.');
+		}
+	}
+
 	function exportPlanOnly() {
 		const p = get(plan);
 		if (!p || !browser) return;
@@ -134,12 +166,26 @@
 	<p class="mono-caps lab">Export</p>
 	<p class="txt">
 		Full backup includes your plan, progress logs (meals, water, workouts, check-ins), settings,
-		onboarding answers, and active day type. Plan-only export matches the raw JSON you imported.
+		onboarding answers, and active day type. You can also export or import just the intake JSON.
+		Plan-only export matches the raw JSON you imported.
 	</p>
 	<p class="mono-caps sub">
 		Plan in browser: {browser ? (localStorage.getItem(LS_PLAN) ? 'present' : 'empty') : '—'}
 	</p>
 	<RedActionButton label="Download full backup" disabled={!$plan} onclick={exportFullBackup} />
+	<button type="button" class="secondary pressable" onclick={exportIntakeOnly}>
+		Download intake JSON only
+	</button>
+	<input
+		bind:this={intakeFileInput}
+		class="sr-inp"
+		type="file"
+		accept=".json,application/json"
+		onchange={onIntakeImport}
+	/>
+	<button type="button" class="secondary pressable" onclick={openIntakePicker}>
+		Import intake JSON
+	</button>
 	<button type="button" class="secondary pressable" disabled={!$plan} onclick={exportPlanOnly}>
 		Download plan JSON only
 	</button>
@@ -235,5 +281,13 @@
 		font-weight: 650;
 		font-size: 15px;
 		cursor: pointer;
+	}
+
+	.sr-inp {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		opacity: 0;
+		pointer-events: none;
 	}
 </style>

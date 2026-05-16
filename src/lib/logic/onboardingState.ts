@@ -36,6 +36,8 @@ export function defaultOnboardingState(): OnboardingState {
 	return {
 		step: 1,
 		confirmed: false,
+		intakeFormatVersion: 2,
+		expandedIntakeNoticePending: false,
 		profile: {
 			name: '',
 			age: '',
@@ -175,6 +177,12 @@ export function normalizeOnboarding(raw: unknown): OnboardingState {
 			biggest_challenges: str(l.biggest_challenges, d.lifestyle.biggest_challenges)
 		};
 
+		out.intakeFormatVersion =
+			typeof raw.intakeFormatVersion === 'number' && Number.isFinite(raw.intakeFormatVersion)
+				? Math.max(1, Math.floor(raw.intakeFormatVersion))
+				: 2;
+		out.expandedIntakeNoticePending = bool(raw.expandedIntakeNoticePending);
+
 		return out;
 	}
 
@@ -200,8 +208,15 @@ export function normalizeOnboarding(raw: unknown): OnboardingState {
 	const mapped = mapLegacyActivityLevel(str(life.activity_level, ''));
 	if (mapped) out.lifestyle.activity_outside_gym = mapped;
 
-	// Old flow had fewer screens; bring users back to step 1 once so new fields are visible.
-	out.step = 1;
+	out.intakeFormatVersion = 2;
+	out.expandedIntakeNoticePending = true;
+
+	const oldStep = clampStep(Number(raw.step));
+	if (bool(raw.confirmed)) {
+		out.step = 6;
+	} else {
+		out.step = oldStep;
+	}
 
 	return out;
 }

@@ -175,7 +175,10 @@
 		</ol>
 	</section>
 
-	<p class="helper">Your uploaded plan is stored only in this browser.</p>
+	<p class="helper">
+		Your uploaded plan is stored only in this browser. Clipboard copy works best over
+		<strong>HTTPS</strong>; if copy fails, use the prompt box and your browser’s copy command.
+	</p>
 
 	{#if error}
 		<InlineErrorCard title="Import blocked" body={error} />
