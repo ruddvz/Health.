@@ -18,6 +18,10 @@ export type UrgencyKey = 'sustainable' | 'balanced' | 'aggressive';
 export interface OnboardingState {
 	step: 1 | 2 | 3 | 4 | 5 | 6;
 	confirmed: boolean;
+	/** Bump when persisted onboarding JSON shape changes (migrations). */
+	intakeFormatVersion: number;
+	/** True after upgrading from pre-v2 intake until the user dismisses the banner. */
+	expandedIntakeNoticePending: boolean;
 	profile: {
 		name: string;
 		age: string;

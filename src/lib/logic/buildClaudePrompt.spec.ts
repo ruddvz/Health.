@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { buildClaudePrompt, profilePayloadFromOnboarding } from './buildClaudePrompt';
+import {
+	buildClaudePrompt,
+	profilePayloadFromOnboarding,
+	sexForClaudeProfile
+} from './buildClaudePrompt';
 import { defaultOnboardingState } from './onboardingState';
 import type { OnboardingState } from '$lib/types/planV2';
 
@@ -78,5 +82,10 @@ describe('buildClaudePrompt', () => {
 		const p = profilePayloadFromOnboarding(fullSample());
 		expect(p.medication_or_condition_flag).toContain('yes');
 		expect(p.training_days_per_week).toBe(4);
+	});
+
+	it('sexForClaudeProfile explains non-binary choice', () => {
+		expect(sexForClaudeProfile('female')).toBe('female');
+		expect(sexForClaudeProfile('other')).toContain('other');
 	});
 });

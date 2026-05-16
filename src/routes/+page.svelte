@@ -8,6 +8,9 @@
 	import StatusStrip from '$lib/components/spec/StatusStrip.svelte';
 	import StepCard from '$lib/components/spec/StepCard.svelte';
 	import TextLinkButton from '$lib/components/spec/TextLinkButton.svelte';
+	import InlineErrorCard from '$lib/components/spec/InlineErrorCard.svelte';
+	import type { IntakeErrors } from '$lib/logic/onboardingValidation';
+	import { validateIntakeComplete, validateIntakeStep } from '$lib/logic/onboardingValidation';
 	import type { OnboardingState, PrimaryGoalKey, UrgencyKey } from '$lib/types/planV2';
 	import { onboarding, persistOnboarding, plan } from '$lib/stores/healthApp';
 
@@ -69,18 +72,57 @@
 		persistOnboarding({ ...$onboarding, lifestyle: { ...$onboarding.lifestyle, ...p } });
 	}
 
+	let fieldErrors = $state<IntakeErrors>({});
+	let reviewOpen = $state(false);
+
 	function goImport() {
+		if (
+			!browser ||
+			!window.confirm(
+				'Skip intake for now? The Claude prompt will contain many "not specified" fields until you finish this form.'
+			)
+		) {
+			return;
+		}
 		goto(resolve('/import'));
 	}
 
-	function next() {
+	function continuePrimary() {
 		const s = $onboarding.step;
+		const v = validateIntakeStep(s, $onboarding);
+		fieldErrors = v.errors;
+		if (!v.ok) return;
+		fieldErrors = {};
 		if (s < 6) {
 			patch({ step: (s + 1) as 1 | 2 | 3 | 4 | 5 | 6 });
 		} else {
-			patch({ confirmed: true });
-			goto(resolve('/import'));
+			reviewOpen = true;
 		}
+	}
+
+	function closeReview() {
+		reviewOpen = false;
+	}
+
+	function confirmGoImport() {
+		const v = validateIntakeComplete($onboarding);
+		fieldErrors = v.errors;
+		if (!v.ok) return;
+		fieldErrors = {};
+		patch({ confirmed: true });
+		reviewOpen = false;
+		goto(resolve('/import'));
+	}
+
+	function dismissIntakeNotice() {
+		patch({ expandedIntakeNoticePending: false });
+	}
+
+	function errorSummary(): string {
+		return Object.entries(fieldErrors)
+			.filter(([, m]) => m)
+			.map(([k, m]) => `${k}: ${m}`)
+			.join('\n');
 	}
 
 	let redirected = false;
@@ -108,6 +150,24 @@
 
 <main class="screen px-screen pt-safe stack">
 	<StatusStrip />
+
+	{#if $onboarding.expandedIntakeNoticePending}
+		<div class="banner nothing-surface" role="status">
+			<p class="bn-t">
+				Intake was expanded. Your previous answers are kept — review each step for new questions.
+			</p>
+			<button type="button" class="bn-dismiss pressable" onclick={dismissIntakeNotice}
+				>Dismiss</button
+			>
+		</div>
+	{/if}
+
+	{#if Object.keys(fieldErrors).length > 0}
+		<InlineErrorCard title="Fix the items below" body={errorSummary()} />
+	{/if}
+
+	<p class="saved-hint mono-caps">Answers save automatically on this device.</p>
+
 	<ProgressHeader
 		label={stepMeta[$onboarding.step - 1].label}
 		progress={stepMeta[$onboarding.step - 1].progress}
@@ -164,12 +224,14 @@
 					<button
 						type="button"
 						class="seg-btn"
+						aria-pressed={$onboarding.profile.height_unit === 'cm'}
 						data-on={$onboarding.profile.height_unit === 'cm'}
 						onclick={() => patchProfile({ height_unit: 'cm' })}>cm</button
 					>
 					<button
 						type="button"
 						class="seg-btn"
+						aria-pressed={$onboarding.profile.height_unit === 'ftin'}
 						data-on={$onboarding.profile.height_unit === 'ftin'}
 						onclick={() => patchProfile({ height_unit: 'ftin' })}>ft / in</button
 					>
@@ -215,12 +277,14 @@
 					<button
 						type="button"
 						class="seg-btn"
+						aria-pressed={$onboarding.profile.weight_unit === 'kg'}
 						data-on={$onboarding.profile.weight_unit === 'kg'}
 						onclick={() => patchProfile({ weight_unit: 'kg' })}>kg</button
 					>
 					<button
 						type="button"
 						class="seg-btn"
+						aria-pressed={$onboarding.profile.weight_unit === 'lbs'}
 						data-on={$onboarding.profile.weight_unit === 'lbs'}
 						onclick={() => patchProfile({ weight_unit: 'lbs' })}>lbs</button
 					>
@@ -261,26 +325,32 @@
 		</div>
 	{:else if $onboarding.step === 2}
 		<div class="form nothing-surface">
-			<p class="mono-caps lab">Primary goal</p>
-			<div class="pick-grid">
-				{#each goals as g (g.id)}
-					<button
-						type="button"
-						class="pick"
-						data-on={$onboarding.goal.primary_goal === g.id}
-						onclick={() => patchGoal({ primary_goal: g.id })}
-					>
-						<span class="pt">{g.label}</span>
-						<span class="ps">{g.hint}</span>
-					</button>
-				{/each}
-			</div>
+			<fieldset class="fs">
+				<legend class="mono-caps lab" id="goal-legend">Primary goal</legend>
+				<div class="pick-grid" role="radiogroup" aria-labelledby="goal-legend">
+					{#each goals as g (g.id)}
+						<button
+							type="button"
+							class="pick"
+							role="radio"
+							aria-checked={$onboarding.goal.primary_goal === g.id}
+							data-on={$onboarding.goal.primary_goal === g.id}
+							onclick={() => patchGoal({ primary_goal: g.id })}
+						>
+							<span class="pt">{g.label}</span>
+							<span class="ps">{g.hint}</span>
+						</button>
+					{/each}
+				</div>
+			</fieldset>
 			<p class="mono-caps lab mt2">Program length</p>
-			<div class="seg">
+			<div class="seg" role="radiogroup" aria-label="Program length in weeks">
 				{#each ['8', '12', '16', '20'] as w (w)}
 					<button
 						type="button"
 						class="seg-btn"
+						role="radio"
+						aria-checked={$onboarding.goal.timeline_weeks === w}
 						data-on={$onboarding.goal.timeline_weeks === w}
 						onclick={() =>
 							patchGoal({ timeline_weeks: w as OnboardingState['goal']['timeline_weeks'] })}
@@ -301,11 +371,13 @@
 				/>
 			</label>
 			<p class="mono-caps lab">Pace</p>
-			<div class="seg">
+			<div class="seg" role="radiogroup" aria-label="Goal pace">
 				{#each urgencies as u (u.id)}
 					<button
 						type="button"
 						class="seg-btn"
+						role="radio"
+						aria-checked={$onboarding.goal.urgency === u.id}
 						data-on={$onboarding.goal.urgency === u.id}
 						onclick={() => patchGoal({ urgency: u.id })}>{u.label}</button
 					>
@@ -482,43 +554,53 @@
 					oninput={(e) => patchSupplements({ owned: (e.target as HTMLTextAreaElement).value })}
 				></textarea>
 			</label>
-			<p class="mono-caps lab">Supplement budget</p>
-			<div class="pick-grid tight">
-				<button
-					type="button"
-					class="pick"
-					data-on={$onboarding.supplements.budget === 'have'}
-					onclick={() => patchSupplements({ budget: 'have' })}
-				>
-					<span class="pt">Have what I need</span>
-				</button>
-				<button
-					type="button"
-					class="pick"
-					data-on={$onboarding.supplements.budget === 'budget_2040'}
-					onclick={() => patchSupplements({ budget: 'budget_2040' })}
-				>
-					<span class="pt">Budget</span>
-					<span class="ps">~$20–40/mo</span>
-				</button>
-				<button
-					type="button"
-					class="pick"
-					data-on={$onboarding.supplements.budget === 'mid_4080'}
-					onclick={() => patchSupplements({ budget: 'mid_4080' })}
-				>
-					<span class="pt">Mid-range</span>
-					<span class="ps">~$40–80/mo</span>
-				</button>
-				<button
-					type="button"
-					class="pick"
-					data-on={$onboarding.supplements.budget === 'no_limit'}
-					onclick={() => patchSupplements({ budget: 'no_limit' })}
-				>
-					<span class="pt">No limit</span>
-				</button>
-			</div>
+			<fieldset class="fs">
+				<legend class="mono-caps lab">Supplement budget</legend>
+				<div class="pick-grid tight" role="radiogroup" aria-label="Supplement budget">
+					<button
+						type="button"
+						class="pick"
+						role="radio"
+						aria-checked={$onboarding.supplements.budget === 'have'}
+						data-on={$onboarding.supplements.budget === 'have'}
+						onclick={() => patchSupplements({ budget: 'have' })}
+					>
+						<span class="pt">Have what I need</span>
+					</button>
+					<button
+						type="button"
+						class="pick"
+						role="radio"
+						aria-checked={$onboarding.supplements.budget === 'budget_2040'}
+						data-on={$onboarding.supplements.budget === 'budget_2040'}
+						onclick={() => patchSupplements({ budget: 'budget_2040' })}
+					>
+						<span class="pt">Budget</span>
+						<span class="ps">~$20–40/mo</span>
+					</button>
+					<button
+						type="button"
+						class="pick"
+						role="radio"
+						aria-checked={$onboarding.supplements.budget === 'mid_4080'}
+						data-on={$onboarding.supplements.budget === 'mid_4080'}
+						onclick={() => patchSupplements({ budget: 'mid_4080' })}
+					>
+						<span class="pt">Mid-range</span>
+						<span class="ps">~$40–80/mo</span>
+					</button>
+					<button
+						type="button"
+						class="pick"
+						role="radio"
+						aria-checked={$onboarding.supplements.budget === 'no_limit'}
+						data-on={$onboarding.supplements.budget === 'no_limit'}
+						onclick={() => patchSupplements({ budget: 'no_limit' })}
+					>
+						<span class="pt">No limit</span>
+					</button>
+				</div>
+			</fieldset>
 			<label class="field">
 				<span class="mono-caps lab">Other supplements <span class="opt">optional</span></span>
 				<textarea
@@ -652,14 +734,156 @@
 		</section>
 	{/if}
 
-	<RedActionButton label={$onboarding.step < 6 ? 'Continue' : 'Start import'} onclick={next} />
+	<RedActionButton
+		label={$onboarding.step < 6 ? 'Continue' : 'Review & import'}
+		onclick={continuePrimary}
+	/>
 	<TextLinkButton text="Skip for now" onclick={goImport} />
 </main>
+
+{#if reviewOpen}
+	<div class="modal" role="presentation">
+		<button type="button" class="backdrop" aria-label="Close review" onclick={closeReview}></button>
+		<div class="sheet nothing-surface" role="dialog" aria-modal="true" aria-labelledby="rev-h">
+			<h2 id="rev-h" class="mono-caps h">Review & import</h2>
+			<p class="rev-p">
+				Next, use <strong>Copy prompt</strong> on Import, then paste JSON when Claude finishes.
+			</p>
+			<ul class="rev-ul">
+				<li><strong>Name</strong>: {$onboarding.profile.name || '—'}</li>
+				<li><strong>Goal</strong>: {$onboarding.goal.primary_goal || '—'}</li>
+				<li><strong>Country</strong>: {$onboarding.lifestyle.country || '—'}</li>
+				<li>
+					<strong>Training</strong>: {$onboarding.training.days_per_week}×/wk, {$onboarding.training
+						.location || '—'}
+				</li>
+			</ul>
+			<div class="rev-row">
+				<button type="button" class="ghost pressable" onclick={closeReview}>Back</button>
+				<button type="button" class="red pressable" onclick={confirmGoImport}>Go to Import</button>
+			</div>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.screen {
 		flex: 1;
 		padding-bottom: var(--space-8);
+	}
+
+	.banner {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--space-3);
+		padding: var(--space-3) var(--space-4);
+		margin-bottom: var(--space-3);
+		border-radius: var(--radius-list);
+		border: 1px solid var(--line-1);
+	}
+
+	.bn-t {
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.45;
+		color: var(--text-2);
+	}
+
+	.bn-dismiss {
+		flex-shrink: 0;
+		padding: 8px 12px;
+		border-radius: var(--radius-xs);
+		border: 1px solid var(--line-2);
+		background: transparent;
+		color: var(--text-1);
+		font-size: 13px;
+		font-weight: 650;
+		cursor: pointer;
+	}
+
+	.saved-hint {
+		margin: 0 0 var(--space-3);
+		font-size: 9px;
+		color: var(--text-3);
+		letter-spacing: 0.06em;
+	}
+
+	.fs {
+		margin: 0;
+		padding: 0;
+		border: none;
+		min-width: 0;
+	}
+
+	.fs .lab {
+		padding: 0;
+	}
+
+	.modal {
+		position: fixed;
+		inset: 0;
+		z-index: 200;
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+	}
+
+	.backdrop {
+		position: absolute;
+		inset: 0;
+		border: none;
+		background: rgba(0, 0, 0, 0.55);
+		cursor: pointer;
+	}
+
+	.sheet {
+		position: relative;
+		width: min(100vw, 430px);
+		padding: var(--space-4);
+		border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+		border: 1px solid var(--line-1);
+		max-height: 90dvh;
+		overflow: auto;
+	}
+
+	.rev-p {
+		margin: 0 0 var(--space-3);
+		font-size: 14px;
+		line-height: 1.5;
+		color: var(--text-2);
+	}
+
+	.rev-ul {
+		margin: 0 0 var(--space-3);
+		padding-left: 1.2rem;
+		font-size: 14px;
+		line-height: 1.5;
+		color: var(--text-2);
+	}
+
+	.rev-row {
+		display: flex;
+		gap: var(--space-2);
+		margin-top: var(--space-3);
+	}
+
+	.ghost,
+	.red {
+		flex: 1;
+		min-height: 48px;
+		border-radius: var(--radius-sm);
+		font-weight: 650;
+		cursor: pointer;
+		border: 1px solid var(--line-2);
+		background: transparent;
+		color: var(--text-1);
+	}
+
+	.red {
+		background: var(--red);
+		border-color: var(--red);
+		color: #fff;
 	}
 
 	.form {

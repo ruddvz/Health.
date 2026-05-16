@@ -9,6 +9,30 @@ describe('normalizeOnboarding', () => {
 		expect(o.goal.primary_goal).toBe('');
 	});
 
+	it('legacy without confirmed keeps prior step', () => {
+		const raw = {
+			step: 2,
+			confirmed: false,
+			profile: {
+				name: 'x',
+				age: '25',
+				sex: 'female',
+				height_cm: '165',
+				weight_kg: '60',
+				goal: 'recomp'
+			},
+			lifestyle: {
+				wake_time: '07:00',
+				sleep_time: '23:00',
+				training_time: '18:00',
+				activity_level: 'high'
+			}
+		};
+		const o = normalizeOnboarding(raw);
+		expect(o.step).toBe(2);
+		expect(o.expandedIntakeNoticePending).toBe(true);
+	});
+
 	it('merges new six-step shape', () => {
 		const base = defaultOnboardingState();
 		const raw = {
@@ -47,6 +71,8 @@ describe('normalizeOnboarding', () => {
 		expect(o.goal.primary_goal).toBe('muscle_gain');
 		expect(o.lifestyle.wake_time).toBe('06:30');
 		expect(o.lifestyle.activity_outside_gym).toBe('light');
-		expect(o.step).toBe(1);
+		expect(o.step).toBe(6);
+		expect(o.expandedIntakeNoticePending).toBe(true);
+		expect(o.intakeFormatVersion).toBe(2);
 	});
 });

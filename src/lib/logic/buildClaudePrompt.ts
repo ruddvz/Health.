@@ -64,6 +64,15 @@ function trainingDays(o: OnboardingState['training']): number {
 	return Math.min(7, Math.max(1, n));
 }
 
+/** `user.sex` in returned JSON is often male|female only — spell out other identities for Claude. */
+export function sexForClaudeProfile(sex: string): string {
+	const raw = sex.trim();
+	const t = raw.toLowerCase();
+	if (t === 'male' || t === 'female') return t;
+	if (!raw) return 'not specified';
+	return `other (${raw}) — not only male/female; personalize respectfully and use neutral physiology framing where relevant for energy needs and training.`;
+}
+
 /** Maps onboarding state to the same profile shape the legacy app sent to Claude. */
 export function profilePayloadFromOnboarding(o: OnboardingState): Record<string, string | number> {
 	const { profile, goal, training, diet, supplements, lifestyle } = o;
@@ -82,7 +91,7 @@ export function profilePayloadFromOnboarding(o: OnboardingState): Record<string,
 	return {
 		name: profile.name.trim() || 'not provided',
 		age: profile.age.trim() || 'not provided',
-		sex: profile.sex.trim() || 'not provided',
+		sex: sexForClaudeProfile(profile.sex),
 		weight: weightDisplay(profile),
 		height: heightDisplay(profile),
 		body_fat_pct: profile.body_fat_pct.trim() || 'not provided',
